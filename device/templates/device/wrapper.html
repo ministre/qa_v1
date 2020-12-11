@@ -1,87 +1,105 @@
 <!DOCTYPE html>
-<html lang="ru">
-    <head>
-        <meta http-equiv="Content-Type" content="text/html" charset="utf-8">
-        <meta http-equiv="Pragma" content="no-cache">
-        <meta HTTP-equiv="Cache-Control" content="no-cache">
-        <meta HTTP-EQUIV="Expires" CONTENT="Mon, 01 Jan 1990 00:00:01 GMT">
+{% load static i18n %}
+{% get_current_language as LANGUAGE_CODE %}
+<html class="no-js" lang="{{ LANGUAGE_CODE }}">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quality Assurance</title>
+    <link rel="stylesheet" href="{% static 'foundation-6.5.1-custom/css/foundation.css' %}" />
+    <link rel="stylesheet" href="{% static 'foundation-icons/foundation-icons.css' %}" />
+    <link rel="stylesheet" href="{% static 'DataTables/datatables.css' %}" />
 
-        <title>Quality Assurance</title>
-        {% load static %}
-        <link href="{% static 'foundation-6.5.1-custom/css/foundation.css' %}" rel="stylesheet" type="text/css">
-        <link href="{% static 'foundation-6.5.1-custom/css/app.css' %}" rel="stylesheet" type="text/css">
-        <link href="{% static 'DataTables/datatables.css' %}" rel="stylesheet" type="text/css" />
+    <style type="text/css">
+    .topcorner {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+    }
+    </style>
+</head>
 
-    </head>
-    <body>
-    <div class="top-bar">
-        <div class="top-bar-left">
-            <ul class="dropdown menu" data-dropdown-menu>
-                <li class="menu-text">Quality Assurance</li>
-                {% if user.is_authenticated %}
-                <li>
-                    <a href="/device/">Оборудование</a>
-                    <ul class="menu vertical">
-                        <li><a href="/device/create/">Создать</a></li>
-                        <li><a href="/device/import/">Получить из Redmine</a></li>
-                        <li><a href="/device/type/">Типы оборудования</a></li>
-                    </ul>
-                </li>
-                <li>
-                    <a href="/testplan/">ПМИ</a>
-                    <ul class="menu vertical">
-                        <li><a href="/testplan/create/">Создать</a></li>
-                    </ul>
-                </li>
-                <li>
-                    <a href="/protocol/">Протоколы</a>
-                    <ul class="menu vertical">
-                        <li><a href="/protocol/create/">Создать протокол испытаний</a></li>
-                        <li><a href="/protocol/import/">Получить из Redmine</a></li>
-                    </ul>
-                </li>
-                <li>
-                    <a href="/docx/">Шаблоны</a>
-                    <ul class="menu vertical">
-                        <li><a href="/docx/template/create/">Создать</a></li>
-                    </ul>
-                </li>
-                <li><a href="/store/">Склад</a></li>
-                <li><a href="/shipment/">Входной контроль</a></li>
-                <li>
-                    <a href="/tcp_udp_check/">Tools</a>
-                    <ul class="menu vertical">
-                        <li><a href="/tcp_udp_check/">Port Forwarding Check</a></li>
-			<li><a href="/sip_invite/">Fake SIP Invite</a></li>
-                    </ul>
-                </li>
-                {% endif %}
-            </ul>
-        </div>
-        <div class="top-bar-right">
-            <ul class="menu">
-                {% if user.is_authenticated %}
-                <li><a href="{% url 'logout'%}?next={{request.path}}" class="button rounded small">Выйти ({{ user.get_username }})</a></li>
-                {% else %}
-                <li><a href="{% url 'login'%}?next={{request.path}}" class="button rounded small">Войти</a></li>
-                {% endif %}
-            </ul>
-        </div>
-    </div>
-    <br>
+<body>
+  <script src="{% static 'foundation-6.5.1-custom/js/vendor/jquery-3.5.0.js' %}"></script>
+  <script src="{% static 'foundation-6.5.1-custom/js/vendor/what-input.js' %}"></script>
+  <script src="{% static 'foundation-6.5.1-custom/js/vendor/foundation.js' %}"></script>
 
-    <script src="{% static 'foundation-6.5.1-custom/js/vendor/jquery.js' %}"></script>
+  <div class="top-bar">
+      <div class="top-bar-left">
+          <ul class="dropdown menu" data-dropdown-menu>
+              <li class="menu-text">Quality Assurance v.1</li>
+              {% if user.is_authenticated %}
+              <li>
+                  <a href="/device/">{% trans "Devices" %}</a>
+                  <ul class="menu vertical">
+                      <li><a href="/device/create/">{% trans "Create" %}</a></li>
+                      <li><a href="/device/import/">{% trans "Import from Redmine" %}</a></li>
+                      <li><a href="/device/type/">{% trans "Device Types" %}</a></li>
+                  </ul>
+              </li>
+              <li>
+                  <a href="/testplan/">{% trans "Testplans" %}</a>
+                  <ul class="menu vertical">
+                      <li><a href="/testplan/create/">{% trans "Create" %}</a></li>
+                  </ul>
+              </li>
+              <li>
+                  <a href="/protocol/">{% trans "Protocols" %}</a>
+                  <ul class="menu vertical">
+                      <li><a href="/protocol/create/">{% trans "Create" %}</a></li>
+                      <li><a href="/protocol/import/">{% trans "Import from Redmine" %}</a></li>
+                  </ul>
+              </li>
+              <li>
+                  <a href="/docx/">{% trans "Templates" %}</a>
+                  <ul class="menu vertical">
+                      <li><a href="/docx/template/create/">{% trans "Create" %}</a></li>
+                  </ul>
+              </li>
+              <li><a href="/store/">{% trans "Store" %}</a></li>
+              <li><a href="/shipment/">{% trans "Shipment" %}</a></li>
+              <li>
+                  <a href="/tcp_udp_check/">{% trans "Tools" %}</a>
+                  <ul class="menu vertical">
+                      <li><a href="/tcp_udp_check/">{% trans "Port Forwarding Check" %}</a></li>
+                      <li><a href="/sip_invite/">{% trans "Fake SIP Invite" %}</a></li>
+                  </ul>
+              </li>
+              {% endif %}
+          </ul>
+      </div>
 
-    <div class="grid-container fluid">
-        {% block content %}
-    </div>
+      <div class="top-bar-right">
+          <form action="{% url 'set_language' %}" method="post">
+              <ul class="menu">
+                  {% csrf_token %}
+                  <li>
+                      <input type="hidden" name="next" value="{{ redirect_to }}">
+                      <select onchange="this.form.submit()" name="language" id="">
+                          {% get_available_languages as LANGUAGES %}
+                          {% get_language_info_list for LANGUAGES as languages %}
+                          {% for language in languages %}
+                          <option value="{{ language.code }}" {% if language.code == LANGUAGE_CODE %} selected{% endif %}>
+                              {{ language.name_local }}
+                          </option>
+                          {% endfor %}
+                      </select>
+                  </li>
+                  <li>&nbsp;</li>
+                  {% if user.is_authenticated %}
+                  <li><a href="{% url 'logout'%}?next={{request.path}}" class="button">{% trans "Sign out" %} ({{ user.get_username }})</a></li>
+                  {% endif %}
+              </ul>
+          </form>
+      </div>
+  </div>
 
-        {% endblock %}
-    </body>
-
-    <script src="{% static 'foundation-6.5.1-custom/js/vendor/what-input.js' %}"></script>
-    <script src="{% static 'foundation-6.5.1-custom/js/vendor/foundation.js' %}"></script>
-    <script src="{% static 'foundation-6.5.1-custom/js/app.js' %}"></script>
-    <script type="text/javascript" src="{% static 'DataTables/datatables.js' %}"></script>
-
+  <br>
+  <div class="grid-container fluid">
+      {% block content %}
+  </div>
+  {% endblock %}
+  <script src="{% static 'foundation-6.5.1-custom/js/app.js' %}"></script>
+</body>
 </html>

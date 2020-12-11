@@ -1,19 +1,19 @@
 {% extends "device/wrapper.html" %}
 
-{% load static %}
+{% load i18n static %}
 
 {% block content %}
 
 {% if form.errors %}
 <div class="callout alert">
-  <p>Authentication failed!</p>
+    <p>{% trans "Authentication failed" %}!</p>
 </div>
 {% endif %}
 
 {% if next %}
     {% if user.is_authenticated %}
 <div class="callout alert">
-    <p>Access error!</p>
+    <p>{% trans "Access error" %}!</p>
 </div>
     {% endif %}
 {% endif %}
@@ -36,7 +36,7 @@
                 {{ form.username }}
                 {{ form.password.label_tag }}
                 {{ form.password }}
-                <input type="submit" value='Sign in' class="button" />
+                <input type="submit" value='{% trans "Sign in" %}' class="button" />
                 <input type="hidden" name="next" value="{{ next }}" />
                 </form>
             </div>
