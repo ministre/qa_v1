@@ -1,0 +1,32 @@
+{% extends "device/wrapper.html" %}
+
+{% block content %}
+
+<h4>Port Forwarding Check</h4>
+
+<p>
+{% for result_message in result_messages %}
+  {{ result_message }}<br>
+{% endfor %}
+</p>
+
+<form method="post" action="">
+    {% csrf_token %}
+    <label>Start port:
+        <input type="text" name ="s_port" value="65435">
+    </label>
+    <label>End port:
+        <input type="text" name ="e_port" value="65535">
+    </label>
+    <label>Destination IP:
+        <input type="text" name ="d_ip">
+    </label>
+    <label for="protocol_id">Protocol:</label>
+    <select name="protocol" id="protocol_id">
+        <option value="udp" selected>UDP</option>
+        <option value="tcp">TCP</option>
+    </select>
+    <input type="submit" value="YARRR!" class="button small rounded" />
+</form>
+
+{% endblock %}
