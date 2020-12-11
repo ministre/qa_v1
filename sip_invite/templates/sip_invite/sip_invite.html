@@ -1,0 +1,17 @@
+{% extends "device/wrapper.html" %}
+
+{% block content %}
+
+<h4>Fake SIP Invite</h4>
+
+<p>{{ message }}</p>
+
+<form method="post" action="">
+    {% csrf_token %}
+    <label>Destination IP:
+        <input type="text" name ="d_ip">
+    </label>
+    <input type="submit" value="YARRR!" class="button small rounded" />
+</form>
+
+{% endblock %}
