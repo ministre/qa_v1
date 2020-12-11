@@ -28,9 +28,7 @@ DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
-
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -39,13 +37,13 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'device',
-    'feature',
-    'docx_builder',
-    'protocol',
-    'pattern',
-    'redmine',
     'testplan',
-    'contact',
+    'protocol',
+    'docx_generator',
+    'store',
+    'shipment',
+    'tcp_udp_check',
+    'sip_invite',
 ]
 
 MIDDLEWARE = [
@@ -59,7 +57,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'qa.urls'
+ROOT_URLCONF = 'qa_v1.urls'
 
 TEMPLATES = [
     {
@@ -77,8 +75,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'qa.wsgi.application'
-
+WSGI_APPLICATION = 'qa_v1.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
@@ -93,7 +90,6 @@ DATABASES = {
         'PORT': '5432',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
@@ -112,7 +108,6 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
