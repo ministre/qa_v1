@@ -1,0 +1,34 @@
+{% extends "device/wrapper.html" %}
+
+{% block content %}
+
+<h4>Новые поставки для входного контроля</h4>
+
+
+
+<br>
+<table class="hover">
+    <thead>
+    <tr>
+        <td width="5%">Кейс:</td>
+        <td width="80%">Поставка:</td>
+        <td width="15%"></td>
+    </tr>
+    </thead>
+    <tbody>
+    {% for id, vendors, models, orders, contracts in shipments %}
+    <tr>
+        <td onclick="window.location.href='http://lab.rt.ru/issues/{{ id }}/'; return false">
+            {{ id }}
+        </td>
+        <td onclick="window.location.href='http://lab.rt.ru/issues/{{ id }}/'; return false">
+            {{ vendors }} {{ models }}<br>
+            <span class="label secondary">{{ orders }}</span> <span class="label secondary">{{ contracts }}</span>
+        </td>
+        <td><a href="{{ id }}" class="button small rounded">Создать протокол</a></td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}
