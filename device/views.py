@@ -9,49 +9,66 @@ from django.http import HttpResponseRedirect
 from .forms import DeviceTypeForm, DeviceForm
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
+from django.utils.decorators import method_decorator
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+from django.urls import reverse
+
+
+@method_decorator(login_required, name='dispatch')
+class DeviceTypeListView(ListView):
+    context_object_name = 'device_types'
+    queryset = DeviceType.objects.all().order_by("-id")
+    template_name = 'device/device_types.html'
+
+
+@method_decorator(login_required, name='dispatch')
+class DeviceTypeCreate(CreateView):
+    model = DeviceType
+    form_class = DeviceTypeForm
+    template_name = 'device/create.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('device_types')
+        return context
+
+    def get_success_url(self):
+        return reverse('device_types')
+
+
+@method_decorator(login_required, name='dispatch')
+class DeviceTypeUpdate(UpdateView):
+    model = DeviceType
+    form_class = DeviceTypeForm
+    template_name = 'device/update.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('device_type_details', kwargs={'pk': self.object.id})
+        return context
+
+    def get_success_url(self):
+        return reverse('device_types')
+
+
+@method_decorator(login_required, name='dispatch')
+class DeviceTypeDelete(DeleteView):
+    model = DeviceType
+    template_name = 'device/delete.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('device_type_details', kwargs={'pk': self.object.id})
+        return context
+
+    def get_success_url(self):
+        return reverse('device_types')
 
 
 @login_required
-def device_type_create(request):
-    if request.method == 'POST':
-        form = DeviceTypeForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return HttpResponseRedirect('/type/')
-    else:
-        form = DeviceTypeForm()
-        return render(request, 'device/device_type_create.html', {'form': form})
-
-
-@login_required
-def device_type_delete(request, device_type_id):
-    DeviceType.objects.filter(id=device_type_id).delete()
-    return HttpResponseRedirect('/device/type/')
-
-
-@login_required
-def device_type_edit(request, device_type_id):
-    if request.method == 'POST':
-        form = DeviceTypeForm(request.POST)
-        if form.is_valid():
-            device_type = DeviceType.objects.get(id=device_type_id)
-            device_type.main_type = request.POST['main_type']
-            device_type.sub_type = request.POST['sub_type']
-            device_type.name = request.POST['name']
-            device_type.save()
-            return HttpResponseRedirect('/type/')
-    else:
-        device_type = DeviceType.objects.get(id=device_type_id)
-        form = DeviceTypeForm(initial={'main_type': device_type.main_type, 'sub_type': device_type.sub_type,
-                                       'name': device_type.name})
-
-        return render(request, 'device/device_type_edit.html', {'form': form, 'device_type': device_type})
-
-
-@login_required
-def device_type_list(request):
-    return render(request, 'device/device_type_list.html',
-                  {'device_types': DeviceType.objects.all().order_by("-id")})
+def device_type_details(request, pk):
+    device_type = get_object_or_404(DeviceType, id=pk)
+    return render(request, 'device/device_type_details.html', {'device_type': device_type})
 
 
 @login_required

@@ -6,6 +6,9 @@ class DeviceType(models.Model):
     sub_type = models.CharField(max_length=50)
     name = models.CharField(max_length=300)
 
+    def __str__(self):
+        return self.name
+
 
 class Device(models.Model):
     project_id = models.CharField(max_length=50)

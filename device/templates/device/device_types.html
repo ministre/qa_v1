@@ -1,0 +1,55 @@
+{% extends "device/wrapper.html" %}
+
+{% load i18n static %}
+
+{% block content %}
+
+<h4>{% trans "Device Types" %}</h4>
+
+<a href="{% url 'device_type_create' %}" class="button small">{% trans "Create" %}</a>
+
+<table id="device_types" class="hover unstriped" style="width:100%">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>{% trans "Type" %}</th>
+        <th>{% trans "Subtype" %}</th>
+        <th>{% trans "Description" %}</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for device_type in device_types %}
+    <tr data-href="{% url 'device_type_details' pk=device_type.id %}">
+        <td>{{ device_type.id }}</td>
+        <td>{{ device_type.main_type }}</td>
+        <td>{{ device_type.sub_type }}</td>
+        <td>{{ device_type.name }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+<script>
+    $(document).ready(function() {
+        var table = $('#device_types').DataTable({
+        {% if LANGUAGE_CODE == 'ru' %}
+            "language": { "url": "{% static '/DataTables/i18n/Russian.json' %}" },
+        {% endif %}
+        "pageLength": 100,
+        "order": [[ 0, "desc" ]]
+        });
+    });
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const rows = document.querySelectorAll("tr[data-href]");
+        rows.forEach(row => {
+            row.addEventListener("click", () => {
+                window.location.href = row.dataset.href;
+            });
+        });
+    });
+</script>
+
+<script type="text/javascript" src="{% static 'DataTables/datatables.js' %}"></script>
+
+{% endblock %}

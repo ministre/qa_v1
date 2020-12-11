@@ -1,0 +1,38 @@
+{% extends "device/wrapper.html" %}
+
+{% load i18n static %}
+
+{% block content %}
+
+<p><a href="{% url 'device_types' %}">{% trans "Device Types" %}</a> &raquo; {{ device_type }}</p>
+
+<div class="grid-x grid-margin-x">
+    <div class="cell">
+        <div class="card">
+            <div class="card-section">
+                <a href="{% url 'device_type_update' pk=device_type.id %}" class="button small">{% trans "Update" %}</a>
+                <a href="{% url 'device_type_delete' pk=device_type.id %}" class="button alert small">{% trans "Delete" %}</a>
+                <table class="hover unstriped">
+                    <tr>
+                        <td>ID:</td>
+                        <td>{{ device_type.id }}</td>
+                    </tr>
+                    <tr>
+                        <td>{% trans "Type" %}:</td>
+                        <td>{{ device_type.main_type }}</td>
+                    </tr>
+                    <tr>
+                        <td>{% trans "Subtype" %}:</td>
+                        <td>{{ device_type.sub_type }}</td>
+                    </tr>
+                    <tr>
+                        <td>{% trans "Description" %}:</td>
+                        <td>{{ device_type.name }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

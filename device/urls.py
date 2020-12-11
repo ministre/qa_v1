@@ -9,8 +9,10 @@ urlpatterns = [
     path('<int:device_id>/', views.device_edit, name='device_edit'),
     path('export/<int:device_id>', views.device_export, name='device_export'),
     path('import/', views.device_import, name='device_import'),
-    path('type/', views.device_type_list, name='device_type_list'),
-    path('type/create/', views.device_type_create, name='device_type_create'),
-    path('type/delete/<int:device_type_id>/', views.device_type_delete, name='device_type_delete'),
-    path('type/<int:device_type_id>/', views.device_type_edit, name='device_type_edit'),
+
+    path('type/', views.DeviceTypeListView.as_view(), name='device_types'),
+    path('type/create/', views.DeviceTypeCreate.as_view(), name='device_type_create'),
+    path('type/update/<int:pk>/', views.DeviceTypeUpdate.as_view(), name='device_type_update'),
+    path('type/delete/<int:pk>/', views.DeviceTypeDelete.as_view(), name='device_type_delete'),
+    path('type/details/<int:pk>/', views.device_type_details, name='device_type_details'),
 ]
