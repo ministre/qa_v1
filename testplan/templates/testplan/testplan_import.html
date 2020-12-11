@@ -1,0 +1,27 @@
+{% extends "device/wrapper.html" %}
+
+{% block content %}
+
+<div class="grid-container">
+    <h4>Импорт тестов</h4>
+
+    <form method="post" action="">
+        {% csrf_token %}
+        <label>Идентификатор проекта ПМИ в Redmine*:
+            <input type="text" name ="project_id" id="project_id" placeholder="Project ID">
+        </label>
+
+        <label for="tag">Хештег-фильтр:</label>
+        <select name="tag" id="tag">
+            <option value="">Без тега (из проекта будут импортированы все тесты)</option>
+            {% for device_type in device_types %}
+            <option value="{{ device_type.sub_type }}">{{ device_type.sub_type }}</option>
+            {% endfor %}
+        </select>
+
+        <input type="submit" value="YARRR!" class="button small rounded" />
+        <a href="/testplan/{{ testplan_id }}" class="button small rounded">Назад</a>
+    </form>
+</div>
+
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends "device/wrapper.html" %}
+
+{% block content %}
+
+<p><a href="/testplan/" class="exit-off-canvas">&laquo; Назад</a></p>
+
+<h4>Программа и методика испытаний {{ testplan.name }}</h4>
+
+<h6>Редакция: {{ testplan.version }}</h6>
+
+<a href="/docx/testplan/create/{{ testplan_id }}" class="button small rounded">Создать ПМИ в формате Word</a>
+<a href="/testplan/import/{{ testplan_id }}" class="button small rounded">Импорт тестов из Redmine</a>
+<a href="/testplan/edit/{{ testplan_id }}" class="button small rounded">Редактировать</a>
+<a href="/testplan/clear/{{ testplan_id }}" class="button alert small rounded">Удалить тесты</a>
+<a href="/testplan/delete/{{ testplan_id }}" class="button alert small rounded">Удалить ПМИ</a>
+
+<table class="hover">
+    <thead>
+    <tr>
+        <td>№:</td>
+        <td>Название теста:</td>
+        <td>Категория:</td>
+    </tr>
+    </thead>
+    <tbody>
+    {% for test, num in tests %}
+    <tr>
+        <td onclick="window.location.href='/testplan/test/{{ test.id }}/'; return false">{{ num }}</td>
+        <td onclick="window.location.href='/testplan/test/{{ test.id }}/'; return false">{{ test.name }}</td>
+        <td onclick="window.location.href='/testplan/test/{{ test.id }}/'; return false">{{ test.category }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

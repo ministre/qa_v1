@@ -1,0 +1,14 @@
+{% extends "device/wrapper.html" %}
+
+{% block content %}
+
+<div class="grid-container">
+    <h4>Ошибка добавления тестов</h4>
+    <br>
+    <font color="red">{{ error }}</font>
+    <br><br>
+    <a href="/testplan/import/{{ testplan_id }}/" class="button">Назад</a>
+</div>
+
+
+{% endblock %}

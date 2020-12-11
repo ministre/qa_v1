@@ -1,0 +1,67 @@
+{% extends "device/wrapper.html" %}
+
+{% block content %}
+
+<div class="grid-x">
+    <div class="cell small-6">
+        <p><a href="/testplan/{{ testplan }}/" class="exit-off-canvas">&laquo; Назад</a></p>
+    </div>
+
+    <div class="cell small-6">
+        <div>
+            <form method="post" action="/testplan/test/import/">
+                {% csrf_token %}
+                <input type='hidden' id='test_id' name='test_id' value='{{ test.id }}'>
+                <table>
+                    <tr>
+                        <td>
+                            <select name="tag" id="tag">
+                                <option value="">Без хэштега</option>
+                                {% for tag in tags %}
+                                <option value="{{ tag.sub_type }}">{{ tag.sub_type }}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                        <td>
+                            <input type='submit' value='Обновить детали из Redmine' class='button small rounded' />
+                        </td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+    </div>
+</div>
+
+<form method="post" action="">
+    {% csrf_token %}
+    <input type='submit' value='Сохранить' class='button small rounded' />
+    <a href="/testplan/test/delete/{{ test.id }}" class="button alert small rounded">Удалить тест</a>
+
+    <ul class="tabs" data-tabs id="example-tabs">
+        <li class="tabs-title is-active"><a href="#panel1" aria-selected="true">Категория</a></li>
+        <li class="tabs-title"><a href="#panel2">Название теста</a></li>
+        <li class="tabs-title"><a href="#panel3">URL Wiki в Redmine</a></li>
+        <li class="tabs-title"><a href="#panel4">Процедура</a></li>
+        <li class="tabs-title"><a href="#panel5">Ожидаемый результат</a></li>
+    </ul>
+
+    <div class="tabs-content" data-tabs-content="example-tabs">
+        <div class="tabs-panel is-active" id="panel1">
+            <p>{{ form.category|safe }}</p>
+        </div>
+        <div class="tabs-panel" id="panel2">
+            <p>{{ form.name|safe }}</p>
+        </div>
+        <div class="tabs-panel" id="panel3">
+            <p>{{ form.url|safe }}</p>
+        </div>
+        <div class="tabs-panel" id="panel4">
+            <p>{{ form.procedure|safe }}</p>
+        </div>
+        <div class="tabs-panel" id="panel5">
+            <p>{{ form.expected|safe }}</p>
+        </div>
+    </div>
+</form>
+
+{% endblock %}
