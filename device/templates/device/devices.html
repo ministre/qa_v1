@@ -1,0 +1,58 @@
+{% extends "device/wrapper.html" %}
+
+{% load i18n static %}
+
+{% block content %}
+
+<h4>{% trans "Devices" %}</h4>
+
+<a href="{% url 'device_create' %}" class="button small">{% trans "Create" %}</a>
+<a href="{% url 'device_import' %}" class="button small">{% trans "Import from Redmine" %}</a>
+
+<table id="devices" class="hover unstriped" style="width:100%">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>{% trans "Vendor" %}</th>
+        <th>{% trans "Model" %}</th>
+        <th>{% trans "HW" %}</th>
+        <th>{% trans "Device Type" %}</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for device in devices %}
+    <tr data-href="{% url 'device_details' pk=device.id %}">
+        <td>{{ device.id }}</td>
+        <td>{{ device.vendor }}</td>
+        <td>{{ device.model }}</td>
+        <td>{{ device.hw }}</td>
+        <td>{{ device.type }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+<script>
+    $(document).ready(function() {
+        var table = $('#devices').DataTable({
+        {% if LANGUAGE_CODE == 'ru' %}
+            "language": { "url": "{% static '/DataTables/i18n/Russian.json' %}" },
+        {% endif %}
+        "pageLength": 100,
+        "order": [[ 0, "desc" ]]
+        });
+    });
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const rows = document.querySelectorAll("tr[data-href]");
+        rows.forEach(row => {
+            row.addEventListener("click", () => {
+                window.location.href = row.dataset.href;
+            });
+        });
+    });
+</script>
+
+<script type="text/javascript" src="{% static 'DataTables/datatables.js' %}"></script>
+
+{% endblock %}

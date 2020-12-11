@@ -12,10 +12,10 @@
             <div class="card-section">
                 <a href="{% url 'device_type_update' pk=device_type.id %}" class="button small">{% trans "Update" %}</a>
                 <a href="{% url 'device_type_delete' pk=device_type.id %}" class="button alert small">{% trans "Delete" %}</a>
-                <table class="hover unstriped">
+                <table class="unstriped">
                     <tr>
                         <td>ID:</td>
-                        <td>{{ device_type.id }}</td>
+                        <td>{{ device.id }}</td>
                     </tr>
                     <tr>
                         <td>{% trans "Type" %}:</td>

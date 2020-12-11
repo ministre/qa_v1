@@ -31,7 +31,7 @@
               <li class="menu-text">Quality Assurance v.1</li>
               {% if user.is_authenticated %}
               <li>
-                  <a href="{% url 'device_list' %}">{% trans "Devices" %}</a>
+                  <a href="{% url 'devices' %}">{% trans "Devices" %}</a>
                   <ul class="menu vertical">
                       <li><a href="{% url 'device_create' %}">{% trans "Create" %}</a></li>
                       <li><a href="{% url 'device_import' %}">{% trans "Import from Redmine" %}</a></li>

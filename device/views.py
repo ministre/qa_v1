@@ -71,66 +71,66 @@ def device_type_details(request, pk):
     return render(request, 'device/device_type_details.html', {'device_type': device_type})
 
 
-@login_required
-def device_create(request):
-    if request.method == 'POST':
-        form = DeviceForm(request.POST)
-        if form.is_valid():
-            new_device = Device(type=DeviceType.objects.get(id=request.POST['device_type']),
-                                project_id=request.POST['project_id'], vendor=request.POST['vendor'],
-                                model=request.POST['model'], hw=request.POST['hw'],
-                                interfaces=request.POST['interfaces'], leds=request.POST['leds'],
-                                buttons=request.POST['buttons'], chipsets=request.POST['chipsets'],
-                                memory=request.POST['memory'])
-            new_device.save()
-            return HttpResponseRedirect('/')
-    else:
-        form = DeviceForm()
-        return render(request, 'device/device_create.html', {'form': form,
-                                                             'device_types': DeviceType.objects.all().order_by("name")})
+@method_decorator(login_required, name='dispatch')
+class DeviceListView(ListView):
+    context_object_name = 'devices'
+    queryset = Device.objects.all().order_by("-id")
+    template_name = 'device/devices.html'
+
+
+@method_decorator(login_required, name='dispatch')
+class DeviceCreate(CreateView):
+    model = Device
+    form_class = DeviceForm
+    template_name = 'device/create.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('devices')
+        return context
+
+    def get_success_url(self):
+        return reverse('devices')
+
+
+@method_decorator(login_required, name='dispatch')
+class DeviceUpdate(UpdateView):
+    model = Device
+    form_class = DeviceForm
+    template_name = 'device/update.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('device_details', kwargs={'pk': self.object.id})
+        return context
+
+    def get_success_url(self):
+        return reverse('devices')
+
+
+@method_decorator(login_required, name='dispatch')
+class DeviceDelete(DeleteView):
+    model = Device
+    template_name = 'device/delete.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('device_details', kwargs={'pk': self.object.id})
+        return context
+
+    def get_success_url(self):
+        return reverse('devices')
 
 
 @login_required
-def device_delete(request, device_id):
-    Device.objects.filter(id=device_id).delete()
-    return HttpResponseRedirect('/device/')
+def device_details(request, pk):
+    device = get_object_or_404(Device, id=pk)
+    return render(request, 'device/device_details.html', {'device': device})
 
 
 @login_required
-def device_edit(request, device_id):
-    if request.method == 'POST':
-        form = DeviceForm(request.POST)
-        if form.is_valid():
-            device = Device.objects.get(id=device_id)
-            device.type = DeviceType.objects.get(id=request.POST['device_type'])
-            device.project_id = request.POST['project_id']
-            device.vendor = request.POST['vendor']
-            device.model = request.POST['model']
-            device.hw = request.POST['hw']
-            device.interfaces = request.POST['interfaces']
-            device.leds = request.POST['leds']
-            device.buttons = request.POST['buttons']
-            device.chipsets = request.POST['chipsets']
-            device.memory = request.POST['memory']
-            device.save()
-            return HttpResponseRedirect('/' + str(device_id) + '/')
-    else:
-        device = Device.objects.get(id=device_id)
-        form = DeviceForm(initial={'project_id': device.project_id, 'vendor': device.vendor, 'model': device.model,
-                                   'hw': device.hw, 'interfaces': device.interfaces, 'leds': device.leds,
-                                   'buttons': device.buttons, 'chipsets': device.chipsets, 'memory': device.memory})
-        return render(request, 'device/device_edit.html', {'form': form, 'device': device,
-                                                           'device_types': DeviceType.objects.all().order_by("-id")})
-
-
-@login_required
-def device_list(request):
-    return render(request, 'device/device_list.html', {'devices': Device.objects.all().order_by("-id")})
-
-
-@login_required
-def device_export(request, device_id):
-    device = get_object_or_404(Device, id=device_id)
+def device_export(request, pk):
+    device = get_object_or_404(Device, id=pk)
     redmine = Redmine(settings.REDMINE_URL, key=settings.REDMINE_KEY, version='4.1.1')
     try:
         # если проект существует

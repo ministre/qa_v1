@@ -1,20 +1,17 @@
 from django.forms import ModelForm
 from device.models import DeviceType, Device
+from django.utils.translation import gettext_lazy as _
 
 
 class DeviceTypeForm(ModelForm):
     class Meta:
         model = DeviceType
         labels = {
-            'main_type': 'Тип (имя корневого проекта Redmine)',
-            'sub_type': 'Подтип (хэштег проекта Redmine)',
-            'name': 'Описание',
+            'main_type': _('Type'),
+            'sub_type': _('Subtype'),
+            'name': _('Description'),
         }
-        fields = ['main_type', 'sub_type', 'name']
-
-    def __init__(self, *args, **kwargs):
-        super(DeviceTypeForm, self).__init__(*args, **kwargs)
-        self.fields['sub_type'].required = False
+        fields = '__all__'
 
 
 class DeviceForm(ModelForm):
@@ -31,7 +28,7 @@ class DeviceForm(ModelForm):
             'chipsets': 'Чипсеты',
             'memory': 'Память',
         }
-        fields = ['project_id', 'vendor', 'model', 'hw', 'interfaces', 'leds', 'buttons', 'chipsets', 'memory']
+        fields = '__all__'
 
     def __init__(self, *args, **kwargs):
         super(DeviceForm, self).__init__(*args, **kwargs)

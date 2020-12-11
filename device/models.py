@@ -21,3 +21,6 @@ class Device(models.Model):
     buttons = models.CharField(max_length=300)
     chipsets = models.CharField(max_length=300)
     memory = models.CharField(max_length=50)
+
+    def __str__(self):
+        return self.model
