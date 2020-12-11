@@ -1,0 +1,54 @@
+{% extends "device/wrapper.html" %}
+
+{% block content %}
+
+<h4>Протоколы испытаний</h4>
+
+<br>
+
+<a href="create/" class="button small rounded">Создать протокол испытаний</a>
+<a href="import/" class="button small rounded">Получить из Redmine</a>
+
+
+
+
+<table id="protocols" class="display" style="width:100%">
+        <thead>
+            <tr>
+			    <th>ID</th>
+                <th>Оборудование</th>
+                <th>Версия ПО</th>
+                <th>Дата начала</th>
+				<th>Дата завершения</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for protocol in protocols %}
+            <tr>
+			    <td>{{ protocol.id }}</td>
+                <td>{{ protocol.device.vendor }} {{ protocol.device.model }}</td>
+                <td>{{ protocol.sw }}</td>
+                <td>{{ protocol.date_of_start|date:"Y/m/d" }}</td>
+				<td>{{ protocol.date_of_finish|date:"Y/m/d" }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+<br><br>
+
+<script>
+  $(document).ready(function() {
+      var table = $('#protocols').DataTable( {
+          "pageLength": 100,
+          "order": [[ 0, "desc" ]]
+      } );
+
+      $('#protocols tbody').on('click', 'tr', function () {
+          var data = table.row( this ).data();
+                  window.open(data[0]+"/","_self");
+      } );
+  } );
+</script>
+
+{% endblock %}

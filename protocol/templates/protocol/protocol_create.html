@@ -1,0 +1,32 @@
+{% extends "device/wrapper.html" %}
+
+{% block content %}
+
+<p><a href="/protocol/" class="exit-off-canvas">&laquo; Назад</a></p>
+
+<h4>Создание протокола испытаний</h4>
+
+<form method="post" action="">
+    {% csrf_token %}
+
+    <label for="device">Оборудование:</label>
+    <select name="device">
+        {% for device in devices %}
+        <option value="{{ device.id }}" id="device">{{ device.vendor }} {{ device.model }}
+            ({{ device.hw }})</option>
+        {% endfor %}
+    </select>
+
+    <label for="testplan">ПМИ:</label>
+    <select name="testplan">
+        {% for testplan in testplans %}
+        <option value="{{ testplan.id }}" id="testplan">ПМИ {{ testplan.name }}
+            ({{ testplan.version }})</option>
+        {% endfor %}
+    </select>
+
+    {{ form }}
+    <input type="submit" value="Создать" class="button small rounded" />
+</form>
+
+{% endblock %}

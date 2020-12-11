@@ -1,3 +1,5 @@
 from django.contrib import admin
+from docx_generator.models import DocxTemplateFile
 
-# Register your models here.
+
+admin.site.register(DocxTemplateFile)

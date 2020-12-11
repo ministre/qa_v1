@@ -1,0 +1,15 @@
+{% extends "device/wrapper.html" %}
+
+{% block content %}
+
+<p><a href="/protocol/">&laquo; Назад</a></p>
+
+<h4>Протокол испытаний {{ protocol.device.vendor }} {{ protocol.device.model }}</h4>
+
+<form method="post" action="">
+    {% csrf_token %}
+    {{ form }}
+    <input type="submit" value="Изменить" class="button small rounded" />
+</form>
+
+{% endblock %}

@@ -1,0 +1,56 @@
+{% extends "device/wrapper.html" %}
+
+{% block content %}
+
+<p><a href="/protocol/{{ results.protocol.id }}" class="exit-off-canvas">&laquo; Назад</a></p>
+
+<h4>{{ results.test.name }}</h4>
+<p><span class="label warning">{{ results.test.category }}</span></p>
+
+<form action="" method="post">
+    {% csrf_token %}
+    <input type="hidden" id="protocol" name="protocol" value="{{ results.protocol.id }}">
+
+    <div class="grid-x grid-margin-x">
+        <div class="cell medium-6 large-4">
+            <select name="result">
+                <option value="0" id="0" {% if results.result == 0 %} selected {% endif %}>Не тестировался</option>
+                <option value="1" id="1" {% if results.result == 1 %} selected {% endif %}>Не пройден</option>
+                <option value="2" id="2" {% if results.result == 2 %} selected {% endif %}>Пройден с замечаниями</option>
+                <option value="3" id="3" {% if results.result == 3 %} selected {% endif %}>Пройден</option>
+            </select>
+        </div>
+        <div class="cell medium-6 large-8">
+            <input type="submit" value="Сохранить" class="button small rounded" />
+        </div>
+    </div>
+
+    <ul class="tabs" data-tabs id="example-tabs">
+        <li class="tabs-title"><a href="#panel1" aria-selected="true">Процедура</a></li>
+        <li class="tabs-title"><a data-tabs-target="panel2" href="#panel2">Ожидаемый результат</a></li>
+        <li class="tabs-title"><a href="#panel3" aria-selected="true">Конфигурация</a></li>
+        <li class="tabs-title"><a data-tabs-target="panel4" href="#panel4">Результат</a></li>
+        <li class="tabs-title is-active"><a data-tabs-target="panel5" href="#panel5">Комментарии</a></li>
+    </ul>
+
+<div class="tabs-content" data-tabs-content="example-tabs">
+  <div class="tabs-panel" id="panel1">
+    <p>{{ procedure|safe }}</p>
+  </div>
+  <div class="tabs-panel" id="panel2">
+    <p>{{ expected|safe }}</p>
+  </div>
+  <div class="tabs-panel" id="panel3">
+    <p>{{ form.config }}</p>
+  </div>
+  <div class="tabs-panel" id="panel4">
+    <p>{{ form.info }}</p>
+  </div>
+  <div class="tabs-panel is-active" id="panel5">
+    <p>{{ form.comment }}</p>
+  </div>
+</div>
+
+</form>
+
+{% endblock %}

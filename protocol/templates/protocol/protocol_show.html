@@ -1,0 +1,149 @@
+{% extends "device/wrapper.html" %}
+
+{% block content %}
+
+<p><a href="/protocol/" class="exit-off-canvas">&laquo; Назад</a></p>
+
+<div class="grid-x">
+    <div class="cell small-6">
+        <h4>Протокол испытаний {{ protocol.device.vendor }} {{ protocol.device.model }}</h4>
+        <p>
+        <div class="grid-x">
+            <div class="cell medium-6 large-4"><i>Версия HW:</i></div>
+            <div class="cell medium-6 large-8">{{ protocol.device.hw }}</div>
+        </div>
+        <div class="grid-x">
+            <div class="cell medium-6 large-4"><i>Версия ПО:</i></div>
+            <div class="cell medium-6 large-8">{{ protocol.sw }}</div>
+        </div>
+        <div class="grid-x">
+            <div class="cell medium-6 large-4"><i>Дата тестирования:</i></div>
+            <div class="cell medium-6 large-8">{{ protocol.date_of_start|date:"d.m.Y" }} - {{ protocol.date_of_finish|date:"d.m.Y" }}</div>
+        </div>
+        </p>
+
+        <ul class="dropdown menu" data-dropdown-menu>
+            <li>
+                <a href="/protocol/edit/{{ protocol.id }}/">Редактирование</a>
+                <ul class="menu vertical">
+                    <li><a href="/protocol/edit/{{ protocol.id }}/">Общая информация</a></li>
+                    <li><a href="/protocol/inherit/{{ protocol.id }}/">Наследовать результаты</a></li>
+                    <li><a href="/protocol/delete/{{ protocol.id }}/"><font color="red">Удалить протокол</font></a></li>
+                </ul>
+            </li>
+            <li><a href="/protocol/export/{{ protocol.id }}/">Отправить в Redmine</a></li>
+            <li>
+                <a href="/testplan/">Word</a>
+                <ul class="menu vertical">
+                    <li><a href="/docx/protocol/create/{{ protocol.id }}">Протокол испытаний</a></li>
+                    <li><a href="/docx/detailed_protocol/create/{{ protocol.id }}">Детализированный протокол (конфиги)</a></li>
+                </ul>
+            </li>
+            <li>&nbsp;&nbsp;&nbsp;</li>
+            <li><button onclick="hideCompleted()" id="hide_completed" class="button small rounded warning">
+                Скрыть завершенные</button></li>
+        </ul>
+
+  </div>
+    <div class="cell small-6">
+        <div id="donutchart"></div>
+    </div>
+</div>
+
+<table class="stack">
+    <thead>
+    <tr>
+        <th width="50px">№</th>
+        <th width="35%">Название теста:</th>
+        <th width="110px">Результат:</th>
+        <th>Комментарий:</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% load static %}
+
+    {% for result, num in zipped_results %}
+    <tr {% if result.result != 0 %} class="completed" {% endif %}>
+        <td onclick="window.location.href='/protocol/results/{{ result.id }}/'; return false">{{ num }}</td>
+        <td onclick="window.location.href='/protocol/results/{{ result.id }}/'; return false">{{ result.test.name }}
+        <br><span class="label secondary">{{ result.test.category }}</span></td>
+        <td onclick="window.location.href='/protocol/results/{{ result.id }}/'; return false" align="center">
+            {% if result.result == 0 %}
+            <img src="{% static '/images/qu.png' %}" width="20" height="20">
+            {% endif %}
+            {% if result.result == 1 %}
+            <img src="{% static '/images/nok.png' %}" width="25" height="25">
+            {% endif %}
+            {% if result.result == 2 %}
+            <img src="{% static '/images/w_yellow.png' %}" width="25" height="25">
+            {% endif %}
+            {% if result.result == 3 %}
+            <img src="{% static '/images/ok.png' %}" width="25" height="25">
+            {% endif %}
+        </td>
+        <td onclick="window.location.href='/protocol/results/{{ result.id }}/'; return false">{{ result.comment }}</td>
+    </tr>
+    {% endfor %}
+
+    </tbody>
+</table>
+
+<br>
+
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+      google.charts.load("current", {packages:["corechart"]});
+      google.charts.setOnLoadCallback(drawChart);
+      function drawChart() {
+        var data = google.visualization.arrayToDataTable([
+          ['Results', 'Percents'],
+          ['Пройдено',     {{ tests_success }}],
+          ['Пройдено с замечанием',      {{ tests_warn }}],
+          ['Не пройдено',  {{ tests_fail }}],
+		  ['Не тестировалось',  {{ tests_left }}],
+        ]);
+
+        var options = {
+          title: 'My Daily Activities',
+
+        };
+
+        var chart = new google.visualization.PieChart(document.getElementById('donutchart'));
+
+
+		chart.draw(data, {
+		  title: 'Протестировано {{ tests_completed }} ({{ tests_completed_percent }}%) из {{ tests_all }}. Осталось: {{ tests_left }}',
+		  width: 545,
+		  height: 190,
+		  pieHole: 0.2,
+		  colors: ['green', 'orange', 'red', 'gray'],
+		});
+      }
+</script>
+
+<script>
+    function hideCompleted() {
+      var elements = document.getElementsByClassName('completed');
+
+      var el = document.getElementById('hide_completed');
+      if (el.firstChild.data == "Показать завершенные") {
+        el.firstChild.data = "Скрыть завершенные";
+      }
+      else {
+        el.firstChild.data = "Показать завершенные";
+      }
+
+      for (i = 0; i < elements.length; i++) {
+        if (elements[i].style.display != 'none') {
+          elements[i].style.display = 'none';
+        }
+        else {
+          elements[i].style.display = 'table-row';
+        }
+	  }
+    }
+</script>
+
+<script src="{% static 'js/my_datatables.js' %}"></script>
+
+{% endblock %}

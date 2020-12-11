@@ -1,0 +1,23 @@
+{% extends "device/wrapper.html" %}
+
+{% block content %}
+
+<p><a href="/protocol/" class="exit-off-canvas">&laquo; Назад</a></p>
+
+<h4>Импорт протокола испытаний из Redmine</h4>
+
+<form method="post" action="">
+    {% csrf_token %}
+
+    <label for="device_id">Оборудование:</label>
+    <select name="device_id" id="device_id">
+        {% for device in devices %}
+        <option value="{{ device.id }}">{{ device.vendor }} {{ device.model }} ({{ device.hw }})</option>
+        {% endfor %}
+    </select>
+
+    {{ form }}
+    <input type="submit" value="YARRR!" class="button small rounded" />
+</form>
+
+{% endblock %}
