@@ -31,39 +31,39 @@
               <li class="menu-text">Quality Assurance v.1</li>
               {% if user.is_authenticated %}
               <li>
-                  <a href="/device/">{% trans "Devices" %}</a>
+                  <a href="{% url 'device_list' %}">{% trans "Devices" %}</a>
                   <ul class="menu vertical">
-                      <li><a href="/device/create/">{% trans "Create" %}</a></li>
-                      <li><a href="/device/import/">{% trans "Import from Redmine" %}</a></li>
-                      <li><a href="/device/type/">{% trans "Device Types" %}</a></li>
+                      <li><a href="{% url 'device_create' %}">{% trans "Create" %}</a></li>
+                      <li><a href="{% url 'device_import' %}">{% trans "Import from Redmine" %}</a></li>
+                      <li><a href="{% url 'device_type_list' %}">{% trans "Device Types" %}</a></li>
                   </ul>
               </li>
               <li>
-                  <a href="/testplan/">{% trans "Testplans" %}</a>
+                  <a href="{% url 'testplan_list' %}">{% trans "Testplans" %}</a>
                   <ul class="menu vertical">
-                      <li><a href="/testplan/create/">{% trans "Create" %}</a></li>
+                      <li><a href="{% url 'testplan_create' %}">{% trans "Create" %}</a></li>
                   </ul>
               </li>
               <li>
-                  <a href="/protocol/">{% trans "Protocols" %}</a>
+                  <a href="{% url 'protocol_list' %}">{% trans "Protocols" %}</a>
                   <ul class="menu vertical">
-                      <li><a href="/protocol/create/">{% trans "Create" %}</a></li>
-                      <li><a href="/protocol/import/">{% trans "Import from Redmine" %}</a></li>
+                      <li><a href="{% url 'protocol_create' %}">{% trans "Create" %}</a></li>
+                      <li><a href="{% url 'protocol_import' %}">{% trans "Import from Redmine" %}</a></li>
                   </ul>
               </li>
               <li>
-                  <a href="/docx/">{% trans "Templates" %}</a>
+                  <a href="{% url 'temp_list' %}">{% trans "Templates" %}</a>
                   <ul class="menu vertical">
-                      <li><a href="/docx/template/create/">{% trans "Create" %}</a></li>
+                      <li><a href="{% url 'template_create' %}">{% trans "Create" %}</a></li>
                   </ul>
               </li>
-              <li><a href="/store/">{% trans "Store" %}</a></li>
-              <li><a href="/shipment/">{% trans "Shipment" %}</a></li>
+              <li><a href="{% url 'item_list' %}">{% trans "Store" %}</a></li>
+              <li><a href="{% url 'shipment_list' %}">{% trans "Shipment" %}</a></li>
               <li>
-                  <a href="/tcp_udp_check/">{% trans "Tools" %}</a>
+                  <a href="#">{% trans "Tools" %}</a>
                   <ul class="menu vertical">
-                      <li><a href="/tcp_udp_check/">{% trans "Port Forwarding Check" %}</a></li>
-                      <li><a href="/sip_invite/">{% trans "Fake SIP Invite" %}</a></li>
+                      <li><a href="{% url 'tcp_udp_check' %}">{% trans "Port Forwarding Check" %}</a></li>
+                      <li><a href="{% url 'sip_invite' %}">{% trans "Fake SIP Invite" %}</a></li>
                   </ul>
               </li>
               {% endif %}
