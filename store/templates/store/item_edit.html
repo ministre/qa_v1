@@ -1,0 +1,25 @@
+{% extends "device/wrapper.html" %}
+
+{% block content %}
+
+<p><a href="/store/" class="exit-off-canvas">&laquo; Назад</a></p>
+
+<h4>{{ item.name }}</h4>
+
+<p><i>Получено {{ item.received_by }} {{ item.date_of_received }}</i></p>
+
+<form method="post" action="">
+    {% csrf_token %}
+    {{ form }}
+
+    {% if item.returned_by != None %}
+    <p><font color="red"><i>Возвращено {{ item.returned_by }} {{ item.date_of_returned }}</i></font></p>
+    {% endif %}
+
+    <input type="submit" value="Изменить" class="button small rounded" />
+    {% if item.returned_by == None %} <a href="/store/return/{{ item.id }}" class="button alert small rounded">Вернуть</a>{% endif %}
+</form>
+
+<br><br>
+
+{% endblock %}
