@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-12-11 22:21+0300\n"
+"POT-Creation-Date: 2020-12-11 22:36+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -84,14 +84,18 @@ msgstr "Ошибка авторизации"
 msgid "Access error"
 msgstr "Ошибка доступа"
 
+#: device/templates/registration/login.html:32
+msgid "Authentication"
+msgstr "Авторизация"
+
 #: device/templates/registration/login.html:39
 msgid "Sign in"
 msgstr "Вход"
 
-#: qa_v1/settings/base.py:131
+#: qa_v1/settings/base.py:130
 msgid "English"
 msgstr "English"
 
-#: qa_v1/settings/base.py:132
+#: qa_v1/settings/base.py:131
 msgid "Russian"
 msgstr "Русский"
