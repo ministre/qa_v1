@@ -10,16 +10,26 @@ from django.http import HttpResponseRedirect
 from .forms import TestPlanForm, TestForm
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
+from django.utils.decorators import method_decorator
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+from django.urls import reverse
+
+
+@method_decorator(login_required, name='dispatch')
+class TestplanListView(ListView):
+    context_object_name = 'testplans'
+    queryset = TestPlan.objects.all().order_by("-id")
+    template_name = 'testplan/testplans.html'
 
 
 @login_required
-def testplan_detail(request, testplan_id):
-    testplan = get_object_or_404(TestPlan, id=testplan_id)
-    tests = Test.objects.filter(testplan=testplan_id).order_by("id")
+def testplan_details(request, pk):
+    testplan = get_object_or_404(TestPlan, id=pk)
+    tests = Test.objects.filter(testplan=testplan).order_by("id")
     numbers_of_tests = get_numbers_of_tests(tests)
     zipped_results = zip(tests, numbers_of_tests)
     return render(request, 'testplan/testplan_detail.html',
-                  {'testplan_id': testplan_id,
+                  {'testplan_id': testplan.id,
                    'testplan': testplan,
                    'tests': zipped_results})
 
@@ -102,16 +112,6 @@ def testplan_create(request):
 def testplan_delete(request, testplan_id):
     TestPlan.objects.filter(id=testplan_id).delete()
     return HttpResponseRedirect('/testplan/')
-
-
-@login_required
-def testplan_list(request):
-    testplans = TestPlan.objects.all().order_by("-id")
-    num = []
-    for testplan in testplans:
-        num.append(Test.objects.filter(testplan=testplan.id).count())
-    zipped_results = zip(testplans, num)
-    return render(request, 'testplan/testplan_list.html', {'testplans': zipped_results})
 
 
 @login_required
