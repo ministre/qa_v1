@@ -1,0 +1,17 @@
+{% extends "device/wrapper.html" %}
+
+{% block content %}
+
+<p><a href="/" class="exit-off-canvas">&laquo; Назад</a></p>
+
+<h4>Импорт оборудования</h4>
+
+<form method="post" action="">
+    {% csrf_token %}
+    <label>Идентификатор проекта в Redmine:
+        <input type="text" name ="project_id" id="project_id" placeholder="Project ID">
+    </label>
+    <input type="submit" value="YARRR!" class="button small rounded" />
+</form>
+
+{% endblock %}

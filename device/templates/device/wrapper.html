@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ru">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html" charset="utf-8">
+        <meta http-equiv="Pragma" content="no-cache">
+        <meta HTTP-equiv="Cache-Control" content="no-cache">
+        <meta HTTP-EQUIV="Expires" CONTENT="Mon, 01 Jan 1990 00:00:01 GMT">
+
+        <title>Quality Assurance</title>
+        {% load static %}
+        <link href="{% static 'foundation-6.5.1-custom/css/foundation.css' %}" rel="stylesheet" type="text/css">
+        <link href="{% static 'foundation-6.5.1-custom/css/app.css' %}" rel="stylesheet" type="text/css">
+        <link href="{% static 'DataTables/datatables.css' %}" rel="stylesheet" type="text/css" />
+
+    </head>
+    <body>
+    <div class="top-bar">
+        <div class="top-bar-left">
+            <ul class="dropdown menu" data-dropdown-menu>
+                <li class="menu-text">Quality Assurance</li>
+                {% if user.is_authenticated %}
+                <li>
+                    <a href="/device/">Оборудование</a>
+                    <ul class="menu vertical">
+                        <li><a href="/device/create/">Создать</a></li>
+                        <li><a href="/device/import/">Получить из Redmine</a></li>
+                        <li><a href="/device/type/">Типы оборудования</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="/testplan/">ПМИ</a>
+                    <ul class="menu vertical">
+                        <li><a href="/testplan/create/">Создать</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="/protocol/">Протоколы</a>
+                    <ul class="menu vertical">
+                        <li><a href="/protocol/create/">Создать протокол испытаний</a></li>
+                        <li><a href="/protocol/import/">Получить из Redmine</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="/docx/">Шаблоны</a>
+                    <ul class="menu vertical">
+                        <li><a href="/docx/template/create/">Создать</a></li>
+                    </ul>
+                </li>
+                <li><a href="/store/">Склад</a></li>
+                <li><a href="/shipment/">Входной контроль</a></li>
+                <li>
+                    <a href="/tcp_udp_check/">Tools</a>
+                    <ul class="menu vertical">
+                        <li><a href="/tcp_udp_check/">Port Forwarding Check</a></li>
+			<li><a href="/sip_invite/">Fake SIP Invite</a></li>
+                    </ul>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+        <div class="top-bar-right">
+            <ul class="menu">
+                {% if user.is_authenticated %}
+                <li><a href="{% url 'logout'%}?next={{request.path}}" class="button rounded small">Выйти ({{ user.get_username }})</a></li>
+                {% else %}
+                <li><a href="{% url 'login'%}?next={{request.path}}" class="button rounded small">Войти</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+    <br>
+
+    <script src="{% static 'foundation-6.5.1-custom/js/vendor/jquery.js' %}"></script>
+
+    <div class="grid-container fluid">
+        {% block content %}
+    </div>
+
+        {% endblock %}
+    </body>
+
+    <script src="{% static 'foundation-6.5.1-custom/js/vendor/what-input.js' %}"></script>
+    <script src="{% static 'foundation-6.5.1-custom/js/vendor/foundation.js' %}"></script>
+    <script src="{% static 'foundation-6.5.1-custom/js/app.js' %}"></script>
+    <script type="text/javascript" src="{% static 'DataTables/datatables.js' %}"></script>
+
+</html>

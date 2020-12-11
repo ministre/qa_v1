@@ -2,9 +2,9 @@
 *.log
 *.pot
 .idea/
-**/settings/local.py
-**/static/
-**/media/
+qa_v1/settings/local.py
+qa_v1/static/
+qa_v1/media/
 **/migrations/*
 
 # Byte-compiled / optimized / DLL files

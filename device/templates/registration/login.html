@@ -1,0 +1,47 @@
+{% extends "device/wrapper.html" %}
+
+{% load static %}
+
+{% block content %}
+
+{% if form.errors %}
+<div class="callout alert">
+  <p>Authentication failed!</p>
+</div>
+{% endif %}
+
+{% if next %}
+    {% if user.is_authenticated %}
+<div class="callout alert">
+    <p>Access error!</p>
+</div>
+    {% endif %}
+{% endif %}
+
+<div class="grid-x grid-margin-x small-up-2 medium-up-2">
+    <div class="cell">
+        <div class="card">
+            <div class="card-section">
+                <p><img src="{% static '/img/login.jpg' %}"></p>
+            </div>
+        </div>
+    </div>
+    <div class="cell">
+        <div class="card">
+            <div class="card-section">
+                <h4>Authentication</h4>
+                <form method="post" action="{% url 'login' %}">
+                {% csrf_token %}
+                {{ form.username.label_tag }}
+                {{ form.username }}
+                {{ form.password.label_tag }}
+                {{ form.password }}
+                <input type="submit" value='Sign in' class="button" />
+                <input type="hidden" name="next" value="{{ next }}" />
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
