@@ -22,6 +22,21 @@ class TestplanListView(ListView):
     template_name = 'testplan/testplans.html'
 
 
+@method_decorator(login_required, name='dispatch')
+class TestplanCreate(CreateView):
+    model = TestPlan
+    form_class = TestPlanForm
+    template_name = 'testplan/create.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('testplans')
+        return context
+
+    def get_success_url(self):
+        return reverse('testplans')
+
+
 @login_required
 def testplan_details(request, pk):
     testplan = get_object_or_404(TestPlan, id=pk)
@@ -94,18 +109,6 @@ def get_numbers_of_tests(tests):
             numbers_of_tests.append(str(i) + '.' + str(j))
             category = test.category
     return numbers_of_tests
-
-
-@login_required
-def testplan_create(request):
-    if request.method == 'POST':
-        form = TestPlanForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return HttpResponseRedirect('/testplan/')
-    else:
-        form = TestPlanForm()
-        return render(request, 'testplan/testplan_create.html', {'form': form})
 
 
 @login_required
