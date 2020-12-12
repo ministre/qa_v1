@@ -15,6 +15,7 @@ import textile
 from django.utils.decorators import method_decorator
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.urls import reverse
+from django import forms
 
 
 @method_decorator(login_required, name='dispatch')
@@ -43,8 +44,29 @@ class ProtocolCreate(CreateView):
         return reverse('protocols')
 
 
+@method_decorator(login_required, name='dispatch')
+class ProtocolUpdate(UpdateView):
+    model = Protocol
+    form_class = ProtocolForm
+    template_name = 'protocol/update.html'
+
+    def get_form(self, form_class=ProtocolForm):
+        form = super(ProtocolUpdate, self).get_form(form_class)
+        form.fields['device'].widget = forms.HiddenInput()
+        form.fields['testplan'].widget = forms.HiddenInput()
+        return form
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('protocol_details', kwargs={'pk': self.object.id, 'tab_id': 1})
+        return context
+
+    def get_success_url(self):
+        return reverse('protocol_details', kwargs={'pk': self.object.id, 'tab_id': 1})
+
+
 @login_required
-def protocol_show(request, pk):
+def protocol_details(request, pk, tab_id):
     protocol = Protocol.objects.get(id=pk)
     results = TestResult.objects.filter(protocol=pk).order_by("id")
 
@@ -58,14 +80,16 @@ def protocol_show(request, pk):
     tests_success = TestResult.objects.filter(Q(protocol=pk) & Q(result=3)).count()
     tests_warn = TestResult.objects.filter(Q(protocol=pk) & Q(result=2)).count()
     tests_fail = TestResult.objects.filter(Q(protocol=pk) & Q(result=1)).count()
-    return render(request, 'protocol/protocol_show.html', {'protocol': protocol,
-                                                           'zipped_results': zipped_results,
-                                                           'tests_all': tests_all, 'tests_completed': tests_completed,
-                                                           'tests_completed_percent': tests_completed_percent,
-                                                           'tests_left': tests_left,
-                                                           'tests_success': tests_success,
-                                                           'tests_warn': tests_warn,
-                                                           'tests_fail': tests_fail})
+    return render(request, 'protocol/protocol_details.html', {'protocol': protocol,
+                                                              'zipped_results': zipped_results,
+                                                              'tests_all': tests_all,
+                                                              'tests_completed': tests_completed,
+                                                              'tests_completed_percent': tests_completed_percent,
+                                                              'tests_left': tests_left,
+                                                              'tests_success': tests_success,
+                                                              'tests_warn': tests_warn,
+                                                              'tests_fail': tests_fail,
+                                                              'tab_id': tab_id})
 
 
 @login_required
@@ -172,35 +196,6 @@ def protocol_export(request, protocol_id):
 def protocol_delete(request, protocol_id):
     Protocol.objects.filter(id=protocol_id).delete()
     return HttpResponseRedirect('/protocol/')
-
-
-@login_required
-def protocol_edit(request, protocol_id):
-    if request.method == 'POST':
-        form = ProtocolForm(request.POST)
-        if form.is_valid():
-            date_of_start = datetime.strptime(request.POST['date_of_start'], '%d.%m.%Y')
-            date_of_finish = datetime.strptime(request.POST['date_of_finish'], '%d.%m.%Y')
-            protocol = Protocol.objects.get(id=protocol_id)
-            protocol.sw = request.POST['sw']
-            protocol.sw_checksum = request.POST['sw_checksum']
-            protocol.engineer_login = request.POST['engineer_login']
-            protocol.engineer_password = request.POST['engineer_password']
-            protocol.sysinfo = request.POST['sysinfo']
-            protocol.console = request.POST['console']
-            protocol.date_of_start = date_of_start
-            protocol.date_of_finish = date_of_finish
-            protocol.save()
-            return HttpResponseRedirect('/protocol/' + str(protocol_id) + '/')
-    else:
-        protocol = Protocol.objects.get(id=protocol_id)
-        form = ProtocolForm(initial={'sw': protocol.sw, 'sw_checksum': protocol.sw_checksum,
-                                     'engineer_login': protocol.engineer_login, 'engineer_password': protocol.engineer_password,
-                                     'sysinfo': protocol.sysinfo,
-                                     'console': protocol.console,
-                                     'date_of_start': protocol.date_of_start,
-                                     'date_of_finish': protocol.date_of_finish})
-        return render(request, 'protocol/protocol_edit.html', {'form': form, 'protocol': protocol})
 
 
 @login_required

@@ -1,12 +1,56 @@
 {% extends "device/wrapper.html" %}
 
+{% load i18n static %}
+
 {% block content %}
 
-<p><a href="/protocol/" class="exit-off-canvas">&laquo; Назад</a></p>
+<p><a href="{% url 'protocols' %}">{% trans "Protocols" %}</a> &raquo; {{ protocol.device.vendor }} {{ protocol.device.model }} ({{ protocol.device.hw }})</p>
+
+<ul class="tabs" data-tabs id="protocol-tabs">
+    <li class="tabs-title {% if tab_id == 1 %} is-active{% endif %}">
+        <a data-tabs-target="general" href="#general">{% trans "General" %}</a>
+    </li>
+    <li class="tabs-title {% if tab_id == 2 %} is-active{% endif %}">
+        <a data-tabs-target="results" href="#results">{% trans "Results" %}</a>
+    </li>
+    <li class="tabs-title {% if tab_id == 3 %} is-active{% endif %}">
+        <a data-tabs-target="statistics" href="#statistics">{% trans "Statistics" %}</a>
+    </li>
+    <li class="tabs-title {% if tab_id == 4 %} is-active{% endif %}">
+        <a data-tabs-target="docx" href="#docx">{% trans "Docx" %}</a>
+    </li>
+    <li class="tabs-title {% if tab_id == 5 %} is-active{% endif %}">
+        <a data-tabs-target="redmine" href="#redmine">{% trans "Redmine" %}</a>
+    </li>
+</ul>
+
+<div class="tabs-content" data-tabs-content="protocol-tabs">
+
+    <div class="tabs-panel {% if tab_id == 1 %}is-active{% endif %}" id="general">
+        <a href="{% url 'protocol_update' pk=protocol.id %}" class="button small">{% trans "Update" %}</a>
+    </div>
+
+    <div class="tabs-panel {% if tab_id == 2 %}is-active{% endif %}" id="results">
+        2
+    </div>
+
+    <div class="tabs-panel {% if tab_id == 3 %}is-active{% endif %}" id="statistics">
+        3
+    </div>
+
+    <div class="tabs-panel {% if tab_id == 4 %}is-active{% endif %}" id="docx">
+        4
+    </div>
+
+    <div class="tabs-panel {% if tab_id == 5 %}is-active{% endif %}" id="redmine">
+        5
+    </div>
+
+</div>
+
 
 <div class="grid-x">
     <div class="cell small-6">
-        <h4>Протокол испытаний {{ protocol.device.vendor }} {{ protocol.device.model }}</h4>
         <p>
         <div class="grid-x">
             <div class="cell medium-6 large-4"><i>Версия HW:</i></div>
