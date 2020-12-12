@@ -16,11 +16,11 @@ class Device(models.Model):
     vendor = models.CharField(max_length=50)
     model = models.CharField(max_length=50)
     hw = models.CharField(max_length=50, blank=True, null=True)
-    interfaces = models.CharField(max_length=300)
-    leds = models.CharField(max_length=300)
-    buttons = models.CharField(max_length=300)
-    chipsets = models.CharField(max_length=300)
-    memory = models.CharField(max_length=50)
+    interfaces = models.CharField(max_length=300, blank=True, null=True)
+    leds = models.CharField(max_length=300, blank=True, null=True)
+    buttons = models.CharField(max_length=300, blank=True, null=True)
+    chipsets = models.CharField(max_length=300, blank=True, null=True)
+    memory = models.CharField(max_length=50, blank=True, null=True)
 
     class Meta:
         ordering = ["model"]
