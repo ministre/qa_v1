@@ -1,0 +1,51 @@
+{% extends "device/wrapper.html" %}
+
+{% load i18n static %}
+
+{% block content %}
+
+<h4>{% trans "Templates" %}</h4>
+
+<a href="{% url 'docx_template_create' %}" class="button small">{% trans "Create" %}</a>
+
+<table id="docx_templates" class="hover unstriped" style="width:100%">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>{% trans "Name" %}</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for docx_template in docx_templates %}
+    <tr data-href="{# url 'docx_template_details' pk=docx_template.id #}">
+        <td>{{ docx_template.id }}</td>
+        <td>{{ docx_template.title }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+<script>
+    $(document).ready(function() {
+        var table = $('#docx_templates').DataTable({
+        {% if LANGUAGE_CODE == 'ru' %}
+            "language": { "url": "{% static '/DataTables/i18n/Russian.json' %}" },
+        {% endif %}
+        "pageLength": 100,
+        "order": [[ 0, "desc" ]]
+        });
+    });
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const rows = document.querySelectorAll("tr[data-href]");
+        rows.forEach(row => {
+            row.addEventListener("click", () => {
+                window.location.href = row.dataset.href;
+            });
+        });
+    });
+</script>
+
+<script type="text/javascript" src="{% static 'DataTables/datatables.js' %}"></script>
+
+{% endblock %}

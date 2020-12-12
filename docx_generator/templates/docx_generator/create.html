@@ -1,0 +1,14 @@
+{% extends "device/wrapper.html" %}
+
+{% load i18n %}
+
+{% block content %}
+
+<form method="post" action="" enctype="multipart/form-data">
+    <a href="{{ back_url }}" class="button small">&laquo; {% trans "Back" %}</a>
+    <input type="submit" value='{% trans "Create" %}' class="button success small" />
+    {% csrf_token %}
+    {{ form }}
+</form>
+
+{% endblock %}

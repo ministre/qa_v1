@@ -11,25 +11,31 @@ from protocol.models import Protocol, TestResult
 from testplan.models import TestPlan, Test
 from protocol.views import get_numbers_of_results
 from django.utils.formats import localize
+from django.utils.decorators import method_decorator
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+from django.urls import reverse
 
 
-@login_required
-def temp_list(request):
-    return render(request, 'docx_generator/template_list.html',
-                  {'docx_templates': DocxTemplateFile.objects.all().order_by("-id")})
+@method_decorator(login_required, name='dispatch')
+class DocxTemplateListView(ListView):
+    context_object_name = 'docx_templates'
+    queryset = DocxTemplateFile.objects.all().order_by("-id")
+    template_name = 'docx_generator/docx_templates.html'
 
 
-@login_required
-def template_create(request):
-    if request.method == 'POST':
-        form = DocxTemplateForm(request.POST, request.FILES)
-        if form.is_valid():
-            # file is saved
-            form.save()
-            return HttpResponseRedirect('/docx/')
-    else:
-        form = DocxTemplateForm()
-    return render(request, 'docx_generator/template_create.html', {'form': form})
+@method_decorator(login_required, name='dispatch')
+class DocxTemplateCreate(CreateView):
+    model = DocxTemplate
+    form_class = DocxTemplateForm
+    template_name = 'docx_generator/create.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('docx_templates')
+        return context
+
+    def get_success_url(self):
+        return reverse('docx_templates')
 
 
 @login_required
