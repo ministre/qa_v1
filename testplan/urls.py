@@ -4,10 +4,11 @@ from . import views
 urlpatterns = [
     path('', views.TestplanListView.as_view(), name='testplans'),
     path('create/', views.TestplanCreate.as_view(), name='testplan_create'),
+    path('update/<int:pk>/', views.TestplanUpdate.as_view(), name='testplan_update'),
+    path('delete/<int:pk>/', views.TestplanDelete.as_view(), name='testplan_delete'),
+    path('<int:pk>/<int:tab_id>/', views.testplan_details, name='testplan_details'),
 
-    path('delete/<int:testplan_id>/', views.testplan_delete, name='testplan_delete'),
-    path('edit/<int:testplan_id>/', views.testplan_edit, name='testplan_edit'),
-    path('<int:pk>/', views.testplan_details, name='testplan_details'),
+
     path('import/<int:testplan_id>/', views.testplan_import, name='testplan_import'),
     path('clear/<int:testplan_id>/', views.clear, name='clear'),
     path('test/<int:test_id>/', views.test_detail, name='test_detail'),

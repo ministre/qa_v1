@@ -1,0 +1,78 @@
+{% extends "device/wrapper.html" %}
+
+{% load i18n static %}
+
+{% block content %}
+
+<p><a href="{% url 'testplans' %}">{% trans "Testplans" %}</a> &raquo; {{ testplan.name }} ({{ testplan.version }})</p>
+
+<ul class="tabs" data-tabs id="testplan-tabs">
+    <li class="tabs-title {% if tab_id == 1 %} is-active{% endif %}">
+        <a data-tabs-target="general" href="#general">{% trans "General" %}</a>
+    </li>
+    <li class="tabs-title {% if tab_id == 2 %} is-active{% endif %}">
+        <a data-tabs-target="tests" href="#tests">{% trans "Tests" %}
+        {% if tests_count > 0 %}({{ tests_count }}){% endif %}</a>
+    </li>
+    <li class="tabs-title {% if tab_id == 3 %} is-active{% endif %}">
+        <a data-tabs-target="docx" href="#docx">{% trans "Docx" %}</a>
+    </li>
+    <li class="tabs-title {% if tab_id == 4 %} is-active{% endif %}">
+        <a data-tabs-target="redmine" href="#redmine">{% trans "Redmine" %}</a>
+    </li>
+</ul>
+
+<div class="tabs-content" data-tabs-content="testplan-tabs">
+
+    <div class="tabs-panel {% if tab_id == 1 %}is-active{% endif %}" id="general">
+        <a href="{% url 'testplan_update' pk=testplan.id %}" class="button small">{% trans "Update" %}</a>
+        <a href="{% url 'testplan_delete' pk=testplan.id %}" class="button alert small">{% trans "Delete" %}</a>
+
+        <table class="unstriped">
+            <tr>
+                <td>{% trans "Name" %}:</td>
+                <td>{{ testplan.name }}</td>
+            </tr>
+            <tr>
+                <td>{% trans "Version" %}:</td>
+                <td>{{ testplan.version }}</td>
+            </tr>
+        </table>
+
+    </div>
+
+    <div class="tabs-panel {% if tab_id == 2 %}is-active{% endif %}" id="tests">
+    </div>
+
+    <div class="tabs-panel {% if tab_id == 3 %}is-active{% endif %}" id="docx">
+    </div>
+
+    <div class="tabs-panel {% if tab_id == 4 %}is-active{% endif %}" id="redmine">
+    </div>
+
+</div>
+
+<a href="/docx/testplan/create/{{ testplan_id }}" class="button small rounded">Создать ПМИ в формате Word</a>
+<a href="/testplan/import/{{ testplan_id }}" class="button small rounded">Импорт тестов из Redmine</a>
+<a href="/testplan/clear/{{ testplan_id }}" class="button alert small rounded">Удалить тесты</a>
+
+<table class="hover">
+    <thead>
+    <tr>
+        <td>№:</td>
+        <td>Название теста:</td>
+        <td>Категория:</td>
+    </tr>
+    </thead>
+    <tbody>
+    {% for test, num in tests %}
+    <tr>
+        <td onclick="window.location.href='/testplan/test/{{ test.id }}/'; return false">{{ num }}</td>
+        <td onclick="window.location.href='/testplan/test/{{ test.id }}/'; return false">{{ test.name }}</td>
+        <td onclick="window.location.href='/testplan/test/{{ test.id }}/'; return false">{{ test.category }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

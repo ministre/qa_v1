@@ -5,6 +5,9 @@ class TestPlan(models.Model):
     version = models.CharField(max_length=30)
     name = models.CharField(max_length=500)
 
+    def __str__(self):
+        return self.name
+
 
 class Test(models.Model):
     testplan = models.ForeignKey(TestPlan, on_delete=models.CASCADE)

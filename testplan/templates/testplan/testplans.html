@@ -18,7 +18,7 @@
     </thead>
     <tbody>
     {% for testplan in testplans %}
-    <tr data-href="{% url 'testplan_details' pk=testplan.id %}">
+    <tr data-href="{% url 'testplan_details' pk=testplan.id tab_id=2 %}">
         <td>{{ testplan.id }}</td>
         <td>ПМИ {{ testplan.name }}</td>
         <td>{{ testplan.version }}</td>

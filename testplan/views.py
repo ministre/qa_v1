@@ -37,16 +37,42 @@ class TestplanCreate(CreateView):
         return reverse('testplans')
 
 
+@method_decorator(login_required, name='dispatch')
+class TestplanUpdate(UpdateView):
+    model = TestPlan
+    form_class = TestPlanForm
+    template_name = 'testplan/update.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('testplan_details', kwargs={'pk': self.object.id, 'tab_id': 1})
+        return context
+
+    def get_success_url(self):
+        return reverse('testplan_details', kwargs={'pk': self.object.id, 'tab_id': 1})
+
+
+@method_decorator(login_required, name='dispatch')
+class TestplanDelete(DeleteView):
+    model = TestPlan
+    template_name = 'testplan/delete.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('testplan_details', kwargs={'pk': self.object.id, 'tab_id': 1})
+        return context
+
+    def get_success_url(self):
+        return reverse('testplans')
+
+
 @login_required
-def testplan_details(request, pk):
+def testplan_details(request, pk, tab_id):
     testplan = get_object_or_404(TestPlan, id=pk)
     tests = Test.objects.filter(testplan=testplan).order_by("id")
-    numbers_of_tests = get_numbers_of_tests(tests)
-    zipped_results = zip(tests, numbers_of_tests)
-    return render(request, 'testplan/testplan_detail.html',
-                  {'testplan_id': testplan.id,
-                   'testplan': testplan,
-                   'tests': zipped_results})
+    # numbers_of_tests = get_numbers_of_tests(tests)
+    # zipped_results = zip(tests, numbers_of_tests)
+    return render(request, 'testplan/testplan_details.html', {'testplan': testplan, 'tests': tests, 'tab_id': tab_id})
 
 
 @login_required
@@ -109,28 +135,6 @@ def get_numbers_of_tests(tests):
             numbers_of_tests.append(str(i) + '.' + str(j))
             category = test.category
     return numbers_of_tests
-
-
-@login_required
-def testplan_delete(request, testplan_id):
-    TestPlan.objects.filter(id=testplan_id).delete()
-    return HttpResponseRedirect('/testplan/')
-
-
-@login_required
-def testplan_edit(request, testplan_id):
-    if request.method == 'POST':
-        form = TestPlanForm(request.POST)
-        if form.is_valid():
-            testplan = TestPlan.objects.get(id=testplan_id)
-            testplan.version = request.POST['version']
-            testplan.name = request.POST['name']
-            testplan.save()
-            return HttpResponseRedirect('/testplan/')
-    else:
-        testplan = TestPlan.objects.get(id=testplan_id)
-        form = TestPlanForm(initial={'version': testplan.version, 'name': testplan.name})
-        return render(request, 'testplan/testplan_edit.html', {'form': form, 'testplan': testplan})
 
 
 @login_required
