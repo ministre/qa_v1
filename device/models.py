@@ -15,7 +15,7 @@ class Device(models.Model):
     type = models.ForeignKey(DeviceType, on_delete=models.CASCADE)
     vendor = models.CharField(max_length=50)
     model = models.CharField(max_length=50)
-    hw = models.CharField(max_length=50)
+    hw = models.CharField(max_length=50, blank=True, null=True)
     interfaces = models.CharField(max_length=300)
     leds = models.CharField(max_length=300)
     buttons = models.CharField(max_length=300)
