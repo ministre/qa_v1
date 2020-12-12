@@ -24,6 +24,25 @@ class ProtocolListView(ListView):
     template_name = 'protocol/protocols.html'
 
 
+@method_decorator(login_required, name='dispatch')
+class ProtocolCreate(CreateView):
+    model = Protocol
+    form_class = ProtocolForm
+    template_name = 'protocol/create.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('protocols')
+        return context
+
+    def get_success_url(self):
+        tests = Test.objects.filter(testplan=self.object.testplan).order_by("id")
+        for test in tests:
+            test_results = TestResult(test=test, protocol=self.object, result=0)
+            test_results.save()
+        return reverse('protocols')
+
+
 @login_required
 def protocol_show(request, pk):
     protocol = Protocol.objects.get(id=pk)
@@ -153,34 +172,6 @@ def protocol_export(request, protocol_id):
 def protocol_delete(request, protocol_id):
     Protocol.objects.filter(id=protocol_id).delete()
     return HttpResponseRedirect('/protocol/')
-
-
-@login_required
-def protocol_create(request):
-    if request.method == 'POST':
-        form = ProtocolForm(request.POST)
-        if form.is_valid():
-            date_of_start = datetime.strptime(request.POST['date_of_start'], '%d.%m.%Y')
-            date_of_finish = datetime.strptime(request.POST['date_of_finish'], '%d.%m.%Y')
-            new_protocol = Protocol(device=Device.objects.get(id=request.POST['device']),
-                                    testplan=TestPlan.objects.get(id=request.POST['testplan']),
-                                    sw=request.POST['sw'], sw_checksum=request.POST['sw_checksum'],
-                                    engineer_login=request.POST['engineer_login'],
-                                    engineer_password=request.POST['engineer_password'],
-                                    sysinfo=request.POST['sysinfo'], console=request.POST['console'],
-                                    date_of_start=date_of_start,
-                                    date_of_finish=date_of_finish)
-            new_protocol.save()
-            # создаем результаты для всех тестов связанной ПМИ
-            for test in Test.objects.filter(testplan=request.POST['testplan']).order_by("id"):
-                test_results = TestResult(test=test, protocol=new_protocol, result=0)
-                test_results.save()
-            return HttpResponseRedirect('/protocol/')
-    else:
-        form = ProtocolForm()
-        return render(request, 'protocol/protocol_create.html',
-                      {'form': form, 'devices': Device.objects.filter().order_by("model"),
-                       'testplans': TestPlan.objects.filter().order_by("name")})
 
 
 @login_required
