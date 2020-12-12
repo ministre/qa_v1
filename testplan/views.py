@@ -13,6 +13,7 @@ from django.db.models import Q
 from django.utils.decorators import method_decorator
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.urls import reverse
+from django.utils.translation import gettext_lazy as _
 
 
 @method_decorator(login_required, name='dispatch')
@@ -70,15 +71,42 @@ class TestplanDelete(DeleteView):
 def testplan_details(request, pk, tab_id):
     testplan = get_object_or_404(TestPlan, id=pk)
     tests = Test.objects.filter(testplan=testplan).order_by("id")
-    # numbers_of_tests = get_numbers_of_tests(tests)
-    # zipped_results = zip(tests, numbers_of_tests)
-    return render(request, 'testplan/testplan_details.html', {'testplan': testplan, 'tests': tests, 'tab_id': tab_id})
+    tests_count = tests.count()
+    numbers_of_tests = get_numbers_of_tests(tests)
+    zipped_results = zip(tests, numbers_of_tests)
+    return render(request, 'testplan/testplan_details.html', {'testplan': testplan, 'tests': zipped_results,
+                                                              'tests_count': tests_count, 'tab_id': tab_id})
 
 
 @login_required
-def clear(request, testplan_id):
-    Test.objects.filter(testplan=testplan_id).delete()
-    return HttpResponseRedirect('/testplan/' + str(testplan_id) + '/')
+def clear_tests(request, tp_id):
+    testplan = get_object_or_404(TestPlan, id=tp_id)
+    if request.method == 'POST':
+        Test.objects.filter(testplan=testplan).delete()
+        return HttpResponseRedirect(reverse('testplan_details', kwargs={'pk': tp_id, 'tab_id': 2}))
+    else:
+        back_url = reverse('testplan_details', kwargs={'pk': tp_id, 'tab_id': 2})
+        message = _('Are you sure?')
+        return render(request, 'testplan/clear.html', {'back_url': back_url, 'message': message})
+
+
+@method_decorator(login_required, name='dispatch')
+class TestCreate(CreateView):
+    model = Test
+    form_class = TestForm
+    template_name = 'testplan/create.html'
+
+    def get_initial(self):
+        return {'testplan': self.kwargs.get('tp_id')}
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        testplan = get_object_or_404(TestPlan, id=self.kwargs.get('tp_id'))
+        context['back_url'] = reverse('testplan_details', kwargs={'pk': testplan.id, 'tab_id': 2})
+        return context
+
+    def get_success_url(self):
+        return reverse('testplan_details', kwargs={'pk': self.object.testplan.id, 'tab_id': 2})
 
 
 @login_required
@@ -89,8 +117,8 @@ def test_delete(request, test_id):
 
 
 @login_required
-def test_detail(request, test_id):
-    test = get_object_or_404(Test, id=test_id)
+def test_details(request, pk):
+    test = get_object_or_404(Test, id=pk)
     tags = DeviceType.objects.filter(~Q(sub_type='')).order_by("sub_type")
     if request.method == "POST":
         form = TestForm(request.POST, instance=test)
@@ -148,8 +176,7 @@ def testplan_import(request, testplan_id):
         else:
             category = ''
             tests = []
-            redmine = Redmine(redmine_config.REDMINE_URL, username=redmine_config.REDMINE_USERNAME,
-                              password=redmine_config.REDMINE_PASSWORD)
+            redmine = Redmine(settings.REDMINE_URL, key=settings.REDMINE_KEY, version='4.1.1')
             # Получаем перечень тестов из Wiki страницы
             try:
                 wiki_page = redmine.wiki_page.get('Wiki', project_id=project_id)

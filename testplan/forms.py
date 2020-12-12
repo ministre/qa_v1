@@ -24,4 +24,4 @@ class TestForm(ModelForm):
             'expected': 'Ожидаемый результат',
         }
         widgets = {'testplan': forms.HiddenInput()}
-        fields = ['category', 'name', 'url', 'procedure', 'expected']
+        fields = '__all__'
