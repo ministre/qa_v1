@@ -25,7 +25,7 @@
         <td>{{ device.id }}</td>
         <td>{{ device.vendor }}</td>
         <td>{{ device.model }}</td>
-        <td>{{ device.hw }}</td>
+        <td>{% if device.hw %}{{ device.hw }}{% endif %}</td>
         <td>{{ device.type }}</td>
     </tr>
     {% endfor %}
