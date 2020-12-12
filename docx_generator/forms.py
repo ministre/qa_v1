@@ -4,7 +4,7 @@ from django.utils.translation import gettext_lazy as _
 from django import forms
 
 
-class DocxTemplateForm(ModelForm):
+class DocxTemplateFileForm(ModelForm):
     class Meta:
         model = DocxTemplateFile
         labels = {

@@ -1,7 +1,7 @@
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from .forms import DocxTemplateForm
+from .forms import DocxTemplateFileForm
 from docx_generator.models import DocxTemplateFile
 from docxtpl import DocxTemplate, RichText, Listing
 import os
@@ -17,17 +17,32 @@ from django.urls import reverse
 
 
 @method_decorator(login_required, name='dispatch')
-class DocxTemplateListView(ListView):
+class DocxTemplateFileListView(ListView):
     context_object_name = 'docx_templates'
     queryset = DocxTemplateFile.objects.all().order_by("-id")
     template_name = 'docx_generator/docx_templates.html'
 
 
 @method_decorator(login_required, name='dispatch')
-class DocxTemplateCreate(CreateView):
-    model = DocxTemplate
-    form_class = DocxTemplateForm
+class DocxTemplateFileCreate(CreateView):
+    model = DocxTemplateFile
+    form_class = DocxTemplateFileForm
     template_name = 'docx_generator/create.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('docx_templates')
+        return context
+
+    def get_success_url(self):
+        return reverse('docx_templates')
+
+
+@method_decorator(login_required, name='dispatch')
+class DocxTemplateFileUpdate(UpdateView):
+    model = DocxTemplateFile
+    form_class = DocxTemplateFileForm
+    template_name = 'docx_generator/update.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -42,22 +57,6 @@ class DocxTemplateCreate(CreateView):
 def template_delete(request, template_id):
     DocxTemplateFile.objects.filter(id=template_id).delete()
     return HttpResponseRedirect('/docx/')
-
-
-@login_required
-def template_edit(request, template_id):
-    if request.method == 'POST':
-        form = DocxTemplateForm(request.POST)
-        if form.is_valid():
-            docx_template = DocxTemplateFile.objects.get(id=template_id)
-            docx_template.title = request.POST['title']
-            docx_template.upload = request.POST['upload']
-            docx_template.save()
-            return HttpResponseRedirect('/docx/')
-    else:
-        docx_template = DocxTemplateFile.objects.get(id=template_id)
-        form = DocxTemplateForm(initial={'title': docx_template.title, 'upload': docx_template.upload})
-        return render(request, 'docx_generator/template_edit.html', {'form': form, 'docx_template': docx_template})
 
 
 @login_required

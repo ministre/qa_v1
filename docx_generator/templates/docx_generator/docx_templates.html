@@ -18,7 +18,7 @@
     </thead>
     <tbody>
     {% for docx_template in docx_templates %}
-    <tr data-href="{# url 'docx_template_details' pk=docx_template.id #}">
+    <tr data-href="{% url 'docx_template_update' pk=docx_template.id %}">
         <td>{{ docx_template.id }}</td>
         <td>{{ docx_template.name }}</td>
         <td>
