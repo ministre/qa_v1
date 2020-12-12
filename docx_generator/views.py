@@ -53,10 +53,18 @@ class DocxTemplateFileUpdate(UpdateView):
         return reverse('docx_templates')
 
 
-@login_required
-def template_delete(request, template_id):
-    DocxTemplateFile.objects.filter(id=template_id).delete()
-    return HttpResponseRedirect('/docx/')
+@method_decorator(login_required, name='dispatch')
+class DocxTemplateFileDelete(DeleteView):
+    model = DocxTemplateFile
+    template_name = 'docx_generator/delete.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('docx_template_update', kwargs={'pk': self.object.id})
+        return context
+
+    def get_success_url(self):
+        return reverse('docx_templates')
 
 
 @login_required
