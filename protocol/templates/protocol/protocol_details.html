@@ -28,6 +28,74 @@
 
     <div class="tabs-panel {% if tab_id == 1 %}is-active{% endif %}" id="general">
         <a href="{% url 'protocol_update' pk=protocol.id %}" class="button small">{% trans "Update" %}</a>
+        <a href="{% url 'protocol_delete' pk=protocol.id %}" class="button alert small">{% trans "Delete" %}</a>
+
+        <div class="grid-x grid-margin-x">
+            <div class="cell">
+                <div class="card">
+                    <div class="card-section">
+                        <table class="unstriped">
+                            <tr>
+                                <td>ID:</td>
+                                <td>{{ protocol.id }}</td>
+                            </tr>
+                            <tr>
+                                <td>{% trans "Device" %}:</td>
+                                <td>{{ protocol.device.vendor }} {{ protocol.device.model }} ({{ protocol.device.hw }})</td>
+                            </tr>
+                            <tr>
+                                <td>{% trans "Software Version" %}:</td>
+                                <td>{{ protocol.sw }}</td>
+                            </tr>
+                            <tr>
+                                <td>{% trans "Checksum" %}:</td>
+                                <td>{{ protocol.sw_checksum }}</td>
+                            </tr>
+                            <tr>
+                                <td>{% trans "Engineer Login" %}:</td>
+                                <td>{{ protocol.engineer_login }}</td>
+                            </tr>
+                            <tr>
+                                <td>{% trans "Engineer Password" %}:</td>
+                                <td>{{ protocol.engineer_password }}</td>
+                            </tr>
+                            <tr>
+                                <td>{% trans "Started" %}:</td>
+                                <td>{{ protocol.date_of_start }}</td>
+                            </tr>
+                            <tr>
+                                <td>{% trans "Completed" %}:</td>
+                                <td>{{ protocol.date_of_finish }}</td>
+                            </tr>
+                        </table>
+
+                        {% if protocol.sysinfo %}
+                        <div class="cell">
+                            <div class="card">
+                                <div class="card-section">
+                                    <h5>{% trans "System Information" %}</h5>
+                                    <p>{{ protocol.sysinfo|safe }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        {% if protocol.console %}
+                        <div class="cell">
+                            <div class="card">
+                                <div class="card-section">
+                                    <h5>{% trans "Console port" %}</h5>
+                                    <p>{{ protocol.console|safe }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <div class="tabs-panel {% if tab_id == 2 %}is-active{% endif %}" id="results">

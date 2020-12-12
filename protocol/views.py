@@ -65,6 +65,20 @@ class ProtocolUpdate(UpdateView):
         return reverse('protocol_details', kwargs={'pk': self.object.id, 'tab_id': 1})
 
 
+@method_decorator(login_required, name='dispatch')
+class ProtocolDelete(DeleteView):
+    model = Protocol
+    template_name = 'protocol/delete.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('protocol_details', kwargs={'pk': self.object.id, 'tab_id': 1})
+        return context
+
+    def get_success_url(self):
+        return reverse('protocols')
+
+
 @login_required
 def protocol_details(request, pk, tab_id):
     protocol = Protocol.objects.get(id=pk)
@@ -190,12 +204,6 @@ def protocol_export(request, protocol_id):
             # обновление Wiki-страницы устройства
             redmine.wiki_page.update('Wiki', project_id=project_id, text=new_wiki_page)
     return HttpResponseRedirect('/protocol/' + str(protocol_id) + '/')
-
-
-@login_required
-def protocol_delete(request, protocol_id):
-    Protocol.objects.filter(id=protocol_id).delete()
-    return HttpResponseRedirect('/protocol/')
 
 
 @login_required

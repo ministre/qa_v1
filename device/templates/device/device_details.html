@@ -17,13 +17,13 @@
 
 <div class="tabs-content" data-tabs-content="device-tabs">
     <div class="tabs-panel {% if tab_id == 1 %}is-active{% endif %}" id="general">
+        <a href="{% url 'device_update' pk=device.id %}" class="button small">{% trans "Update" %}</a>
+        <a href="{% url 'device_delete' pk=device.id %}" class="button alert small">{% trans "Delete" %}</a>
 
         <div class="grid-x grid-margin-x">
             <div class="cell">
                 <div class="card">
                     <div class="card-section">
-                        <a href="{% url 'device_update' pk=device.id %}" class="button small">{% trans "Update" %}</a>
-                        <a href="{% url 'device_delete' pk=device.id %}" class="button alert small">{% trans "Delete" %}</a>
                         <table class="unstriped">
                             <tr>
                                 <td>ID:</td>
