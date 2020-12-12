@@ -20,20 +20,20 @@ def protocol_list(request):
 
 
 @login_required
-def protocol_show(request, protocol_id):
-    protocol = Protocol.objects.get(id=protocol_id)
-    results = TestResult.objects.filter(protocol=protocol_id).order_by("id")
+def protocol_show(request, pk):
+    protocol = Protocol.objects.get(id=pk)
+    results = TestResult.objects.filter(protocol=pk).order_by("id")
 
     numbers_of_testplan = get_numbers_of_results(results)
     zipped_results = zip(results, numbers_of_testplan)
 
     tests_all = results.count()
-    tests_completed = TestResult.objects.filter(Q(protocol=protocol_id) & ~Q(result=0)).count()
+    tests_completed = TestResult.objects.filter(Q(protocol=pk) & ~Q(result=0)).count()
     tests_completed_percent = round(tests_completed * 100 / tests_all, 1)
     tests_left = tests_all - tests_completed
-    tests_success = TestResult.objects.filter(Q(protocol=protocol_id) & Q(result=3)).count()
-    tests_warn = TestResult.objects.filter(Q(protocol=protocol_id) & Q(result=2)).count()
-    tests_fail = TestResult.objects.filter(Q(protocol=protocol_id) & Q(result=1)).count()
+    tests_success = TestResult.objects.filter(Q(protocol=pk) & Q(result=3)).count()
+    tests_warn = TestResult.objects.filter(Q(protocol=pk) & Q(result=2)).count()
+    tests_fail = TestResult.objects.filter(Q(protocol=pk) & Q(result=1)).count()
     return render(request, 'protocol/protocol_show.html', {'protocol': protocol,
                                                            'zipped_results': zipped_results,
                                                            'tests_all': tests_all, 'tests_completed': tests_completed,
