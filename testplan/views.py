@@ -14,6 +14,7 @@ from django.utils.decorators import method_decorator
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
+import textile
 
 
 @method_decorator(login_required, name='dispatch')
@@ -79,6 +80,28 @@ def testplan_details(request, pk, tab_id):
 
 
 @login_required
+def testplan_clone(request, pk):
+    if request.method == 'POST':
+        form = TestPlanForm(request.POST)
+        if form.is_valid():
+            new_testplan = TestPlan(name=request.POST['name'],
+                                    version=request.POST['version'])
+            new_testplan.save()
+            src_testplan = get_object_or_404(TestPlan, id=request.POST['src_testplan'])
+            src_tests = Test.objects.filter(testplan=src_testplan).order_by('id')
+            for src_test in src_tests:
+                new_test = Test(testplan=new_testplan, category=src_test.category, url=src_test.url,
+                                name=src_test.name, procedure=src_test.procedure, expected=src_test.expected)
+                new_test.save()
+            return HttpResponseRedirect(reverse('testplans'))
+    else:
+        testplan = get_object_or_404(TestPlan, id=pk)
+        form = TestPlanForm(initial={'name': testplan.name,
+                                     'version': testplan.version})
+        return render(request, 'testplan/clone.html', {'form': form, 'tp_id': testplan.id})
+
+
+@login_required
 def clear_tests(request, tp_id):
     testplan = get_object_or_404(TestPlan, id=tp_id)
     if request.method == 'POST':
@@ -109,28 +132,45 @@ class TestCreate(CreateView):
         return reverse('testplan_details', kwargs={'pk': self.object.testplan.id, 'tab_id': 2})
 
 
-@login_required
-def test_delete(request, test_id):
-    test = get_object_or_404(Test, id=test_id)
-    Test.objects.filter(id=test_id).delete()
-    return HttpResponseRedirect('/testplan/' + str(test.testplan.id) + '/')
+@method_decorator(login_required, name='dispatch')
+class TestUpdate(UpdateView):
+    model = Test
+    form_class = TestForm
+    template_name = 'testplan/update.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('test_details', kwargs={'pk': self.object.id, 'tab_id': 1})
+        return context
+
+    def get_success_url(self):
+        return reverse('test_details', kwargs={'pk': self.object.id, 'tab_id': 1})
+
+
+@method_decorator(login_required, name='dispatch')
+class TestDelete(DeleteView):
+    model = Test
+    template_name = 'testplan/delete.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('test_details', kwargs={'pk': self.object.id, 'tab_id': 1})
+        return context
+
+    def get_success_url(self):
+        testplan = self.object.testplan
+        return reverse('testplan_details', kwargs={'pk': testplan.id, 'tab_id': 2})
 
 
 @login_required
-def test_details(request, pk):
+def test_details(request, pk, tab_id):
     test = get_object_or_404(Test, id=pk)
     tags = DeviceType.objects.filter(~Q(sub_type='')).order_by("sub_type")
-    if request.method == "POST":
-        form = TestForm(request.POST, instance=test)
-        if form.is_valid():
-            test = form.save(commit=False)
-            test.save()
-            return HttpResponseRedirect('/testplan/' + str(test.testplan.id) + '/')
-    else:
-        form = TestForm(instance=test)
-    return render(request, 'testplan/test_detail.html', {'test': test, 'form': form,
-                                                         'testplan': test.testplan.id,
-                                                         'tags': tags})
+    procedure = textile.textile(test.procedure)
+    expected = textile.textile(test.expected)
+    return render(request, 'testplan/test_details.html', {'test': test, 'tags': tags,
+                                                          'procedure': procedure, 'expected': expected,
+                                                          'tab_id': tab_id})
 
 
 @login_required

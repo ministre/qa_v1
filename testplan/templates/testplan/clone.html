@@ -1,0 +1,15 @@
+{% extends "device/wrapper.html" %}
+
+{% load i18n %}
+
+{% block content %}
+
+<form method="post" action="">
+    <a href="{% url 'testplan_details' pk=tp_id tab_id=1 %}" class="button small">&laquo; {% trans "Back" %}</a>
+    <input type="submit" value='{% trans "Create" %}' class="button small success" />
+    {% csrf_token %}
+    {{ form }}
+    <input type="hidden" name="src_testplan" value="{{ tp_id }}" class="button small" />
+</form>
+
+{% endblock %}

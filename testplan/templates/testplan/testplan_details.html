@@ -26,6 +26,7 @@
 
     <div class="tabs-panel {% if tab_id == 1 %}is-active{% endif %}" id="general">
         <a href="{% url 'testplan_update' pk=testplan.id %}" class="button small">{% trans "Update" %}</a>
+        <a href="{% url 'testplan_clone' pk=testplan.id %}" class="button small">{% trans "Clone" %}</a>
         <a href="{% url 'testplan_delete' pk=testplan.id %}" class="button alert small">{% trans "Delete" %}</a>
 
         <table class="unstriped">
@@ -55,7 +56,7 @@
             </thead>
             <tbody>
             {% for test, num in tests %}
-            <tr data-href="{% url 'test_details' pk=test.id %}">
+            <tr data-href="{% url 'test_details' pk=test.id tab_id=1 %}">
                 <td>{{ num }}</td>
                 <td>{{ test.name }}</td>
                 <td>{{ test.category }}</td>
@@ -67,11 +68,11 @@
     </div>
 
     <div class="tabs-panel {% if tab_id == 3 %}is-active{% endif %}" id="docx">
-        <a href="/docx/testplan/create/{{ testplan_id }}" class="button small">{% trans "Build" %}</a>
+        <a href="/docx/testplan/create/{{ testplan.id }}" class="button small">{% trans "Build" %}</a>
     </div>
 
     <div class="tabs-panel {% if tab_id == 4 %}is-active{% endif %}" id="redmine">
-        <a href="/testplan/import/{{ testplan_id }}" class="button small">{% trans "Import Tests" %}</a>
+        <a href="{% url 'testplan_import' testplan_id=testplan.id %}" class="button small">{% trans "Import Tests" %}</a>
     </div>
 
 </div>

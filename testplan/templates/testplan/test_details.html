@@ -1,0 +1,102 @@
+{% extends "device/wrapper.html" %}
+
+{% load i18n static %}
+
+{% block content %}
+
+<p>
+    <a href="{% url 'testplans' %}">{% trans "Testplans" %}</a> &raquo;
+    <a href="{% url 'testplan_details' pk=test.testplan.id tab_id=2 %}">{{ test.testplan.name }} ({{ test.testplan.version }})</a> &raquo;
+    {{ test.name }}
+</p>
+
+<ul class="tabs" data-tabs id="test-tabs">
+    <li class="tabs-title {% if tab_id == 1 %} is-active{% endif %}">
+        <a data-tabs-target="general" href="#general">{% trans "General" %}</a>
+    </li>
+    <li class="tabs-title {% if tab_id == 2 %} is-active{% endif %}">
+        <a data-tabs-target="redmine" href="#redmine">{% trans "Redmine" %}</a>
+    </li>
+</ul>
+
+<div class="tabs-content" data-tabs-content="test-tabs">
+
+    <div class="tabs-panel {% if tab_id == 1 %}is-active{% endif %}" id="general">
+        <a href="{% url 'test_update' pk=test.id %}" class="button small">{% trans "Update" %}</a>
+        <a href="{% url 'test_delete' pk=test.id %}" class="button alert small">{% trans "Delete" %}</a>
+
+        <div class="cell">
+            <div class="card">
+                <div class="card-section">
+                    <h4>{% trans "Category" %}</h4>
+                    <p>{{ test.category }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="cell">
+            <div class="card">
+                <div class="card-section">
+                    <h4>{% trans "Name" %}</h4>
+                    <p>{{ test.name }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="cell">
+            <div class="card">
+                <div class="card-section">
+                    <h4>{% trans "Procedure" %}</h4>
+                    <p>{{ procedure|safe }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="cell">
+            <div class="card">
+                <div class="card-section">
+                    <h4>{% trans "Expected result" %}</h4>
+                    <p>{{ expected|safe }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="cell">
+            <div class="card">
+                <div class="card-section">
+                    <h4>Redmine Wiki</h4>
+                    <p>{{ test.url }}</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="tabs-panel {% if tab_id == 2 %}is-active{% endif %}" id="redmine">
+
+        <div class="cell">
+            <div class="card">
+                <div class="card-section">
+                    <h4>{% trans "Import" %}</h4>
+
+                    <form method="post" action="{% url 'test_import_details' %}">
+                        {% csrf_token %}
+                        <input type='hidden' id='test_id' name='test_id' value='{{ test.id }}'>
+                        <select name="tag" id="tag">
+                            <option value="">{% trans "Without tag" %}</option>
+                            {% for tag in tags %}
+                            <option value="{{ tag.sub_type }}">{{ tag.sub_type }}</option>
+                            {% endfor %}
+                        </select>
+                        <input type='submit' value='{% trans "Import" %}' class='button small success' />
+                    </form>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
