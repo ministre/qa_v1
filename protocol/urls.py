@@ -2,7 +2,7 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('', views.protocol_list, name='protocol_list'),
+    path('', views.ProtocolListView.as_view(), name='protocols'),
     path('<int:pk>/', views.protocol_show, name='protocol_show'),
     path('create/', views.protocol_create, name='protocol_create'),
     path('delete/<int:protocol_id>/', views.protocol_delete, name='protocol_delete'),

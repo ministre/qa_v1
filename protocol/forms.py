@@ -16,9 +16,7 @@ class ProtocolForm(ModelForm):
             'date_of_start': 'Дата начала тестирования',
             'date_of_finish': 'Дата окончания тестирования',
         }
-        fields = ['sw', 'sw_checksum',
-                  'engineer_login', 'engineer_password', 'sysinfo', 'console',
-                  'date_of_start', 'date_of_finish']
+        fields = '__all__'
 
     def __init__(self, *args, **kwargs):
         super(ProtocolForm, self).__init__(*args, **kwargs)

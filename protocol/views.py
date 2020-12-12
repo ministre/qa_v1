@@ -12,11 +12,16 @@ import re
 from datetime import datetime
 from django.db.models import Q
 import textile
+from django.utils.decorators import method_decorator
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+from django.urls import reverse
 
 
-@login_required
-def protocol_list(request):
-    return render(request, 'protocol/protocol_list.html', {'protocols': Protocol.objects.all().order_by("-id")})
+@method_decorator(login_required, name='dispatch')
+class ProtocolListView(ListView):
+    context_object_name = 'protocols'
+    queryset = Protocol.objects.all().order_by("-id")
+    template_name = 'protocol/protocols.html'
 
 
 @login_required
