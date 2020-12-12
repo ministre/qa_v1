@@ -11,16 +11,16 @@ class DeviceType(models.Model):
 
 
 class Device(models.Model):
-    project_id = models.CharField(max_length=50, blank=True, null=True)
+    project_id = models.CharField(max_length=50)
     type = models.ForeignKey(DeviceType, on_delete=models.CASCADE)
     vendor = models.CharField(max_length=50)
     model = models.CharField(max_length=50)
-    hw = models.CharField(max_length=50, blank=True, null=True)
-    interfaces = models.CharField(max_length=300, blank=True, null=True)
-    leds = models.CharField(max_length=300, blank=True, null=True)
-    buttons = models.CharField(max_length=300, blank=True, null=True)
-    chipsets = models.CharField(max_length=300, blank=True, null=True)
-    memory = models.CharField(max_length=50, blank=True, null=True)
+    hw = models.CharField(max_length=50)
+    interfaces = models.CharField(max_length=300)
+    leds = models.CharField(max_length=300)
+    buttons = models.CharField(max_length=300)
+    chipsets = models.CharField(max_length=300)
+    memory = models.CharField(max_length=50)
 
     class Meta:
         ordering = ["model"]
