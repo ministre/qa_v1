@@ -1,33 +1,43 @@
+from django.forms import ModelForm, HiddenInput
+from protocol.models import Protocol, TestResult
+from django.utils.translation import gettext_lazy as _
 from django import forms
-from django.forms import ModelForm
-from protocol.models import Protocol
 
 
 class ProtocolForm(ModelForm):
     class Meta:
         model = Protocol
         labels = {
-            'sw': 'ПО',
-            'sw_checksum': 'Контрольная сумма ПО',
-            'engineer_login': 'Заводской (инженерный) логин',
-            'engineer_password': 'Заводской (инженерный) пароль',
-            'sysinfo': 'Системная информация',
-            'console': 'Параметры консольного порта',
-            'date_of_start': 'Дата начала тестирования',
-            'date_of_finish': 'Дата окончания тестирования',
+            'sw': _('Software Version'),
+            'sw_checksum': _('Checksum'),
+            'engineer_login': _('Engineer login'),
+            'engineer_password': _('Engineer password'),
+            'sysinfo': _('System Information'),
+            'console': _('Console port parameters'),
+            'date_of_start': _('Started'),
+            'date_of_finish': _('Completed'),
         }
         fields = '__all__'
 
-    def __init__(self, *args, **kwargs):
-        super(ProtocolForm, self).__init__(*args, **kwargs)
-        self.fields['sw_checksum'].required = False
-        self.fields['engineer_login'].required = False
-        self.fields['engineer_password'].required = False
-        self.fields['sysinfo'].required = False
-        self.fields['console'].required = False
 
+class TestResultForm(ModelForm):
+    class Meta:
+        model = TestResult
+        labels = {
+            'result': _('Result'),
+            'config': _('Configuration'),
+            'info': _('Additional Information'),
+            'comment': _('Comments'),
+        }
+        fields = '__all__'
+        STATUS = (
+            ('0', 'Не тестировался'),
+            ('1', 'Не пройден'),
+            ('2', 'Пройден с замечаниями'),
+            ('3', 'Пройден'),
+        )
 
-class ResultsForm(forms.Form):
-    config = forms.CharField(required=False, widget=forms.Textarea(attrs={'rows': "15", }))
-    info = forms.CharField(required=False, widget=forms.Textarea(attrs={'rows': "15", }))
-    comment = forms.CharField(required=False, widget=forms.Textarea(attrs={'rows': "15", }))
+        widgets = {
+            'result': forms.Select(choices=STATUS, attrs={'class': 'form-control'}),
+            'test': HiddenInput(), 'protocol': HiddenInput(),
+        }

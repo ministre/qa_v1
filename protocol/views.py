@@ -4,7 +4,7 @@ from device.models import Device
 from testplan.models import TestPlan, Test
 from protocol.models import Protocol, TestResult
 from django.http import HttpResponseRedirect
-from .forms import ResultsForm, ProtocolForm
+from .forms import ProtocolForm, TestResultForm
 from qa_v1 import settings
 from redminelib import Redmine
 from redminelib.exceptions import ResourceNotFoundError
@@ -106,31 +106,50 @@ def protocol_details(request, pk, tab_id):
                                                               'tab_id': tab_id})
 
 
-@login_required
-def protocol_results_edit(request, pk):
-    if request.method == 'POST':
-        form = ResultsForm(request.POST)
-        if form.is_valid():
-            protocol = request.POST['protocol']
-            result = request.POST['result']
-            config = request.POST['config']
-            info = request.POST['info']
-            comment = request.POST['comment']
-            # обновляем результаты теста
-            results = TestResult.objects.get(id=pk)
-            results.result = result
-            results.config = config
-            results.info = info
-            results.comment = comment
-            results.save()
-            return HttpResponseRedirect('/protocol/'+protocol+'/')
-    else:
-        results = TestResult.objects.get(id=pk)
-        procedure = textile.textile(results.test.procedure)
-        expected = textile.textile(results.test.expected)
-        form = ResultsForm(initial={'config': results.config, 'info': results.info, 'comment': results.comment})
-        return render(request, 'protocol/protocol_results_edit.html', {'form': form, 'results': results,
-                                                                       'procedure': procedure, 'expected': expected})
+@method_decorator(login_required, name='dispatch')
+class TestResultUpdate(UpdateView):
+    model = TestResult
+    form_class = TestResultForm
+    template_name = 'protocol/update_test_result.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('protocol_details', kwargs={'pk': self.object.protocol.id, 'tab_id': 2})
+
+        context['procedure'] = textile.textile(self.object.test.procedure)
+        context['expected'] = textile.textile(self.object.test.expected)
+
+        return context
+
+    def get_success_url(self):
+        return reverse('protocol_details', kwargs={'pk': self.object.protocol.id, 'tab_id': 2})
+
+
+#@login_required
+#def protocol_test_result_details(request, pk):
+#    if request.method == 'POST':
+#        form = ResultsForm(request.POST)
+#        if form.is_valid():
+#            protocol = request.POST['protocol']
+#            result = request.POST['result']
+#            config = request.POST['config']
+#            info = request.POST['info']
+#            comment = request.POST['comment']
+#            # обновляем результаты теста
+#            results = TestResult.objects.get(id=pk)
+#            results.result = result
+#            results.config = config
+#            results.info = info
+#            results.comment = comment
+#            results.save()
+#            return HttpResponseRedirect('/protocol/'+protocol+'/')
+#    else:
+#        results = TestResult.objects.get(id=pk)
+#        procedure = textile.textile(results.test.procedure)
+#        expected = textile.textile(results.test.expected)
+#        form = ResultsForm(initial={'config': results.config, 'info': results.info, 'comment': results.comment})
+#        return render(request, 'protocol/protocol_results_edit.html', {'form': form, 'results': results,
+#                                                                       'procedure': procedure, 'expected': expected})
 
 
 @login_required

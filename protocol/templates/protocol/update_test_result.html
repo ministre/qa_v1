@@ -1,0 +1,77 @@
+{% extends "device/wrapper.html" %}
+
+{% load i18n %}
+
+{% block content %}
+
+<p>
+    <a href="{% url 'protocols' %}">{% trans "Protocols" %}</a> &raquo;
+    <a href="{% url 'protocol_details' pk=object.protocol.id tab_id=2 %}">{{ object.protocol.device.vendor }} {{ object.protocol.device.model }}
+    {% if object.protocol.device.hw %}({{ object.protocol.device.hw }}){% endif %}</a>
+</p>
+
+<p>
+    <a href="{% url 'testplans' %}">{% trans "Testplans" %}</a> &raquo;
+    <a href="{% url 'testplan_details' pk=object.test.testplan.id tab_id=2 %}">{{ object.test.testplan }} ({{ object.test.testplan.version }})</a> &raquo;
+    {{ object.test.category }} &raquo;
+    <a href="{% url 'test_details' pk=object.test.id tab_id=1 %}">{{ object.test.name }}</a>
+</p>
+
+<ul class="tabs" data-tabs id="result-tabs">
+    <li class="tabs-title">
+        <a data-tabs-target="test_details" href="#test_details">{% trans "Test Details" %}</a>
+    </li>
+    <li class="tabs-title is-active">
+        <a data-tabs-target="test_result" href="#test_result">{% trans "Test Result" %}</a>
+    </li>
+</ul>
+
+<div class="tabs-content" data-tabs-content="result-tabs">
+    <div class="tabs-panel" id="test_details">
+
+        <div class="grid-x grid-margin-x">
+            <div class="cell">
+                <div class="card">
+                    <div class="card-section">
+                        <h4>{% trans "Procedure" %}</h4>
+                        <p>{{ procedure|safe }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="grid-x grid-margin-x">
+            <div class="cell">
+                <div class="card">
+                    <div class="card-section">
+                        <h4>{% trans "Expected result" %}</h4>
+                        <p>{{ expected|safe }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="tabs-panel is-active" id="test_result">
+
+        <div class="grid-x grid-margin-x">
+            <div class="cell">
+                <div class="card">
+                    <div class="card-section">
+                        <form method="post" action="">
+                            <input type="submit" value='{% trans "Update" %}' class="button success small" />
+                            {% csrf_token %}
+                            {{ form }}
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+
+
+{% endblock %}

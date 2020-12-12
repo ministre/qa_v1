@@ -4,7 +4,9 @@
 
 {% block content %}
 
-<p><a href="{% url 'protocols' %}">{% trans "Protocols" %}</a> &raquo; {{ protocol.device.vendor }} {{ protocol.device.model }} ({{ protocol.device.hw }})</p>
+<p><a href="{% url 'protocols' %}">{% trans "Protocols" %}</a> &raquo; {{ protocol.device.vendor }} {{ protocol.device.model }}
+    {% if protocol.device.hw %}({{ protocol.device.hw }}){% endif %}
+</p>
 
 <ul class="tabs" data-tabs id="protocol-tabs">
     <li class="tabs-title {% if tab_id == 1 %} is-active{% endif %}">
@@ -44,7 +46,8 @@
                             </tr>
                             <tr>
                                 <td>{% trans "Device" %}:</td>
-                                <td>{{ protocol.device.vendor }} {{ protocol.device.model }} ({{ protocol.device.hw }})</td>
+                                <td>{{ protocol.device.vendor }} {{ protocol.device.model }}
+                                    {% if protocol.device.hw %}({{ protocol.device.hw }}){% endif %}</td>
                             </tr>
                             <tr>
                                 <td>{% trans "Software Version" %}:</td>
@@ -114,7 +117,7 @@
         </thead>
         <tbody>
         {% for result, num in zipped_results %}
-        <tr data-href="{% url 'test_result_details' pk=result.id %}">
+        <tr data-href="{% url 'test_result_update' pk=result.id %}">
             <td>{{ forloop.counter }}</td>
             <td>
                 {% if result.result == 0 %}

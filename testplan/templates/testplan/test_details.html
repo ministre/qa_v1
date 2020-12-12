@@ -6,9 +6,10 @@
 
 <p>
     <a href="{% url 'testplans' %}">{% trans "Testplans" %}</a> &raquo;
-    <a href="{% url 'testplan_details' pk=test.testplan.id tab_id=2 %}">{{ test.testplan.name }} ({{ test.testplan.version }})</a> &raquo;
-    {{ test.name }}
+    <a href="{% url 'testplan_details' pk=test.testplan.id tab_id=2 %}">{{ test.testplan.name }} ({{ test.testplan.version }})</a>
 </p>
+
+<h5>{{ test.category }} &raquo; {{ test.name }}</h5><br>
 
 <ul class="tabs" data-tabs id="test-tabs">
     <li class="tabs-title {% if tab_id == 1 %} is-active{% endif %}">
@@ -28,24 +29,6 @@
         <div class="cell">
             <div class="card">
                 <div class="card-section">
-                    <h4>{% trans "Category" %}</h4>
-                    <p>{{ test.category }}</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="cell">
-            <div class="card">
-                <div class="card-section">
-                    <h4>{% trans "Name" %}</h4>
-                    <p>{{ test.name }}</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="cell">
-            <div class="card">
-                <div class="card-section">
                     <h4>{% trans "Procedure" %}</h4>
                     <p>{{ procedure|safe }}</p>
                 </div>
@@ -57,15 +40,6 @@
                 <div class="card-section">
                     <h4>{% trans "Expected result" %}</h4>
                     <p>{{ expected|safe }}</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="cell">
-            <div class="card">
-                <div class="card-section">
-                    <h4>Redmine Wiki</h4>
-                    <p>{{ test.url }}</p>
                 </div>
             </div>
         </div>
@@ -91,6 +65,15 @@
                         <input type='submit' value='{% trans "Import" %}' class='button small success' />
                     </form>
 
+                </div>
+            </div>
+        </div>
+
+        <div class="cell">
+            <div class="card">
+                <div class="card-section">
+                    <h4>Redmine Wiki</h4>
+                    <p>{{ test.url }}</p>
                 </div>
             </div>
         </div>
