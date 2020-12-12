@@ -4,64 +4,92 @@
 
 {% block content %}
 
-<p><a href="{% url 'devices' %}">{% trans "Devices" %}</a> &raquo; {{ device }}</p>
+<p><a href="{% url 'devices' %}">{% trans "Devices" %}</a> &raquo; {{ device.vendor }} {{ device.model }} ({{ device.hw }})</p>
 
-<div class="grid-x grid-margin-x">
-    <div class="cell">
-        <div class="card">
-            <div class="card-section">
-                <a href="{% url 'device_update' pk=device.id %}" class="button small">{% trans "Update" %}</a>
-                <a href="{% url 'device_export' pk=device.id %}" class="button small">{% trans "Export to Redmine" %}</a>
-                <a href="{% url 'device_delete' pk=device.id %}" class="button alert small">{% trans "Delete" %}</a>
-                <table class="unstriped">
-                    <tr>
-                        <td>ID:</td>
-                        <td>{{ device.id }}</td>
-                    </tr>
-                    <tr>
-                        <td>Redmine Project ID:</td>
-                        <td>{{ device.project_id }}</td>
-                    </tr>
-                    <tr>
-                        <td>{% trans "Type" %}:</td>
-                        <td>{{ device.type }}</td>
-                    </tr>
-                    <tr>
-                        <td>{% trans "Vendor" %}:</td>
-                        <td>{{ device.vendor }}</td>
-                    </tr>
-                    <tr>
-                        <td>{% trans "Model" %}:</td>
-                        <td>{{ device.model }}</td>
-                    </tr>
-                    <tr>
-                        <td>{% trans "HW" %}:</td>
-                        <td>{{ device.hw }}</td>
-                    </tr>
-                    <tr>
-                        <td>{% trans "Interfaces" %}:</td>
-                        <td>{{ device.interfaces }}</td>
-                    </tr>
-                    <tr>
-                        <td>{% trans "Leds" %}:</td>
-                        <td>{{ device.leds }}</td>
-                    </tr>
-                    <tr>
-                        <td>{% trans "Buttons" %}:</td>
-                        <td>{{ device.buttons }}</td>
-                    </tr>
-                    <tr>
-                        <td>{% trans "Chipsets" %}:</td>
-                        <td>{{ device.chipsets }}</td>
-                    </tr>
-                    <tr>
-                        <td>{% trans "Memory" %}:</td>
-                        <td>{{ device.memory }}</td>
-                    </tr>
-                </table>
+<ul class="tabs" data-tabs id="device-tabs">
+    <li class="tabs-title {% if tab_id == 1 %} is-active{% endif %}">
+        <a data-tabs-target="general" href="#general">{% trans "General" %}</a>
+    </li>
+    <li class="tabs-title {% if tab_id == 2 %} is-active{% endif %}">
+        <a data-tabs-target="redmine" href="#redmine">{% trans "Redmine" %}</a>
+    </li>
+</ul>
+
+<div class="tabs-content" data-tabs-content="device-tabs">
+    <div class="tabs-panel {% if tab_id == 1 %}is-active{% endif %}" id="general">
+
+        <div class="grid-x grid-margin-x">
+            <div class="cell">
+                <div class="card">
+                    <div class="card-section">
+                        <a href="{% url 'device_update' pk=device.id %}" class="button small">{% trans "Update" %}</a>
+                        <a href="{% url 'device_delete' pk=device.id %}" class="button alert small">{% trans "Delete" %}</a>
+                        <table class="unstriped">
+                            <tr>
+                                <td>ID:</td>
+                                <td>{{ device.id }}</td>
+                            </tr>
+                            <tr>
+                                <td>Redmine Project ID:</td>
+                                <td>{{ device.project_id }}</td>
+                            </tr>
+                            <tr>
+                                <td>{% trans "Type" %}:</td>
+                                <td>{{ device.type }}</td>
+                            </tr>
+                            <tr>
+                                <td>{% trans "Vendor" %}:</td>
+                                <td>{{ device.vendor }}</td>
+                            </tr>
+                            <tr>
+                                <td>{% trans "Model" %}:</td>
+                                <td>{{ device.model }}</td>
+                            </tr>
+                            <tr>
+                                <td>{% trans "HW" %}:</td>
+                                <td>{{ device.hw }}</td>
+                            </tr>
+                            <tr>
+                                <td>{% trans "Interfaces" %}:</td>
+                                <td>{{ device.interfaces }}</td>
+                            </tr>
+                            <tr>
+                                <td>{% trans "Leds" %}:</td>
+                                <td>{{ device.leds }}</td>
+                            </tr>
+                            <tr>
+                                <td>{% trans "Buttons" %}:</td>
+                                <td>{{ device.buttons }}</td>
+                            </tr>
+                            <tr>
+                                <td>{% trans "Chipsets" %}:</td>
+                                <td>{{ device.chipsets }}</td>
+                            </tr>
+                            <tr>
+                                <td>{% trans "Memory" %}:</td>
+                                <td>{{ device.memory }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+
+    <div class="tabs-panel {% if tab_id == 2 %}is-active{% endif %}" id="redmine">
+        <div class="grid-x grid-margin-x">
+            <div class="cell">
+                <div class="card">
+
+                    <div class="card-section">
+                        <a href="{% url 'device_export' pk=device.id %}" class="button small">{% trans "Export" %}</a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 {% endblock %}

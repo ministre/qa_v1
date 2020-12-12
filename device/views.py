@@ -101,11 +101,11 @@ class DeviceUpdate(UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['back_url'] = reverse('device_details', kwargs={'pk': self.object.id})
+        context['back_url'] = reverse('device_details', kwargs={'pk': self.object.id, 'tab_id': 1})
         return context
 
     def get_success_url(self):
-        return reverse('devices')
+        return reverse('device_details', kwargs={'pk': self.object.id, 'tab_id': 1})
 
 
 @method_decorator(login_required, name='dispatch')
@@ -115,7 +115,7 @@ class DeviceDelete(DeleteView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['back_url'] = reverse('device_details', kwargs={'pk': self.object.id})
+        context['back_url'] = reverse('device_details', kwargs={'pk': self.object.id, 'tab_id': 1})
         return context
 
     def get_success_url(self):
@@ -123,9 +123,9 @@ class DeviceDelete(DeleteView):
 
 
 @login_required
-def device_details(request, pk):
+def device_details(request, pk, tab_id):
     device = get_object_or_404(Device, id=pk)
-    return render(request, 'device/device_details.html', {'device': device})
+    return render(request, 'device/device_details.html', {'device': device, 'tab_id': tab_id})
 
 
 @login_required

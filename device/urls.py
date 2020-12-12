@@ -7,7 +7,7 @@ urlpatterns = [
     path('create/', views.DeviceCreate.as_view(), name='device_create'),
     path('update/<int:pk>/', views.DeviceUpdate.as_view(), name='device_update'),
     path('delete/<int:pk>/', views.DeviceDelete.as_view(), name='device_delete'),
-    path('details/<int:pk>/', views.device_details, name='device_details'),
+    path('details/<int:pk>/<int:tab_id>', views.device_details, name='device_details'),
 
     # Device Types
     path('type/', views.DeviceTypeListView.as_view(), name='device_types'),

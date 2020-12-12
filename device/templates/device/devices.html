@@ -21,7 +21,7 @@
     </thead>
     <tbody>
     {% for device in devices %}
-    <tr data-href="{% url 'device_details' pk=device.id %}">
+    <tr data-href="{% url 'device_details' pk=device.id tab_id=1 %}">
         <td>{{ device.id }}</td>
         <td>{{ device.vendor }}</td>
         <td>{{ device.model }}</td>
