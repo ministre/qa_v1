@@ -1,27 +1,28 @@
 from django.forms import ModelForm
 from testplan.models import Test, TestPlan
 from django import forms
+from django.utils.translation import gettext_lazy as _
 
 
 class TestPlanForm(ModelForm):
     class Meta:
         model = TestPlan
         labels = {
-            'name': 'Программа и методика испытаний',
-            'version': 'Редакция',
+            'name': _('Name'),
+            'version': _('Version'),
         }
-        fields = ['name', 'version']
+        fields = '__all__'
 
 
 class TestForm(ModelForm):
     class Meta:
         model = Test
         labels = {
-            'category': 'Категория',
-            'name': 'Название теста',
-            'url': 'URL Wiki-страницы в Redmine',
-            'procedure': 'Процедура',
-            'expected': 'Ожидаемый результат',
+            'category': _('Category'),
+            'name': _('Name'),
+            'url': _('Redmine Wiki page'),
+            'procedure': _('Procedure'),
+            'expected': _('Expected'),
         }
         widgets = {'testplan': forms.HiddenInput()}
         fields = '__all__'
