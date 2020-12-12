@@ -107,7 +107,7 @@ def protocol_details(request, pk, tab_id):
 
 
 @login_required
-def protocol_results_edit(request, results_id):
+def protocol_results_edit(request, pk):
     if request.method == 'POST':
         form = ResultsForm(request.POST)
         if form.is_valid():
@@ -117,7 +117,7 @@ def protocol_results_edit(request, results_id):
             info = request.POST['info']
             comment = request.POST['comment']
             # обновляем результаты теста
-            results = TestResult.objects.get(id=results_id)
+            results = TestResult.objects.get(id=pk)
             results.result = result
             results.config = config
             results.info = info
@@ -125,7 +125,7 @@ def protocol_results_edit(request, results_id):
             results.save()
             return HttpResponseRedirect('/protocol/'+protocol+'/')
     else:
-        results = TestResult.objects.get(id=results_id)
+        results = TestResult.objects.get(id=pk)
         procedure = textile.textile(results.test.procedure)
         expected = textile.textile(results.test.expected)
         form = ResultsForm(initial={'config': results.config, 'info': results.info, 'comment': results.comment})
@@ -134,8 +134,8 @@ def protocol_results_edit(request, results_id):
 
 
 @login_required
-def protocol_export(request, protocol_id):
-    protocol = Protocol.objects.get(id=protocol_id)
+def protocol_export(request, pk):
+    protocol = Protocol.objects.get(id=pk)
     project_id = protocol.device.project_id
 
     if protocol.sysinfo != "":
@@ -160,7 +160,7 @@ def protocol_export(request, protocol_id):
                   protocol.testplan.name + ' (Редакция: ' + protocol.testplan.version + ')_\n\n' \
                   '|_. № |_. Название теста: |_. Результат: |_. Инфо: |_. Комментарии: |\n'
 
-    results = TestResult.objects.filter(protocol=protocol_id).order_by("id")
+    results = TestResult.objects.filter(protocol=pk).order_by("id")
 
     numbers_of_testplan = get_numbers_of_results(results)
     zipped_results = zip(results, numbers_of_testplan)
@@ -203,7 +203,7 @@ def protocol_export(request, protocol_id):
             new_wiki_page = 'h2. '.join(blocks)
             # обновление Wiki-страницы устройства
             redmine.wiki_page.update('Wiki', project_id=project_id, text=new_wiki_page)
-    return HttpResponseRedirect('/protocol/' + str(protocol_id) + '/')
+    return HttpResponseRedirect('/protocol/' + str(pk) + '/')
 
 
 @login_required

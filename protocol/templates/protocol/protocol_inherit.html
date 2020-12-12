@@ -1,8 +1,10 @@
 {% extends "device/wrapper.html" %}
 
+{% load i18n static %}
+
 {% block content %}
 
-<p><a href="/protocol/{{ protocol_id }}" class="exit-off-canvas">&laquo; Назад</a></p>
+<p><a href="{% url 'protocol_details' pk=protocol_id tab_id=1 %}" class="exit-off-canvas">&laquo; {% trans "Back" %}</a></p>
 
 <div class="card" style="width: 800px;">
   <div class="card-divider">

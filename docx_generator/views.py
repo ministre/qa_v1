@@ -55,16 +55,16 @@ def template_edit(request, template_id):
 
 
 @login_required
-def create_docx_detailed_protocol(request, protocol_id):
+def create_docx_detailed_protocol(request, pk):
     # собираем исходные данные
-    protocol = Protocol.objects.get(id=protocol_id)
+    protocol = Protocol.objects.get(id=pk)
     # перменные шаблона
     testplan = protocol.testplan.name
     vendor = protocol.device.vendor
     model = protocol.device.model
     hw = protocol.device.hw
     sw = protocol.sw
-    results = TestResult.objects.filter(protocol=protocol_id).order_by("id")
+    results = TestResult.objects.filter(protocol=pk).order_by("id")
     protocol_file = DocxTemplate("docx_templates/detailed_protocol_switches.docx")
     results_table = []
     for result in results:
@@ -90,9 +90,9 @@ def create_docx_detailed_protocol(request, protocol_id):
 
 
 @login_required
-def create_docx_protocol(request, protocol_id):
+def create_docx_protocol(request, pk):
     # собираем исходные данные
-    protocol = Protocol.objects.get(id=protocol_id)
+    protocol = Protocol.objects.get(id=pk)
     # перменные шаблона
     testplan = protocol.testplan.name
     vendor = protocol.device.vendor
@@ -113,7 +113,7 @@ def create_docx_protocol(request, protocol_id):
     # таблица с результатами
     results_table = []
     summary_comments = []
-    results = TestResult.objects.filter(protocol=protocol_id).order_by("id")
+    results = TestResult.objects.filter(protocol=pk).order_by("id")
     numbers_of_testplan = get_numbers_of_results(results)
     zipped_results = zip(results, numbers_of_testplan)
     result_status = 'null'

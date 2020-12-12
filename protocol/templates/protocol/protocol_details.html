@@ -11,7 +11,9 @@
         <a data-tabs-target="general" href="#general">{% trans "General" %}</a>
     </li>
     <li class="tabs-title {% if tab_id == 2 %} is-active{% endif %}">
-        <a data-tabs-target="results" href="#results">{% trans "Results" %}</a>
+        <a data-tabs-target="test_results" href="#test_results">{% trans "Results" %}
+            ({{ tests_completed }}/{{ tests_all }})
+        </a>
     </li>
     <li class="tabs-title {% if tab_id == 3 %} is-active{% endif %}">
         <a data-tabs-target="statistics" href="#statistics">{% trans "Statistics" %}</a>
@@ -28,6 +30,7 @@
 
     <div class="tabs-panel {% if tab_id == 1 %}is-active{% endif %}" id="general">
         <a href="{% url 'protocol_update' pk=protocol.id %}" class="button small">{% trans "Update" %}</a>
+        <a href="{% url 'protocol_inherit' protocol_id=protocol.id %}" class="button small">{% trans "Inherit results" %}</a>
         <a href="{% url 'protocol_delete' pk=protocol.id %}" class="button alert small">{% trans "Delete" %}</a>
 
         <div class="grid-x grid-margin-x">
@@ -98,164 +101,162 @@
 
     </div>
 
-    <div class="tabs-panel {% if tab_id == 2 %}is-active{% endif %}" id="results">
-        2
+    <div class="tabs-panel {% if tab_id == 2 %}is-active{% endif %}" id="test_results">
+        <table id="results" class="unstriped hover" style="width:100%;">
+        <thead>
+            <tr style="background-color: #E8E8E8">
+                <th>ID</th>
+                <th width="70px">{% trans "Results" %}</th>
+                <th>{% trans "Tests" %}</th>
+                <th>{% trans "Category" %}</th>
+                <th width="45%">{% trans "Comments" %}</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for result, num in zipped_results %}
+        <tr data-href="{% url 'test_result_details' pk=result.id %}">
+            <td>{{ forloop.counter }}</td>
+            <td>
+                {% if result.result == 0 %}
+                <span class="label" style="width:65px; text-align: center; background-color: gray; color: white">{% trans "Not tested" %}</span>
+                {% endif %}
+                {% if result.result == 1 %}
+                <span class="label alert" style="width:65px; text-align: center">{% trans "Failed" %}</span>
+                {% endif %}
+                {% if result.result == 2 %}
+                <span class="label warning" style="width:65px; text-align: center">{% trans "Warning" %}</span>
+                {% endif %}
+                {% if result.result == 3 %}
+                <span class="label success" style="width:65px; text-align: center; background-color: green; color: white">{% trans "Success" %}</span>
+                {% endif %}
+            </td>
+            <td><i>{{ num }}. {{ result.test.name }}</i></td>
+            <td>{{ result.test.category }}</td>
+            <td>{{ result.comment }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+        </table>
     </div>
 
     <div class="tabs-panel {% if tab_id == 3 %}is-active{% endif %}" id="statistics">
-        3
+        <div class="cell small-6">
+            <div id="donutchart"></div>
+        </div>
     </div>
 
     <div class="tabs-panel {% if tab_id == 4 %}is-active{% endif %}" id="docx">
-        4
+
+        <div class="cell">
+            <div class="card">
+                <div class="card-section">
+                    <h5>{% trans "Protocol" %}</h5>
+                    <p><a href="{% url 'create_docx_protocol' pk=protocol.id %}" class="button small success">{% trans "Build" %}</a></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="cell">
+            <div class="card">
+                <div class="card-section">
+                    <h5>{% trans "Detailed protocol" %}</h5>
+                    <p><a href="{% url 'create_docx_detailed_protocol' pk=protocol.id %}" class="button small success">{% trans "Build" %}</a></p>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <div class="tabs-panel {% if tab_id == 5 %}is-active{% endif %}" id="redmine">
-        5
+
+        <div class="cell">
+            <div class="card">
+                <div class="card-section">
+                    <h5>{% trans "Export" %}</h5>
+                    <p><a href="{% url 'protocol_export' pk=protocol.id %}" class="button small">{% trans "Export" %}</a></p>
+                </div>
+            </div>
+        </div>
+
     </div>
 
 </div>
-
-
-<div class="grid-x">
-    <div class="cell small-6">
-        <p>
-        <div class="grid-x">
-            <div class="cell medium-6 large-4"><i>Версия HW:</i></div>
-            <div class="cell medium-6 large-8">{{ protocol.device.hw }}</div>
-        </div>
-        <div class="grid-x">
-            <div class="cell medium-6 large-4"><i>Версия ПО:</i></div>
-            <div class="cell medium-6 large-8">{{ protocol.sw }}</div>
-        </div>
-        <div class="grid-x">
-            <div class="cell medium-6 large-4"><i>Дата тестирования:</i></div>
-            <div class="cell medium-6 large-8">{{ protocol.date_of_start|date:"d.m.Y" }} - {{ protocol.date_of_finish|date:"d.m.Y" }}</div>
-        </div>
-        </p>
-
-        <ul class="dropdown menu" data-dropdown-menu>
-            <li>
-                <a href="/protocol/edit/{{ protocol.id }}/">Редактирование</a>
-                <ul class="menu vertical">
-                    <li><a href="/protocol/edit/{{ protocol.id }}/">Общая информация</a></li>
-                    <li><a href="/protocol/inherit/{{ protocol.id }}/">Наследовать результаты</a></li>
-                    <li><a href="/protocol/delete/{{ protocol.id }}/"><font color="red">Удалить протокол</font></a></li>
-                </ul>
-            </li>
-            <li><a href="/protocol/export/{{ protocol.id }}/">Отправить в Redmine</a></li>
-            <li>
-                <a href="/testplan/">Word</a>
-                <ul class="menu vertical">
-                    <li><a href="/docx/protocol/create/{{ protocol.id }}">Протокол испытаний</a></li>
-                    <li><a href="/docx/detailed_protocol/create/{{ protocol.id }}">Детализированный протокол (конфиги)</a></li>
-                </ul>
-            </li>
-            <li>&nbsp;&nbsp;&nbsp;</li>
-            <li><button onclick="hideCompleted()" id="hide_completed" class="button small rounded warning">
-                Скрыть завершенные</button></li>
-        </ul>
-
-  </div>
-    <div class="cell small-6">
-        <div id="donutchart"></div>
-    </div>
-</div>
-
-<table class="stack">
-    <thead>
-    <tr>
-        <th width="50px">№</th>
-        <th width="35%">Название теста:</th>
-        <th width="110px">Результат:</th>
-        <th>Комментарий:</th>
-    </tr>
-    </thead>
-    <tbody>
-    {% load static %}
-
-    {% for result, num in zipped_results %}
-    <tr {% if result.result != 0 %} class="completed" {% endif %}>
-        <td onclick="window.location.href='/protocol/results/{{ result.id }}/'; return false">{{ num }}</td>
-        <td onclick="window.location.href='/protocol/results/{{ result.id }}/'; return false">{{ result.test.name }}
-        <br><span class="label secondary">{{ result.test.category }}</span></td>
-        <td onclick="window.location.href='/protocol/results/{{ result.id }}/'; return false" align="center">
-            {% if result.result == 0 %}
-            <img src="{% static '/images/qu.png' %}" width="20" height="20">
-            {% endif %}
-            {% if result.result == 1 %}
-            <img src="{% static '/images/nok.png' %}" width="25" height="25">
-            {% endif %}
-            {% if result.result == 2 %}
-            <img src="{% static '/images/w_yellow.png' %}" width="25" height="25">
-            {% endif %}
-            {% if result.result == 3 %}
-            <img src="{% static '/images/ok.png' %}" width="25" height="25">
-            {% endif %}
-        </td>
-        <td onclick="window.location.href='/protocol/results/{{ result.id }}/'; return false">{{ result.comment }}</td>
-    </tr>
-    {% endfor %}
-
-    </tbody>
-</table>
-
-<br>
 
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <script type="text/javascript">
-      google.charts.load("current", {packages:["corechart"]});
-      google.charts.setOnLoadCallback(drawChart);
-      function drawChart() {
-        var data = google.visualization.arrayToDataTable([
-          ['Results', 'Percents'],
-          ['Пройдено',     {{ tests_success }}],
-          ['Пройдено с замечанием',      {{ tests_warn }}],
-          ['Не пройдено',  {{ tests_fail }}],
-		  ['Не тестировалось',  {{ tests_left }}],
-        ]);
 
-        var options = {
-          title: 'My Daily Activities',
+<script type="text/javascript">
+    google.charts.load("current", {packages:["corechart"]});
+    google.charts.setOnLoadCallback(drawChart);
+    function drawChart() {
+      var data = google.visualization.arrayToDataTable([
+        ['Results', 'Percents'],
+        ['Пройдено',     {{ tests_success }}],
+        ['Пройдено с замечанием',      {{ tests_warn }}],
+        ['Не пройдено',  {{ tests_fail }}],
+		['Не тестировалось',  {{ tests_left }}],
+      ]);
 
-        };
+      var chart = new google.visualization.PieChart(document.getElementById('donutchart'));
 
-        var chart = new google.visualization.PieChart(document.getElementById('donutchart'));
-
-
-		chart.draw(data, {
-		  title: 'Протестировано {{ tests_completed }} ({{ tests_completed_percent }}%) из {{ tests_all }}. Осталось: {{ tests_left }}',
-		  width: 545,
-		  height: 190,
-		  pieHole: 0.2,
-		  colors: ['green', 'orange', 'red', 'gray'],
-		});
-      }
-</script>
-
-<script>
-    function hideCompleted() {
-      var elements = document.getElementsByClassName('completed');
-
-      var el = document.getElementById('hide_completed');
-      if (el.firstChild.data == "Показать завершенные") {
-        el.firstChild.data = "Скрыть завершенные";
-      }
-      else {
-        el.firstChild.data = "Показать завершенные";
-      }
-
-      for (i = 0; i < elements.length; i++) {
-        if (elements[i].style.display != 'none') {
-          elements[i].style.display = 'none';
-        }
-        else {
-          elements[i].style.display = 'table-row';
-        }
-	  }
+      chart.draw(data, {
+		title: 'Протестировано {{ tests_completed }} ({{ tests_completed_percent }}%) из {{ tests_all }}. Осталось: {{ tests_left }}',
+		width: 900,
+		height: 500,
+		pieHole: 0.4,
+		colors: ['green', 'orange', 'red', 'gray'],
+	  });
     }
 </script>
 
-<script src="{% static 'js/my_datatables.js' %}"></script>
+<script>
+$(document).ready(function() {
+    var groupColumn = 3;
+    var table = $('#results').DataTable({
+        "columnDefs": [
+            { "visible": false, "targets": groupColumn },
+            { "visible": false, "targets": [ 0 ] },
+        ],
+        "order": [[ 0, 'asc' ]],
+        "displayLength": 100,
+        "drawCallback": function ( settings ) {
+            var api = this.api();
+            var rows = api.rows( {page:'current'} ).nodes();
+            var last=null;
+
+            api.column(groupColumn, {page:'current'} ).data().each( function ( group, i ) {
+                if ( last !== group ) {
+                    $(rows).eq( i ).before(
+                        '<tr class="group" style="background-color: #F5F5F5; font-weight: bold"><td colspan="5">'+group+'</td></tr>'
+                    );
+
+                    last = group;
+                }
+            } );
+        }
+    } );
+
+    // Order by the grouping
+    $('#results tbody').on( 'click', 'tr.group', function () {
+        var currentOrder = table.order()[0];
+        if ( currentOrder[0] === groupColumn && currentOrder[1] === 'asc' ) {
+            table.order( [ groupColumn, 'desc' ] ).draw();
+        }
+        else {
+            table.order( [ groupColumn, 'asc' ] ).draw();
+        }
+    } );
+} );
+
+document.addEventListener("DOMContentLoaded", () => {
+    const rows = document.querySelectorAll("tr[data-href]");
+    rows.forEach(row => {
+        row.addEventListener("click", () => {
+            window.location.href = row.dataset.href;
+        });
+    });
+});
+</script>
+
+<script type="text/javascript" src="{% static 'DataTables/datatables.js' %}"></script>
 
 {% endblock %}

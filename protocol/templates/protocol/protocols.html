@@ -21,7 +21,7 @@
     </thead>
     <tbody>
     {% for protocol in protocols %}
-    <tr data-href="{% url 'protocol_details' pk=protocol.id tab_id=1 %}">
+    <tr data-href="{% url 'protocol_details' pk=protocol.id tab_id=2 %}">
         <td>{{ protocol.id }}</td>
         <td>{{ protocol.device.vendor }} {{ protocol.device.model }}</td>
         <td>{{ protocol.sw }}</td>
