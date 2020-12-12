@@ -18,23 +18,14 @@ class DeviceForm(ModelForm):
     class Meta:
         model = Device
         labels = {
-            'project_id': 'Идентификатор проекта Redmine*',
-            'vendor': 'Производитель*',
-            'model': 'Модель*',
-            'hw': 'Версия Hardware',
-            'interfaces': 'Интерфейсы',
-            'leds': 'Индикаторы',
-            'buttons': 'Кнопки',
-            'chipsets': 'Чипсеты',
-            'memory': 'Память',
+            'project_id': _('Project ID'),
+            'vendor': _('Vendor'),
+            'model': _('Model'),
+            'hw': _('Hardware Version'),
+            'interfaces': _('Interfaces'),
+            'leds': _('Leds'),
+            'buttons': _('Buttons'),
+            'chipsets': _('Chipsets'),
+            'memory': _('Memory'),
         }
         fields = '__all__'
-
-    def __init__(self, *args, **kwargs):
-        super(DeviceForm, self).__init__(*args, **kwargs)
-        self.fields['hw'].required = False
-        self.fields['interfaces'].required = False
-        self.fields['leds'].required = False
-        self.fields['buttons'].required = False
-        self.fields['chipsets'].required = False
-        self.fields['memory'].required = False
