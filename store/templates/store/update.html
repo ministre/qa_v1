@@ -12,4 +12,6 @@
     {{ form }}
 </form>
 
+<a href="{% url 'item_return' pk=item.id %}" class="button success small">{% trans "Return" %}</a>
+
 {% endblock %}

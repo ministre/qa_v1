@@ -2,10 +2,11 @@ from django.contrib.auth.decorators import login_required
 from store.models import Item
 from .forms import ItemForm
 from django.http import HttpResponseRedirect
-from datetime import datetime
+import datetime
 from django.utils.decorators import method_decorator
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.urls import reverse
+from django.shortcuts import get_object_or_404
 
 
 @method_decorator(login_required, name='dispatch')
@@ -64,9 +65,9 @@ class ItemDelete(DeleteView):
 
 @login_required
 def item_return(request, pk):
-    item = Item.objects.get(id=pk)
-    item.location = ''
+    item = get_object_or_404(Item, id=pk)
+    item.location = None
     item.returned_by = request.user
-    item.date_of_returned = datetime.now()
+    item.date_of_returned = datetime.date.today()
     item.save()
     return HttpResponseRedirect(reverse('items'))
