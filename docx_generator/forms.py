@@ -14,9 +14,9 @@ class DocxTemplateFileForm(ModelForm):
         }
         fields = '__all__'
         TEMPLATE_TYPE = (
-            ('0', 'Protocol'),
-            ('1', 'Detailed protocol'),
-            ('2', 'Testplan'),
+            ('0', _('Protocol')),
+            ('1', _('Detailed protocol')),
+            ('2', _('Testplan')),
         )
 
         widgets = {
