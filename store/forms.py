@@ -1,21 +1,18 @@
-from django.forms import ModelForm
+from django.forms import ModelForm, HiddenInput
 from store.models import Item
-from django import forms
+from django.utils.translation import gettext_lazy as _
 
 
 class ItemForm(ModelForm):
     class Meta:
         model = Item
-        # widgets = {'received_by': forms.HiddenInput()}
         labels = {
-            'name': 'Наименование',
-            'location': 'Где лежит/номер полки',
-            'comment': 'Комментарий',
+            'name': _('Name'),
+            'location': _('Location'),
+            'comment': _('Comment'),
         }
-        fields = ['name', 'location', 'comment']
-
-    def __init__(self, *args, **kwargs):
-        super(ItemForm, self).__init__(*args, **kwargs)
-        self.fields['name'].required = True
-        self.fields['location'].required = True
-        self.fields['comment'].required = False
+        fields = '__all__'
+#        widgets = {
+#            'date_of_received': HiddenInput(), 'received_by': HiddenInput(),
+#            'date_of_returned': HiddenInput(), 'returned_by': HiddenInput()
+#        }
