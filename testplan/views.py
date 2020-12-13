@@ -16,6 +16,7 @@ from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 import textile
+from django import forms
 
 
 @method_decorator(login_required, name='dispatch')
@@ -76,7 +77,10 @@ def testplan_details(request, pk, tab_id):
     tests_count = tests.count()
     numbers_of_tests = get_numbers_of_tests(tests)
     zipped_results = zip(tests, numbers_of_tests)
-    testplan_form = BuildTestplanForm()
+
+    testplan_form = BuildTestplanForm(initial={'testplan_id': testplan.id})
+    testplan_form.fields['testplan_id'].widget = forms.HiddenInput()
+
     return render(request, 'testplan/testplan_details.html', {'testplan': testplan, 'tests': zipped_results,
                                                               'tests_count': tests_count,
                                                               'build_testplan_form': testplan_form, 'tab_id': tab_id})

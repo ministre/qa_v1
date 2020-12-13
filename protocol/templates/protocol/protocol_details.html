@@ -153,7 +153,7 @@
             <div class="card">
                 <div class="card-section">
                     <h5>{% trans "Build protocol" %}</h5>
-                    <form action="{% url 'build_protocol' pk=protocol.id %}" method="post">
+                    <form action="{% url 'build_protocol' %}" method="post">
                         {% csrf_token %}
                         {{ build_protocol_form }}
                         <input type="submit" value='{% trans "Build" %}' class="button small success" />
@@ -165,7 +165,7 @@
             <div class="card">
                 <div class="card-section">
                     <h5>{% trans "Build detailed protocol" %}</h5>
-                    <form action="{% url 'build_protocol_detailed' pk=protocol.id %}" method="post">
+                    <form action="{% url 'build_protocol_detailed' %}" method="post">
                         {% csrf_token %}
                         {{ build_protocol_detailed_form }}
                         <input type="submit" value='{% trans "Build" %}' class="button small success" />

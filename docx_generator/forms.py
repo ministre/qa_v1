@@ -25,12 +25,15 @@ class DocxTemplateFileForm(ModelForm):
 
 
 class BuildProtocolForm(forms.Form):
-    docx_template = forms.ModelChoiceField(queryset=DocxTemplateFile.objects.filter(type=0).order_by('-id'))
+    protocol_id = forms.IntegerField()
+    docx_template_id = forms.ModelChoiceField(queryset=DocxTemplateFile.objects.filter(type=0).order_by('-id'))
 
 
 class BuildProtocolDetailedForm(forms.Form):
-    docx_template = forms.ModelChoiceField(queryset=DocxTemplateFile.objects.filter(type=1).order_by('-id'))
+    protocol_id = forms.IntegerField()
+    docx_template_id = forms.ModelChoiceField(queryset=DocxTemplateFile.objects.filter(type=1).order_by('-id'))
 
 
 class BuildTestplanForm(forms.Form):
-    docx_template = forms.ModelChoiceField(queryset=DocxTemplateFile.objects.filter(type=2).order_by('-id'))
+    testplan_id = forms.IntegerField()
+    docx_template_id = forms.ModelChoiceField(queryset=DocxTemplateFile.objects.filter(type=2).order_by('-id'))

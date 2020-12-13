@@ -96,8 +96,11 @@ def protocol_details(request, pk, tab_id):
     tests_warn = TestResult.objects.filter(Q(protocol=pk) & Q(result=2)).count()
     tests_fail = TestResult.objects.filter(Q(protocol=pk) & Q(result=1)).count()
 
-    protocol_form = BuildProtocolForm()
-    protocol_detailed_form = BuildProtocolDetailedForm()
+    protocol_form = BuildProtocolForm(initial={'protocol_id': protocol.id})
+    protocol_form.fields['protocol_id'].widget = forms.HiddenInput()
+    protocol_detailed_form = BuildProtocolDetailedForm(initial={'protocol_id': protocol.id})
+    protocol_detailed_form.fields['protocol_id'].widget = forms.HiddenInput()
+
     return render(request, 'protocol/protocol_details.html', {'protocol': protocol,
                                                               'zipped_results': zipped_results,
                                                               'tests_all': tests_all,

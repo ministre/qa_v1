@@ -14,6 +14,8 @@ from django.utils.formats import localize
 from django.utils.decorators import method_decorator
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.urls import reverse
+from django.utils.translation import gettext_lazy as _
+from django.shortcuts import get_object_or_404
 
 
 @method_decorator(login_required, name='dispatch')
@@ -68,6 +70,68 @@ class DocxTemplateFileDelete(DeleteView):
 
 
 @login_required
+def build_protocol(request):
+    if request.method == "POST":
+        protocol = get_object_or_404(Protocol, id=request.POST['protocol_id'])
+        docx_template = get_object_or_404(DocxTemplateFile, id=request.POST['docx_template_id'])
+
+        results_table = summary_comments = []
+        results = TestResult.objects.filter(protocol=protocol).order_by("id")
+        zipped_results = zip(results, get_numbers_of_results(results))
+
+        status = None
+        for result, num in zipped_results:
+            if result.result == 0:
+                status = RichText('Пропущен', color='black')
+            elif result.result == 1:
+                status = RichText('X', color='red', bold=True)
+            elif result.result == 2:
+                status = RichText(u'\u00b1', color='black', bold=True)
+            elif result.result == 3:
+                status = RichText(u'\u221a', color='green', bold=True)
+            result_string = {'num': num, 'testname': result.test.name, 'testresult': status,
+                             'testcomment': Listing(result.comment)}
+            results_table.append(result_string)
+            if result.comment:
+                summary_comment_string = {'text': Listing(result.comment)}
+                summary_comments.append(summary_comment_string)
+
+        protocol_file = DocxTemplate(docx_template.file)
+
+        context = {'testplan': protocol.testplan.name,
+                   'vendor': protocol.device.vendor,
+                   'model': protocol.device.model,
+                   'hw': protocol.device.hw,
+                   'sw': protocol.sw,
+                   'sw_checksum': protocol.sw_checksum,
+                   'interfaces': protocol.device.interfaces,
+                   'leds': protocol.device.leds,
+                   'buttons': protocol.device.buttons,
+                   'chipsets': protocol.device.chipsets,
+                   'memory': protocol.device.memory,
+                   'date_of_start': localize(protocol.date_of_start),
+                   'date_of_finish': localize(protocol.date_of_finish),
+                   'version': protocol.testplan.version,
+                   'tbl_contents': results_table,
+                   'comments': summary_comments
+                   }
+
+        protocol_file.render(context)
+        file = os.path.join(settings.MEDIA_ROOT + '/docx_generator/protocols/',
+                            'Protocol_' + str(protocol.id) + '.docx')
+        protocol_file.save(file)
+        if os.path.exists(file):
+            with open(file, 'rb') as fh:
+                response = HttpResponse(fh.read(), content_type="application/vnd.ms-word")
+                response['Content-Disposition'] = 'inline; filename=' + os.path.basename(file)
+                return response
+        raise Http404
+    else:
+        message = [False, _('Page not found')]
+        return render(request, 'docx_generator/message.html', {'message': message})
+
+
+@login_required
 def build_protocol_detailed(request, pk):
     # собираем исходные данные
     protocol = Protocol.objects.get(id=pk)
@@ -93,76 +157,6 @@ def build_protocol_detailed(request, pk):
     protocol_file.save(settings.MEDIA_ROOT + '/docx_generator/' + protocol_filename)
     # возвращаем протокол
 #    file_path = os.path.join(settings.MEDIA_ROOT, protocol_filename)
-    file_path = os.path.join(settings.MEDIA_ROOT + '/docx_generator/', protocol_filename)
-    if os.path.exists(file_path):
-        with open(file_path, 'rb') as fh:
-            response = HttpResponse(fh.read(), content_type="application/vnd.ms-word")
-            response['Content-Disposition'] = 'inline; filename=' + os.path.basename(file_path)
-            return response
-    raise Http404
-
-
-@login_required
-def build_protocol(request, pk):
-    # собираем исходные данные
-    protocol = Protocol.objects.get(id=pk)
-    # перменные шаблона
-    testplan = protocol.testplan.name
-    vendor = protocol.device.vendor
-    model = protocol.device.model
-    hw = protocol.device.hw
-    sw = protocol.sw
-    sw_checksum = protocol.sw_checksum
-    interfaces = protocol.device.interfaces
-    leds = protocol.device.leds
-    buttons = protocol.device.buttons
-    chipsets = protocol.device.chipsets
-    memory = protocol.device.memory
-    date_of_start = localize(protocol.date_of_start)
-    date_of_finish = localize(protocol.date_of_finish)
-    date_of_file = str(protocol.date_of_finish)
-    version = protocol.testplan.version
-
-    # таблица с результатами
-    results_table = []
-    summary_comments = []
-    results = TestResult.objects.filter(protocol=pk).order_by("id")
-    numbers_of_testplan = get_numbers_of_results(results)
-    zipped_results = zip(results, numbers_of_testplan)
-    result_status = 'null'
-    for result, num in zipped_results:
-        if result.result == 0:
-            result_status = RichText('Пропущен', color='black')
-        if result.result == 1:
-            result_status = RichText('X', color='red', bold=True)
-        if result.result == 2:
-            result_status = RichText(u'\u00b1', color='black', bold=True)
-        if result.result == 3:
-            result_status = RichText(u'\u221a', color='green', bold=True)
-        result_string = {'num': num, 'testname': result.test.name, 'testresult': result_status,
-                         'testcomment': Listing(result.comment)}
-        results_table.append(result_string)
-        if result.comment != '':
-            summary_comment_string = {'text': Listing(result.comment)}
-            summary_comments.append(summary_comment_string)
-
-    # генерируем протокол
-    # if protocol.device.type.id != 3:
-    protocol_file = DocxTemplate("docx_templates/protocol_sw_acc.docx")
-    # else:
-    #    protocol_file = DocxTemplate("docx_templates/protocol_switches.docx")
-
-    context = {'testplan': testplan, 'vendor': vendor, 'model': model, 'hw': hw, 'sw': sw, 'sw_checksum': sw_checksum,
-               'interfaces': interfaces, 'leds': leds, 'buttons': buttons, 'chipsets': chipsets, 'memory': memory,
-               'date_of_start': date_of_start, 'date_of_finish': date_of_finish, 'version': version,
-               'tbl_contents': results_table,
-               'comments': summary_comments
-               }
-    protocol_file.render(context)
-    #protocol_filename = 'docx_protocols/Protocol_' + str(protocol.id) + '_' + date_of_file + '.docx'
-    protocol_filename = 'Protocol_' + str(protocol.id) + '_' + date_of_file + '.docx'
-    protocol_file.save(settings.MEDIA_ROOT + '/docx_generator/' + protocol_filename)
-    # возвращаем протокол
     file_path = os.path.join(settings.MEDIA_ROOT + '/docx_generator/', protocol_filename)
     if os.path.exists(file_path):
         with open(file_path, 'rb') as fh:
