@@ -19,6 +19,7 @@ class DeviceForm(ModelForm):
         model = Device
         labels = {
             'project_id': _('Project ID'),
+            'type': _('Device Type'),
             'vendor': _('Vendor'),
             'model': _('Model'),
             'hw': _('Hardware Version'),
