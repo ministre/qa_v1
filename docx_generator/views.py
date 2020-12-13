@@ -75,7 +75,7 @@ def build_protocol(request):
         protocol = get_object_or_404(Protocol, id=request.POST['protocol_id'])
         docx_template = get_object_or_404(DocxTemplateFile, id=request.POST['docx_template_id'])
 
-        results_table = summary_comments = []
+        tests = comments = []
         results = TestResult.objects.filter(protocol=protocol).order_by("id")
         zipped_results = zip(results, get_numbers_of_results(results))
 
@@ -89,12 +89,12 @@ def build_protocol(request):
                 status = RichText(u'\u00b1', color='black', bold=True)
             elif result.result == 3:
                 status = RichText(u'\u221a', color='green', bold=True)
-            result_string = {'num': num, 'testname': result.test.name, 'testresult': status,
-                             'testcomment': Listing(result.comment)}
-            results_table.append(result_string)
+
+            test = {'num': num, 'name': result.test.name, 'status': status, 'comment': Listing(result.comment)}
+            tests.append(test)
             if result.comment:
-                summary_comment_string = {'text': Listing(result.comment)}
-                summary_comments.append(summary_comment_string)
+                comment = {'text': Listing(result.comment)}
+                comments.append(comment)
 
         protocol_file = DocxTemplate(docx_template.file)
 
@@ -112,8 +112,8 @@ def build_protocol(request):
                    'date_of_start': localize(protocol.date_of_start),
                    'date_of_finish': localize(protocol.date_of_finish),
                    'version': protocol.testplan.version,
-                   'tbl_contents': results_table,
-                   'comments': summary_comments
+                   'tests': tests,
+                   'comments': comments
                    }
 
         protocol_file.render(context)
