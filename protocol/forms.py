@@ -10,8 +10,8 @@ class ProtocolForm(ModelForm):
         labels = {
             'sw': _('Software Version'),
             'sw_checksum': _('Checksum'),
-            'engineer_login': _('Engineer login'),
-            'engineer_password': _('Engineer password'),
+            'engineer_login': _('Engineer Login'),
+            'engineer_password': _('Engineer Password'),
             'sysinfo': _('System Information'),
             'console': _('Console port parameters'),
             'date_of_start': _('Started'),

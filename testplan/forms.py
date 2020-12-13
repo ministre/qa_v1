@@ -22,7 +22,7 @@ class TestForm(ModelForm):
             'name': _('Name'),
             'url': _('Redmine Wiki page'),
             'procedure': _('Procedure'),
-            'expected': _('Expected'),
+            'expected': _('Expected result'),
         }
         widgets = {'testplan': forms.HiddenInput()}
         fields = '__all__'

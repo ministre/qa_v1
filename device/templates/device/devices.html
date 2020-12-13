@@ -7,7 +7,7 @@
 <h4>{% trans "Devices" %}</h4>
 
 <a href="{% url 'device_create' %}" class="button small">{% trans "Create" %}</a>
-<a href="{% url 'device_import' %}" class="button small">{% trans "Import from Redmine" %}</a>
+<a href="{% url 'device_import' %}" class="button small">{% trans "Import from" %} Redmine</a>
 
 <table id="devices" class="hover unstriped" style="width:100%">
     <thead>
@@ -15,7 +15,7 @@
         <th>ID</th>
         <th>{% trans "Vendor" %}</th>
         <th>{% trans "Model" %}</th>
-        <th>{% trans "HW" %}</th>
+        <th>{% trans "Hardware Version" %}</th>
         <th>{% trans "Device Type" %}</th>
     </tr>
     </thead>

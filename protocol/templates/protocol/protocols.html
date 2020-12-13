@@ -7,14 +7,14 @@
 <h4>{% trans "Protocols" %}</h4>
 
 <a href="{% url 'protocol_create' %}" class="button small">{% trans "Create" %}</a>
-<a href="{% url 'protocol_import' %}" class="button small">{% trans "Import from Redmine" %}</a>
+<a href="{% url 'protocol_import' %}" class="button small">{% trans "Import from" %} Redmine</a>
 
 <table id="protocols" class="hover unstriped" style="width:100%">
     <thead>
     <tr>
         <th>ID</th>
         <th>{% trans "Device" %}</th>
-        <th>{% trans "SW" %}</th>
+        <th>{% trans "Software Version" %}</th>
         <th>{% trans "Started" %}</th>
         <th>{% trans "Completed" %}</th>
     </tr>

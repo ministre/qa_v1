@@ -6,7 +6,7 @@
 
 <form method="post" action="">
     <a href="{% url 'devices' %}" class="button small">&laquo; {% trans "Back" %}</a>
-    <input type="submit" value='{% trans "Import from Redmine" %}' class="button small success" />
+    <input type="submit" value='{% trans "Import from" %}  Redmine' class="button small success" />
     {% csrf_token %}
     <label>Redmine Project ID:
         <input type="text" name ="project_id" id="project_id" placeholder="Project ID">
