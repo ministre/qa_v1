@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import login_required
 from store.models import Item
 from .forms import ItemForm
 from django.http import HttpResponseRedirect
-import datetime
+from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.urls import reverse
@@ -68,6 +68,6 @@ def item_return(request, pk):
     item = get_object_or_404(Item, id=pk)
     item.location = None
     item.returned_by = request.user
-    item.date_of_returned = datetime.date.today()
+    item.date_of_returned = timezone.now()
     item.save()
     return HttpResponseRedirect(reverse('items'))
