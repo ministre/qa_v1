@@ -8,6 +8,8 @@ class ProtocolForm(ModelForm):
     class Meta:
         model = Protocol
         labels = {
+            'device': _('Device'),
+            'testplan': _('Testplan'),
             'sw': _('Software Version'),
             'sw_checksum': _('Checksum'),
             'engineer_login': _('Engineer Login'),
