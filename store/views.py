@@ -7,6 +7,8 @@ from django.utils.decorators import method_decorator
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.urls import reverse
 from django.shortcuts import get_object_or_404
+from django.utils.translation import gettext_lazy as _
+from django.shortcuts import render
 
 
 @method_decorator(login_required, name='dispatch')
@@ -64,10 +66,14 @@ class ItemDelete(DeleteView):
 
 
 @login_required
-def item_return(request, pk):
-    item = get_object_or_404(Item, id=pk)
-    item.location = None
-    item.returned_by = request.user
-    item.date_of_returned = timezone.now()
-    item.save()
-    return HttpResponseRedirect(reverse('items'))
+def item_return(request):
+    if request.method == "POST":
+        item = get_object_or_404(Item, id=request.POST['item_id'])
+        item.location = None
+        item.returned_by = request.user
+        item.date_of_returned = timezone.now()
+        item.save()
+        return HttpResponseRedirect(reverse('items'))
+    else:
+        message = [False, _('Page not found')]
+        return render(request, 'docx_generator/message.html', {'message': message})

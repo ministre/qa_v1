@@ -4,6 +4,17 @@
 
 {% block content %}
 
+{% if item.date_of_returned %}
+
+<div class="callout secondary">
+    <p>{% trans "This item has been returned" %}!</p>
+</div>
+
+<a href="{% url 'items' %}" class="button small">&laquo; {% trans "Back" %}</a>
+<a href="{% url 'item_delete' pk=item.id %}" class="button alert small">{% trans "Delete" %}</a>
+
+{% else %}
+
 <form method="post" action="">
     <a href="{{ back_url }}" class="button small">&laquo; {% trans "Back" %}</a>
     <input type="submit" value='{% trans "Update" %}' class="button success small" />
@@ -12,6 +23,22 @@
     {{ form }}
 </form>
 
-<a href="{% url 'item_return' pk=item.id %}" class="button success small">{% trans "Return" %}</a>
+<div class="cell">
+    <div class="card">
+        <div class="card-section">
+            <h5>{% trans "Return" %}</h5>
+
+            <form action="{% url 'item_return' %}" method="post">
+                {% csrf_token %}
+                {{ item_return_form }}
+                <input type="hidden" name="item_id" value="{{ object.id }}" id="id_item_id">
+                <input type="submit" value='{% trans "Return" %}' class="button small success" />
+            </form>
+
+        </div>
+    </div>
+</div>
+
+{% endif %}
 
 {% endblock %}

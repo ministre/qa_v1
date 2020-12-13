@@ -7,5 +7,5 @@ urlpatterns = [
     path('create/', views.ItemCreate.as_view(), name='item_create'),
     path('update/<int:pk>/', views.ItemUpdate.as_view(), name='item_update'),
     path('delete/<int:pk>/', views.ItemDelete.as_view(), name='item_delete'),
-    path('return/<int:pk>/', views.item_return, name='item_return'),
+    path('return/', views.item_return, name='item_return'),
 ]
