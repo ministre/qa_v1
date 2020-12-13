@@ -68,7 +68,18 @@
     </div>
 
     <div class="tabs-panel {% if tab_id == 3 %}is-active{% endif %}" id="docx">
-        <a href="/docx/testplan/create/{{ testplan.id }}" class="button small">{% trans "Build" %}</a>
+        <div class="cell">
+            <div class="card">
+                <div class="card-section">
+                    <h5>{% trans "Build testplan" %}</h5>
+                    <form action="{% url 'build_testplan' pk=testplan.id %}" method="post">
+                        {% csrf_token %}
+                        {{ build_testplan_form }}
+                        <input type="submit" value='{% trans "Build" %}' class="button small success" />
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="tabs-panel {% if tab_id == 4 %}is-active{% endif %}" id="redmine">

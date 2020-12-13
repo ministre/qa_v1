@@ -149,25 +149,30 @@
     </div>
 
     <div class="tabs-panel {% if tab_id == 4 %}is-active{% endif %}" id="docx">
-
         <div class="cell">
             <div class="card">
                 <div class="card-section">
-                    <h5>{% trans "Protocol" %}</h5>
-                    <p><a href="{% url 'create_docx_protocol' pk=protocol.id %}" class="button small success">{% trans "Build" %}</a></p>
+                    <h5>{% trans "Build protocol" %}</h5>
+                    <form action="{% url 'build_protocol' pk=protocol.id %}" method="post">
+                        {% csrf_token %}
+                        {{ build_protocol_form }}
+                        <input type="submit" value='{% trans "Build" %}' class="button small success" />
+                    </form>
                 </div>
             </div>
         </div>
-
         <div class="cell">
             <div class="card">
                 <div class="card-section">
-                    <h5>{% trans "Detailed protocol" %}</h5>
-                    <p><a href="{% url 'create_docx_detailed_protocol' pk=protocol.id %}" class="button small success">{% trans "Build" %}</a></p>
+                    <h5>{% trans "Build detailed protocol" %}</h5>
+                    <form action="{% url 'build_protocol_detailed' pk=protocol.id %}" method="post">
+                        {% csrf_token %}
+                        {{ build_protocol_detailed_form }}
+                        <input type="submit" value='{% trans "Build" %}' class="button small success" />
+                    </form>
                 </div>
             </div>
         </div>
-
     </div>
 
     <div class="tabs-panel {% if tab_id == 5 %}is-active{% endif %}" id="redmine">

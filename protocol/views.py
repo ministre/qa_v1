@@ -5,6 +5,7 @@ from testplan.models import TestPlan, Test
 from protocol.models import Protocol, TestResult
 from django.http import HttpResponseRedirect
 from .forms import ProtocolForm, TestResultForm
+from docx_generator.forms import BuildProtocolForm, BuildProtocolDetailedForm
 from qa_v1 import settings
 from redminelib import Redmine
 from redminelib.exceptions import ResourceNotFoundError
@@ -94,6 +95,9 @@ def protocol_details(request, pk, tab_id):
     tests_success = TestResult.objects.filter(Q(protocol=pk) & Q(result=3)).count()
     tests_warn = TestResult.objects.filter(Q(protocol=pk) & Q(result=2)).count()
     tests_fail = TestResult.objects.filter(Q(protocol=pk) & Q(result=1)).count()
+
+    protocol_form = BuildProtocolForm()
+    protocol_detailed_form = BuildProtocolDetailedForm()
     return render(request, 'protocol/protocol_details.html', {'protocol': protocol,
                                                               'zipped_results': zipped_results,
                                                               'tests_all': tests_all,
@@ -103,6 +107,8 @@ def protocol_details(request, pk, tab_id):
                                                               'tests_success': tests_success,
                                                               'tests_warn': tests_warn,
                                                               'tests_fail': tests_fail,
+                                                              'build_protocol_form': protocol_form,
+                                                              'build_protocol_detailed_form': protocol_detailed_form,
                                                               'tab_id': tab_id})
 
 
@@ -123,33 +129,6 @@ class TestResultUpdate(UpdateView):
 
     def get_success_url(self):
         return reverse('protocol_details', kwargs={'pk': self.object.protocol.id, 'tab_id': 2})
-
-
-#@login_required
-#def protocol_test_result_details(request, pk):
-#    if request.method == 'POST':
-#        form = ResultsForm(request.POST)
-#        if form.is_valid():
-#            protocol = request.POST['protocol']
-#            result = request.POST['result']
-#            config = request.POST['config']
-#            info = request.POST['info']
-#            comment = request.POST['comment']
-#            # обновляем результаты теста
-#            results = TestResult.objects.get(id=pk)
-#            results.result = result
-#            results.config = config
-#            results.info = info
-#            results.comment = comment
-#            results.save()
-#            return HttpResponseRedirect('/protocol/'+protocol+'/')
-#    else:
-#        results = TestResult.objects.get(id=pk)
-#        procedure = textile.textile(results.test.procedure)
-#        expected = textile.textile(results.test.expected)
-#        form = ResultsForm(initial={'config': results.config, 'info': results.info, 'comment': results.comment})
-#        return render(request, 'protocol/protocol_results_edit.html', {'form': form, 'results': results,
-#                                                                       'procedure': procedure, 'expected': expected})
 
 
 @login_required

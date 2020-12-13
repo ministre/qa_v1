@@ -8,6 +8,7 @@ from testplan.models import TestPlan, Test
 from device.models import DeviceType
 from django.http import HttpResponseRedirect
 from .forms import TestPlanForm, TestForm
+from docx_generator.forms import BuildTestplanForm
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
 from django.utils.decorators import method_decorator
@@ -75,8 +76,10 @@ def testplan_details(request, pk, tab_id):
     tests_count = tests.count()
     numbers_of_tests = get_numbers_of_tests(tests)
     zipped_results = zip(tests, numbers_of_tests)
+    testplan_form = BuildTestplanForm()
     return render(request, 'testplan/testplan_details.html', {'testplan': testplan, 'tests': zipped_results,
-                                                              'tests_count': tests_count, 'tab_id': tab_id})
+                                                              'tests_count': tests_count,
+                                                              'build_testplan_form': testplan_form, 'tab_id': tab_id})
 
 
 @login_required

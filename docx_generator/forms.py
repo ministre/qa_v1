@@ -22,3 +22,15 @@ class DocxTemplateFileForm(ModelForm):
         widgets = {
             'type': forms.Select(choices=TEMPLATE_TYPE, attrs={'class': 'form-control'}),
         }
+
+
+class BuildProtocolForm(forms.Form):
+    docx_template = forms.ModelChoiceField(queryset=DocxTemplateFile.objects.filter(type=0).order_by('-id'))
+
+
+class BuildProtocolDetailedForm(forms.Form):
+    docx_template = forms.ModelChoiceField(queryset=DocxTemplateFile.objects.filter(type=1).order_by('-id'))
+
+
+class BuildTestplanForm(forms.Form):
+    docx_template = forms.ModelChoiceField(queryset=DocxTemplateFile.objects.filter(type=2).order_by('-id'))

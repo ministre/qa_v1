@@ -68,7 +68,7 @@ class DocxTemplateFileDelete(DeleteView):
 
 
 @login_required
-def create_docx_detailed_protocol(request, pk):
+def build_protocol_detailed(request, pk):
     # собираем исходные данные
     protocol = Protocol.objects.get(id=pk)
     # перменные шаблона
@@ -103,7 +103,7 @@ def create_docx_detailed_protocol(request, pk):
 
 
 @login_required
-def create_docx_protocol(request, pk):
+def build_protocol(request, pk):
     # собираем исходные данные
     protocol = Protocol.objects.get(id=pk)
     # перменные шаблона
@@ -173,12 +173,12 @@ def create_docx_protocol(request, pk):
 
 
 @login_required
-def create_docx_testplan(request, testplan_id):
+def build_testplan(request, pk):
     # собираем исходные данные
-    testplan = TestPlan.objects.get(id=testplan_id)
+    testplan = TestPlan.objects.get(id=pk)
 
     tests_table = []
-    tests = Test.objects.filter(testplan=testplan_id).order_by("id")
+    tests = Test.objects.filter(testplan=pk).order_by("id")
     for test in tests:
         test_string = {'category': test.category, 'name': test.name, 'procedure': Listing(test.procedure),
                        'expected': Listing(test.expected)}
@@ -190,7 +190,7 @@ def create_docx_testplan(request, testplan_id):
     context = {'testplan': testplan.name, 'version': testplan.version, 'tests': tests_table}
     testplan_file.render(context)
 #    testplan_filename = 'docx_testplans/Testplan_' + str(testplan_id) + '.docx'
-    testplan_filename = 'Testplan_' + str(testplan_id) + '.docx'
+    testplan_filename = 'Testplan_' + str(pk) + '.docx'
 #    testplan_file.save(testplan_filename)
     testplan_file.save(settings.MEDIA_ROOT + '/docx_generator/' + testplan_filename)
     # возвращаем ПМИ

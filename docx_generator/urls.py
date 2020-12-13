@@ -8,7 +8,7 @@ urlpatterns = [
     path('template/update/<int:pk>/', views.DocxTemplateFileUpdate.as_view(), name='docx_template_update'),
     path('template/delete/<int:pk>/', views.DocxTemplateFileDelete.as_view(), name='docx_template_delete'),
 
-    path('build_protocol/<int:pk>/', views.create_docx_protocol, name='create_docx_protocol'),
-    path('build_detailed_protocol/<int:pk>/', views.create_docx_detailed_protocol, name='create_docx_detailed_protocol'),
-    path('testplan/create/<int:testplan_id>/', views.create_docx_testplan, name='create_docx_testplan'),
+    path('build/protocol/<int:pk>/', views.build_protocol, name='build_protocol'),
+    path('build/protocol_detailed/<int:pk>/', views.build_protocol_detailed, name='build_protocol_detailed'),
+    path('build/testplan/<int:pk>/', views.build_testplan, name='build_testplan'),
 ]
