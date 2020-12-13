@@ -1,0 +1,458 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-12-13 22:33+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n"
+"%100>=11 && n%100<=14)? 2 : 3);\n"
+
+#: device/templates/device/device_type_details.html:21
+#: device/templates/device/device_types.html:15 docx_generator/forms.py:12
+#: docx_generator/templates/docx_generator/docx_templates.html:16
+msgid "Type"
+msgstr "Тип"
+
+#: device/forms.py:11 device/templates/device/device_type_details.html:25
+#: device/templates/device/device_types.html:16
+msgid "Subtype"
+msgstr "Подтип"
+
+#: device/forms.py:12 device/templates/device/device_type_details.html:29
+#: device/templates/device/device_types.html:17
+msgid "Description"
+msgstr "Описание"
+
+#: device/forms.py:21
+msgid "Project ID"
+msgstr "Идентификатор проекта"
+
+#: device/forms.py:22 device/templates/device/device_details.html:41
+#: device/templates/device/devices.html:16
+msgid "Vendor"
+msgstr "Производитель"
+
+#: device/forms.py:23 device/templates/device/device_details.html:45
+#: device/templates/device/devices.html:17
+msgid "Model"
+msgstr "Модель"
+
+#: device/forms.py:24
+#: device/templates/device/device_details.html:49
+#: device/templates/device/devices.html:18
+msgid "Hardware Version"
+msgstr "Аппаратная версия"
+
+#: device/forms.py:25 device/templates/device/device_details.html:53
+msgid "Interfaces"
+msgstr "Интерфейсы"
+
+#: device/forms.py:26 device/templates/device/device_details.html:57
+msgid "Leds"
+msgstr "Индикаторы"
+
+#: device/forms.py:27 device/templates/device/device_details.html:61
+msgid "Buttons"
+msgstr "Кнопки"
+
+#: device/forms.py:28 device/templates/device/device_details.html:65
+msgid "Chipsets"
+msgstr "Чипсеты"
+
+#: device/forms.py:29 device/templates/device/device_details.html:69
+msgid "Memory"
+msgstr "Память"
+
+#: device/templates/device/create.html:8 device/templates/device/delete.html:10
+#: device/templates/device/device_import.html:8
+#: device/templates/device/update.html:8
+#: docx_generator/templates/docx_generator/create.html:8
+#: docx_generator/templates/docx_generator/delete.html:10
+#: docx_generator/templates/docx_generator/message.html:11
+#: docx_generator/templates/docx_generator/update.html:8
+#: protocol/templates/protocol/create.html:8
+#: protocol/templates/protocol/delete.html:10
+#: protocol/templates/protocol/protocol_inherit.html:7
+#: protocol/templates/protocol/update.html:8
+#: testplan/templates/testplan/clear.html:10
+#: testplan/templates/testplan/clone.html:8
+#: testplan/templates/testplan/create.html:8
+#: testplan/templates/testplan/delete.html:10
+#: testplan/templates/testplan/update.html:8
+msgid "Back"
+msgstr "Назад"
+
+#: device/templates/device/create.html:9
+#: device/templates/device/device_types.html:9
+#: device/templates/device/devices.html:9
+#: device/templates/device/wrapper.html:36
+#: device/templates/device/wrapper.html:44
+#: device/templates/device/wrapper.html:50
+#: device/templates/device/wrapper.html:57
+#: docx_generator/templates/docx_generator/create.html:9
+#: docx_generator/templates/docx_generator/docx_templates.html:9
+#: protocol/templates/protocol/create.html:9
+#: protocol/templates/protocol/protocols.html:9
+#: testplan/templates/testplan/clone.html:9
+#: testplan/templates/testplan/create.html:9
+#: testplan/templates/testplan/testplans.html:9
+msgid "Create"
+msgstr "Создать"
+
+#: device/templates/device/delete.html:9
+#: docx_generator/templates/docx_generator/delete.html:9
+#: protocol/templates/protocol/delete.html:9
+#: testplan/templates/testplan/delete.html:9
+msgid "Are you sure you want to delete"
+msgstr "Вы уверены что хотите удалить"
+
+#: device/templates/device/delete.html:11
+#: docx_generator/templates/docx_generator/delete.html:11
+#: protocol/templates/protocol/delete.html:11
+#: testplan/templates/testplan/clear.html:11
+#: testplan/templates/testplan/delete.html:11
+msgid "Confirm"
+msgstr "Подтвердить"
+
+#: device/templates/device/device_details.html:7
+#: device/templates/device/devices.html:7
+#: device/templates/device/wrapper.html:34
+msgid "Devices"
+msgstr "Оборудование"
+
+#: device/templates/device/device_details.html:11
+#: protocol/templates/protocol/protocol_details.html:13
+#: testplan/templates/testplan/test_details.html:16
+#: testplan/templates/testplan/testplan_details.html:11
+msgid "General"
+msgstr "Основная информация"
+
+#: device/templates/device/device_details.html:20
+#: device/templates/device/device_type_details.html:13
+#: device/templates/device/update.html:9
+#: docx_generator/templates/docx_generator/update.html:9
+#: protocol/templates/protocol/protocol_details.html:34
+#: protocol/templates/protocol/update.html:9
+#: protocol/templates/protocol/update_test_result.html:62
+#: testplan/templates/testplan/test_details.html:26
+#: testplan/templates/testplan/testplan_details.html:28
+#: testplan/templates/testplan/update.html:9
+msgid "Update"
+msgstr "Редактировать"
+
+#: device/templates/device/device_details.html:21
+#: device/templates/device/device_type_details.html:14
+#: docx_generator/templates/docx_generator/update.html:10
+#: protocol/templates/protocol/protocol_details.html:36
+#: testplan/templates/testplan/test_details.html:27
+#: testplan/templates/testplan/testplan_details.html:30
+msgid "Delete"
+msgstr "Удалить"
+
+#: device/templates/device/device_details.html:85
+#: protocol/templates/protocol/protocol_details.html:183
+#: protocol/templates/protocol/protocol_details.html:184
+msgid "Export"
+msgstr "Экспортировать"
+
+#: device/templates/device/device_import.html:9
+#: device/templates/device/devices.html:10
+#: device/templates/device/wrapper.html:37
+#: device/templates/device/wrapper.html:51
+#: protocol/templates/protocol/protocols.html:10
+msgid "Import from"
+msgstr "Импортировать из"
+
+#: device/templates/device/device_type_details.html:7
+#: device/templates/device/device_types.html:7
+#: device/templates/device/wrapper.html:38
+msgid "Device Types"
+msgstr "Типы оборудования"
+
+#: device/forms.py:10 device/templates/device/device_details.html:37
+#: device/templates/device/devices.html:19
+msgid "Device Type"
+msgstr "Тип оборудования"
+
+#: device/templates/device/wrapper.html:42
+#: protocol/templates/protocol/update_test_result.html:14
+#: testplan/templates/testplan/test_details.html:8
+#: testplan/templates/testplan/testplan_details.html:7
+#: testplan/templates/testplan/testplans.html:7
+msgid "Testplans"
+msgstr "ПМИ"
+
+#: device/templates/device/wrapper.html:48
+#: protocol/templates/protocol/protocol_details.html:7
+#: protocol/templates/protocol/protocols.html:7
+#: protocol/templates/protocol/update_test_result.html:8
+msgid "Protocols"
+msgstr "Протоколы"
+
+#: device/templates/device/wrapper.html:55
+#: docx_generator/templates/docx_generator/docx_templates.html:7
+msgid "Templates"
+msgstr "Шаблоны"
+
+#: device/templates/device/wrapper.html:60
+msgid "Store"
+msgstr "Склад"
+
+#: device/templates/device/wrapper.html:61
+msgid "Shipment"
+msgstr "Входной контроль"
+
+#: device/templates/device/wrapper.html:63
+msgid "Tools"
+msgstr "Утилиты"
+
+#: device/templates/device/wrapper.html:65
+msgid "Port Forwarding Check"
+msgstr "Проверка проброса портов"
+
+#: device/templates/device/wrapper.html:66
+msgid "Fake SIP Invite"
+msgstr "Проверка SIP Invite"
+
+#: device/templates/device/wrapper.html:91
+msgid "Sign out"
+msgstr "Выход"
+
+#: device/templates/registration/login.html:9
+msgid "Authentication failed"
+msgstr "Ошибка авторизации"
+
+#: device/templates/registration/login.html:16
+msgid "Access error"
+msgstr "Ошибка доступа"
+
+#: device/templates/registration/login.html:32
+msgid "Authentication"
+msgstr "Авторизация"
+
+#: device/templates/registration/login.html:39
+msgid "Sign in"
+msgstr "Вход"
+
+#: docx_generator/forms.py:11
+#: docx_generator/templates/docx_generator/docx_templates.html:15
+#: testplan/forms.py:11 testplan/forms.py:22
+#: testplan/templates/testplan/testplan_details.html:34
+#: testplan/templates/testplan/testplan_details.html:53
+#: testplan/templates/testplan/testplans.html:15
+msgid "Name"
+msgstr "Название"
+
+#: docx_generator/forms.py:13
+msgid "File"
+msgstr "Файл"
+
+#: docx_generator/templates/docx_generator/docx_templates.html:25
+msgid "Protocol"
+msgstr "Протокол"
+
+#: docx_generator/templates/docx_generator/docx_templates.html:26
+msgid "Detailed protocol"
+msgstr "Детализированный протокол"
+
+#: docx_generator/templates/docx_generator/docx_templates.html:27
+msgid "Testplan"
+msgstr "ПМИ"
+
+#: docx_generator/views.py:130
+msgid "Page not found"
+msgstr "Страница не найдена"
+
+#: protocol/forms.py:11 protocol/templates/protocol/protocol_details.html:53
+#: protocol/templates/protocol/protocols.html:17
+msgid "Software Version"
+msgstr "Версия ПО"
+
+#: protocol/forms.py:12 protocol/templates/protocol/protocol_details.html:57
+msgid "Checksum"
+msgstr "Чек-сумма"
+
+#: protocol/forms.py:15 protocol/templates/protocol/protocol_details.html:82
+msgid "System Information"
+msgstr "Системная информация"
+
+#: protocol/forms.py:16
+#: protocol/templates/protocol/protocol_details.html:93
+msgid "Console port parameters"
+msgstr "Параметры консольного порта"
+
+#: protocol/forms.py:17 protocol/templates/protocol/protocol_details.html:69
+#: protocol/templates/protocol/protocols.html:18
+msgid "Started"
+msgstr "Дата начала"
+
+#: protocol/forms.py:18 protocol/templates/protocol/protocol_details.html:73
+#: protocol/templates/protocol/protocols.html:19
+msgid "Completed"
+msgstr "Дата завершения"
+
+#: protocol/forms.py:27
+msgid "Result"
+msgstr "Результат"
+
+#: protocol/forms.py:28
+msgid "Configuration"
+msgstr "Конфигурация"
+
+#: protocol/forms.py:29
+msgid "Additional Information"
+msgstr "Дополнительная информация"
+
+#: protocol/forms.py:30 protocol/templates/protocol/protocol_details.html:115
+msgid "Comments"
+msgstr "Комментарии"
+
+#: protocol/templates/protocol/protocol_details.html:16
+#: protocol/templates/protocol/protocol_details.html:112
+msgid "Results"
+msgstr "Результаты"
+
+#: protocol/templates/protocol/protocol_details.html:21
+msgid "Statistics"
+msgstr "Статистика"
+
+#: protocol/templates/protocol/protocol_details.html:35
+msgid "Inherit results"
+msgstr "Наследовать результаты"
+
+#: protocol/templates/protocol/protocol_details.html:48
+#: protocol/templates/protocol/protocols.html:16
+msgid "Device"
+msgstr "Оборудование"
+
+#: protocol/forms.py:13
+#: protocol/templates/protocol/protocol_details.html:61
+msgid "Engineer Login"
+msgstr "Инженерный логин"
+
+#: protocol/forms.py:14
+#: protocol/templates/protocol/protocol_details.html:65
+msgid "Engineer Password"
+msgstr "Инженерный пароль"
+
+#: protocol/templates/protocol/protocol_details.html:113
+#: testplan/templates/testplan/testplan_details.html:14
+msgid "Tests"
+msgstr "Тесты"
+
+#: protocol/templates/protocol/protocol_details.html:114 testplan/forms.py:21
+#: testplan/templates/testplan/testplan_details.html:54
+msgid "Category"
+msgstr "Категория"
+
+#: protocol/templates/protocol/protocol_details.html:124
+msgid "Not tested"
+msgstr "Не тестировался"
+
+#: protocol/templates/protocol/protocol_details.html:127
+msgid "Failed"
+msgstr "Не пройден"
+
+#: protocol/templates/protocol/protocol_details.html:130
+msgid "Warning"
+msgstr "Замечания"
+
+#: protocol/templates/protocol/protocol_details.html:133
+msgid "Success"
+msgstr "Пройден"
+
+#: protocol/templates/protocol/protocol_details.html:155
+msgid "Build protocol"
+msgstr "Собрать протокол"
+
+#: protocol/templates/protocol/protocol_details.html:159
+#: protocol/templates/protocol/protocol_details.html:171
+#: testplan/templates/testplan/testplan_details.html:78
+msgid "Build"
+msgstr "Собрать"
+
+#: protocol/templates/protocol/protocol_details.html:167
+msgid "Build detailed protocol"
+msgstr "Собрать детализированный протокол"
+
+#: protocol/templates/protocol/update_test_result.html:22
+msgid "Test Details"
+msgstr "Описание теста"
+
+#: protocol/templates/protocol/update_test_result.html:25
+msgid "Test Result"
+msgstr "Результат теста"
+
+#: protocol/templates/protocol/update_test_result.html:36 testplan/forms.py:24
+#: testplan/templates/testplan/test_details.html:32
+msgid "Procedure"
+msgstr "Процедура"
+
+#: protocol/templates/protocol/update_test_result.html:46
+#: testplan/templates/testplan/test_details.html:41
+#: testplan/forms.py:25
+msgid "Expected result"
+msgstr "Ожидаемый результат"
+
+#: qa_v1/settings/base.py:130
+msgid "English"
+msgstr "English"
+
+#: qa_v1/settings/base.py:131
+msgid "Russian"
+msgstr "Русский"
+
+#: testplan/forms.py:12 testplan/templates/testplan/testplan_details.html:38
+#: testplan/templates/testplan/testplans.html:16
+msgid "Version"
+msgstr "Редакция"
+
+#: testplan/forms.py:23
+msgid "Redmine Wiki page"
+msgstr "Wiki страница"
+
+#: testplan/templates/testplan/test_details.html:54
+#: testplan/templates/testplan/test_details.html:65
+msgid "Import"
+msgstr "Импортировать"
+
+#: testplan/templates/testplan/test_details.html:60
+msgid "Without tag"
+msgstr "Без тега"
+
+#: testplan/templates/testplan/testplan_details.html:29
+msgid "Clone"
+msgstr "Клонировать"
+
+#: testplan/templates/testplan/testplan_details.html:46
+msgid "Add"
+msgstr "Добавить"
+
+#: testplan/templates/testplan/testplan_details.html:47
+msgid "Clear"
+msgstr "Очистить"
+
+#: testplan/templates/testplan/testplan_details.html:74
+msgid "Build testplan"
+msgstr "Собрать ПМИ"
+
+#: testplan/templates/testplan/testplan_details.html:86
+msgid "Import Tests"
+msgstr "Импортировать тесты"
+
+#: testplan/views.py:119
+msgid "Are you sure?"
+msgstr "Вы уверены?"
