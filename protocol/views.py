@@ -17,6 +17,7 @@ from django.utils.decorators import method_decorator
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.urls import reverse
 from django import forms
+from django.utils.translation import gettext_lazy as _
 
 
 @method_decorator(login_required, name='dispatch')
@@ -327,10 +328,10 @@ def protocol_import(request):
 
 
 @login_required
-def protocol_inherit(request, protocol_id):
+def protocol_inherit(request, pk):
     if request.method == 'POST':
         src_protocol = request.POST['src_protocol']
-        dst_results = TestResult.objects.filter(protocol=protocol_id)
+        dst_results = TestResult.objects.filter(protocol=pk)
         for dst_result in dst_results:
             src_results = TestResult.objects.filter(protocol=src_protocol)
             for src_result in src_results:
@@ -340,17 +341,18 @@ def protocol_inherit(request, protocol_id):
                     dst_result.info = src_result.info
                     dst_result.comment = src_result.comment
                     dst_result.save()
-        return HttpResponseRedirect('/protocol/' + str(protocol_id) + '/')
+        return HttpResponseRedirect('/protocol/' + str(pk) + '/')
     else:
-        protocol = Protocol.objects.get(id=protocol_id)
+        protocol = Protocol.objects.get(id=pk)
         device = protocol.device.id
-        protocol = Protocol.objects.filter(Q(device=device) & ~Q(id=protocol_id))
+        protocol = Protocol.objects.filter(Q(device=device) & ~Q(id=pk))
         if protocol:
-            return render(request, 'protocol/protocol_inherit.html', {'protocol_id': protocol_id,
+            return render(request, 'protocol/protocol_inherit.html', {'protocol_id': pk,
                                                                       'protocols': protocol})
         else:
-            message = 'Нет других протоколов испытаний для данного оборудования!'
-            return render(request, 'protocol/protocol_inherit_error.html', {'message': message})
+            message = [False, _('There are no other protocols for this device')]
+            back_url = reverse('protocol_details', kwargs={'pk': pk, 'tab_id': 1})
+            return render(request, 'protocol/message.html', {'message': message, 'back_url': back_url})
 
 
 def get_numbers_of_results(results):

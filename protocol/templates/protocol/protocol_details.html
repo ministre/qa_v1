@@ -32,7 +32,7 @@
 
     <div class="tabs-panel {% if tab_id == 1 %}is-active{% endif %}" id="general">
         <a href="{% url 'protocol_update' pk=protocol.id %}" class="button small">{% trans "Update" %}</a>
-        <a href="{% url 'protocol_inherit' protocol_id=protocol.id %}" class="button small">{% trans "Inherit results" %}</a>
+        <a href="{% url 'protocol_inherit' pk=protocol.id %}" class="button small">{% trans "Inherit results" %}</a>
         <a href="{% url 'protocol_delete' pk=protocol.id %}" class="button alert small">{% trans "Delete" %}</a>
 
         <div class="grid-x grid-margin-x">
