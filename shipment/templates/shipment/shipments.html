@@ -1,0 +1,55 @@
+{% extends "device/wrapper.html" %}
+
+{% load i18n static %}
+
+{% block content %}
+
+<h4>{% trans "Tickets" %}</h4>
+
+<table id="shipments" class="hover unstriped" style="width:100%">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>{% trans "Vendor" %}</th>
+        <th>{% trans "Model" %}</th>
+        <th>{% trans "Order" %}</th>
+        <th>{% trans "Contract" %}</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for id, vendors, models, orders, contracts in shipments %}
+    <tr data-href="{{ redmine_url }}/issues/{{ id }}/">
+        <td>{{ id }}</td>
+        <td>{{ vendors }}</td>
+        <td>{{ models }}</td>
+        <td>{{ orders }}</td>
+        <td>{{ contracts }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+<script>
+    $(document).ready(function() {
+        var table = $('#shipments').DataTable({
+        {% if LANGUAGE_CODE == 'ru' %}
+            "language": { "url": "{% static '/DataTables/i18n/Russian.json' %}" },
+        {% endif %}
+        "pageLength": 100,
+        "order": [[ 0, "desc" ]]
+        });
+    });
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const rows = document.querySelectorAll("tr[data-href]");
+        rows.forEach(row => {
+            row.addEventListener("click", () => {
+                window.location.href = row.dataset.href;
+            });
+        });
+    });
+</script>
+
+<script type="text/javascript" src="{% static 'DataTables/datatables.js' %}"></script>
+
+{% endblock %}
