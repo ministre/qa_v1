@@ -41,7 +41,7 @@ class ProtocolCreate(CreateView):
         tests = Test.objects.filter(testplan=self.object.testplan).order_by("id")
         for test in tests:
             test_results = TestResult(test=test, protocol=self.object, result=0,
-                                      config=None, info=None, comment=None)
+                                      config=None, info=None, comment='')
             test_results.save()
         return reverse('protocols')
 
