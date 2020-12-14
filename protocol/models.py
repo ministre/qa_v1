@@ -16,6 +16,16 @@ class Protocol(models.Model):
     date_of_start = models.DateField(default=datetime.now, blank=True)
     date_of_finish = models.DateField(default=datetime.now, blank=True)
 
+    def __str__(self):
+        name = 'id: ' + str(self.id)
+        if self.sw:
+            name += ' / sw ver.: ' + str(self.sw)
+        if self.date_of_start:
+            name += ' / test date: ' + str(self.date_of_start)
+        if self.date_of_finish:
+            name += ' - ' + str(self.date_of_finish)
+        return name
+
 
 class TestResult(models.Model):
     test = models.ForeignKey(Test, on_delete=models.CASCADE)

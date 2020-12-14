@@ -10,5 +10,5 @@ urlpatterns = [
     path('test_result/update/<int:pk>/', views.TestResultUpdate.as_view(), name='test_result_update'),
     path('export/<int:pk>/', views.protocol_export, name='protocol_export'),
     path('import/', views.protocol_import, name='protocol_import'),
-    path('inherit/<int:pk>/', views.protocol_inherit, name='protocol_inherit'),
+    path('copy_results/', views.protocol_copy_results, name='protocol_copy_results'),
 ]

@@ -32,7 +32,6 @@
 
     <div class="tabs-panel {% if tab_id == 1 %}is-active{% endif %}" id="general">
         <a href="{% url 'protocol_update' pk=protocol.id %}" class="button small">{% trans "Update" %}</a>
-        <a href="{% url 'protocol_inherit' pk=protocol.id %}" class="button small">{% trans "Inherit results" %}</a>
         <a href="{% url 'protocol_delete' pk=protocol.id %}" class="button alert small">{% trans "Delete" %}</a>
 
         <div class="grid-x grid-margin-x">
@@ -98,6 +97,19 @@
                         {% endif %}
 
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="cell">
+            <div class="card">
+                <div class="card-section">
+                    <h5>{% trans "Copy results from another protocol" %}</h5>
+                    <form action="{% url 'protocol_copy_results' %}" method="post">
+                        {% csrf_token %}
+                        {{ copy_test_results_form }}
+                        <input type="submit" value='{% trans "Copy" %}' class="button small success" />
+                    </form>
                 </div>
             </div>
         </div>

@@ -4,7 +4,7 @@ from device.models import Device
 from testplan.models import TestPlan, Test
 from protocol.models import Protocol, TestResult
 from django.http import HttpResponseRedirect
-from .forms import ProtocolForm, TestResultForm
+from .forms import ProtocolForm, TestResultForm, ProtocolCopyTestResultsForm
 from docx_generator.forms import BuildProtocolForm, BuildProtocolDetailedForm
 from qa_v1 import settings
 from redminelib import Redmine
@@ -18,6 +18,7 @@ from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.urls import reverse
 from django import forms
 from django.utils.translation import gettext_lazy as _
+from django.shortcuts import get_object_or_404
 
 
 @method_decorator(login_required, name='dispatch')
@@ -105,6 +106,7 @@ def protocol_details(request, pk, tab_id):
     protocol_form.fields['protocol_id'].widget = forms.HiddenInput()
     protocol_detailed_form = BuildProtocolDetailedForm(initial={'protocol_id': protocol.id})
     protocol_detailed_form.fields['protocol_id'].widget = forms.HiddenInput()
+    copy_test_results_form = ProtocolCopyTestResultsForm(device_id=protocol.device.id, dst_protocol=protocol.id)
 
     return render(request, 'protocol/protocol_details.html', {'protocol': protocol,
                                                               'zipped_results': zipped_results,
@@ -117,6 +119,7 @@ def protocol_details(request, pk, tab_id):
                                                               'tests_fail': tests_fail,
                                                               'build_protocol_form': protocol_form,
                                                               'build_protocol_detailed_form': protocol_detailed_form,
+                                                              'copy_test_results_form': copy_test_results_form,
                                                               'tab_id': tab_id})
 
 
@@ -328,10 +331,11 @@ def protocol_import(request):
 
 
 @login_required
-def protocol_inherit(request, pk):
+def protocol_copy_results(request):
     if request.method == 'POST':
-        src_protocol = request.POST['src_protocol']
-        dst_results = TestResult.objects.filter(protocol=pk)
+        src_protocol = get_object_or_404(Protocol, id=request.POST['src_protocol'])
+        dst_protocol = get_object_or_404(Protocol, id=request.POST['dst_protocol'])
+        dst_results = TestResult.objects.filter(protocol=dst_protocol)
         for dst_result in dst_results:
             src_results = TestResult.objects.filter(protocol=src_protocol)
             for src_result in src_results:
@@ -341,18 +345,10 @@ def protocol_inherit(request, pk):
                     dst_result.info = src_result.info
                     dst_result.comment = src_result.comment
                     dst_result.save()
-        return HttpResponseRedirect('/protocol/' + str(pk) + '/')
+        return HttpResponseRedirect(reverse('protocol_details', kwargs={'pk': dst_protocol.id, 'tab_id': 2}))
     else:
-        protocol = Protocol.objects.get(id=pk)
-        device = protocol.device.id
-        protocol = Protocol.objects.filter(Q(device=device) & ~Q(id=pk))
-        if protocol:
-            return render(request, 'protocol/protocol_inherit.html', {'protocol_id': pk,
-                                                                      'protocols': protocol})
-        else:
-            message = [False, _('There are no other protocols for this device')]
-            back_url = reverse('protocol_details', kwargs={'pk': pk, 'tab_id': 1})
-            return render(request, 'protocol/message.html', {'message': message, 'back_url': back_url})
+        message = [False, _('Page not found')]
+        return render(request, 'docx_generator/message.html', {'message': message})
 
 
 def get_numbers_of_results(results):

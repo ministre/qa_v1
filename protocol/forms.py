@@ -2,6 +2,7 @@ from django.forms import ModelForm, HiddenInput
 from protocol.models import Protocol, TestResult
 from django.utils.translation import gettext_lazy as _
 from django import forms
+from django.db.models import Q
 
 
 class ProtocolForm(ModelForm):
@@ -43,3 +44,18 @@ class TestResultForm(ModelForm):
             'result': forms.Select(choices=STATUS, attrs={'class': 'form-control'}),
             'test': HiddenInput(), 'protocol': HiddenInput(),
         }
+
+
+class ProtocolCopyTestResultsForm(forms.Form):
+    src_protocol = forms.ModelChoiceField(queryset=Protocol.objects.all(), label=_('Source Protocol'))
+    dst_protocol = forms.IntegerField()
+
+    def __init__(self, *args, **kwargs):
+        device_id = kwargs.pop('device_id', None)
+        dst_protocol = kwargs.pop('dst_protocol', None)
+        super(ProtocolCopyTestResultsForm, self).__init__(*args, **kwargs)
+
+        self.fields['dst_protocol'].initial = dst_protocol
+        self.fields['dst_protocol'].widget = forms.HiddenInput()
+        if device_id:
+            self.fields['src_protocol'].queryset = Protocol.objects.filter(Q(device=device_id) & ~Q(id=dst_protocol))
