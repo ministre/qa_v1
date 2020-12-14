@@ -166,32 +166,30 @@ def build_protocol_detailed(request, pk):
 
 
 @login_required
-def build_testplan(request, pk):
-    # собираем исходные данные
-    testplan = TestPlan.objects.get(id=pk)
+def build_testplan(request):
+    if request.method == "POST":
+        testplan = get_object_or_404(TestPlan, id=request.POST['testplan_id'])
+        docx_template = get_object_or_404(DocxTemplateFile, id=request.POST['docx_template_id'])
 
-    tests_table = []
-    tests = Test.objects.filter(testplan=pk).order_by("id")
-    for test in tests:
-        test_string = {'category': test.category, 'name': test.name, 'procedure': Listing(test.procedure),
-                       'expected': Listing(test.expected)}
-        tests_table.append(test_string)
+        tests_table = []
+        tests = Test.objects.filter(testplan=testplan).order_by("id")
+        for test in tests:
+            test_string = {'category': test.category, 'name': test.name, 'procedure': Listing(test.procedure),
+                           'expected': Listing(test.expected)}
+            tests_table.append(test_string)
 
-    # генерируем ПМИ
-    testplan_file = DocxTemplate("docx_templates/testplan_cpe.docx")
-
-    context = {'testplan': testplan.name, 'version': testplan.version, 'tests': tests_table}
-    testplan_file.render(context)
-#    testplan_filename = 'docx_testplans/Testplan_' + str(testplan_id) + '.docx'
-    testplan_filename = 'Testplan_' + str(pk) + '.docx'
-#    testplan_file.save(testplan_filename)
-    testplan_file.save(settings.MEDIA_ROOT + '/docx_generator/' + testplan_filename)
-    # возвращаем ПМИ
-#    file_path = os.path.join(settings.MEDIA_ROOT, testplan_filename)
-    file_path = os.path.join(settings.MEDIA_ROOT + '/docx_generator/', testplan_filename)
-    if os.path.exists(file_path):
-        with open(file_path, 'rb') as fh:
-            response = HttpResponse(fh.read(), content_type="application/vnd.ms-word")
-            response['Content-Disposition'] = 'inline; filename=' + os.path.basename(file_path)
-            return response
-    raise Http404
+        testplan_file = DocxTemplate(docx_template.file)
+        context = {'testplan': testplan.name, 'version': testplan.version, 'tests': tests_table}
+        testplan_file.render(context)
+        file = os.path.join(settings.MEDIA_ROOT + '/docx_generator/testplans/',
+                            'Testplan_' + str(testplan.id) + '.docx')
+        testplan_file.save(file)
+        if os.path.exists(file):
+            with open(file, 'rb') as fh:
+                response = HttpResponse(fh.read(), content_type="application/vnd.ms-word")
+                response['Content-Disposition'] = 'inline; filename=' + os.path.basename(file)
+                return response
+        raise Http404
+    else:
+        message = [False, _('Page not found')]
+        return render(request, 'docx_generator/message.html', {'message': message})
