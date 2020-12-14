@@ -52,18 +52,24 @@
                                 <td>{% trans "Software Version" %}:</td>
                                 <td>{{ protocol.sw }}</td>
                             </tr>
+                            {% if protocol.sw_checksum %}
                             <tr>
                                 <td>{% trans "Checksum" %}:</td>
                                 <td>{{ protocol.sw_checksum }}</td>
                             </tr>
+                            {% endif %}
+                            {% if protocol.engineer_login %}
                             <tr>
                                 <td>{% trans "Engineer Login" %}:</td>
                                 <td>{{ protocol.engineer_login }}</td>
                             </tr>
+                            {% endif %}
+                            {% if protocol.engineer_password %}
                             <tr>
                                 <td>{% trans "Engineer Password" %}:</td>
                                 <td>{{ protocol.engineer_password }}</td>
                             </tr>
+                            {% endif %}
                             <tr>
                                 <td>{% trans "Started" %}:</td>
                                 <td>{{ protocol.date_of_start }}</td>
