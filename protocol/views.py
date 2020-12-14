@@ -90,7 +90,10 @@ def protocol_details(request, pk, tab_id):
 
     tests_all = results.count()
     tests_completed = TestResult.objects.filter(Q(protocol=pk) & ~Q(result=0)).count()
-    tests_completed_percent = round(tests_completed * 100 / tests_all, 1)
+    if tests_all > 0:
+        tests_completed_percent = round(tests_completed * 100 / tests_all, 1)
+    else:
+        tests_completed_percent = 0
     tests_left = tests_all - tests_completed
     tests_success = TestResult.objects.filter(Q(protocol=pk) & Q(result=3)).count()
     tests_warn = TestResult.objects.filter(Q(protocol=pk) & Q(result=2)).count()
