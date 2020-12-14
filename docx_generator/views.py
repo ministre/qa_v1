@@ -91,7 +91,7 @@ def build_protocol(request):
 
             test = {'num': num, 'name': result.test.name, 'status': status, 'comment': Listing(result.comment)}
             tests.append(test)
-            if result.comment:
+            if result.comment != '':
                 comment = {'text': Listing(result.comment)}
                 comments.append(comment)
 
