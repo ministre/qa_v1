@@ -73,11 +73,9 @@ def build_protocol(request):
     if request.method == "POST":
         protocol = get_object_or_404(Protocol, id=request.POST['protocol_id'])
         docx_template = get_object_or_404(DocxTemplateFile, id=request.POST['docx_template_id'])
-
         tests = comments = []
         results = TestResult.objects.filter(protocol=protocol).order_by("id")
         zipped_results = zip(results, get_numbers_of_results(results))
-
         status = None
         for result, num in zipped_results:
             if result.result == 0:
@@ -88,15 +86,12 @@ def build_protocol(request):
                 status = RichText(u'\u00b1', color='black', bold=True)
             elif result.result == 3:
                 status = RichText(u'\u221a', color='green', bold=True)
-
             test = {'num': num, 'name': result.test.name, 'status': status, 'comment': Listing(result.comment)}
             tests.append(test)
             if result.comment != '' and result.comment != ' ':
                 comment = {'text': Listing(result.comment)}
                 comments.append(comment)
-
         protocol_file = DocxTemplate(docx_template.file)
-
         context = {'testplan': protocol.testplan.name,
                    'vendor': protocol.device.vendor,
                    'model': protocol.device.model,
@@ -114,7 +109,6 @@ def build_protocol(request):
                    'tests': tests,
                    'comments': comments
                    }
-
         protocol_file.render(context)
         file = os.path.join(settings.MEDIA_ROOT + '/docx_generator/protocols/',
                             'Protocol_' + str(protocol.id) + '.docx')
@@ -131,38 +125,35 @@ def build_protocol(request):
 
 
 @login_required
-def build_protocol_detailed(request, pk):
-    # собираем исходные данные
-    protocol = Protocol.objects.get(id=pk)
-    # перменные шаблона
-    testplan = protocol.testplan.name
-    vendor = protocol.device.vendor
-    model = protocol.device.model
-    hw = protocol.device.hw
-    sw = protocol.sw
-    results = TestResult.objects.filter(protocol=pk).order_by("id")
-    protocol_file = DocxTemplate("docx_templates/detailed_protocol_switches.docx")
-    results_table = []
-    for result in results:
-        result_string = {'category': result.test.category, 'name': result.test.name,
-                         'config': Listing(result.config), 'info': Listing(result.info)}
-        results_table.append(result_string)
-    context = {'vendor': vendor, 'model': model, 'hw': hw, 'sw': sw, 'tests': results_table}
-
-    protocol_file.render(context)
-#    protocol_filename = 'docx_protocols/detailed_protocol_' + str(protocol.id) + '.docx'
-    protocol_filename = 'Detailed_protocol_' + str(protocol.id) + '.docx'
-#    protocol_file.save(protocol_filename)
-    protocol_file.save(settings.MEDIA_ROOT + '/docx_generator/' + protocol_filename)
-    # возвращаем протокол
-#    file_path = os.path.join(settings.MEDIA_ROOT, protocol_filename)
-    file_path = os.path.join(settings.MEDIA_ROOT + '/docx_generator/', protocol_filename)
-    if os.path.exists(file_path):
-        with open(file_path, 'rb') as fh:
-            response = HttpResponse(fh.read(), content_type="application/vnd.ms-word")
-            response['Content-Disposition'] = 'inline; filename=' + os.path.basename(file_path)
-            return response
-    raise Http404
+def build_protocol_detailed(request):
+    if request.method == "POST":
+        protocol = get_object_or_404(Protocol, id=request.POST['protocol_id'])
+        docx_template = get_object_or_404(DocxTemplateFile, id=request.POST['docx_template_id'])
+        vendor = protocol.device.vendor
+        model = protocol.device.model
+        hw = protocol.device.hw
+        sw = protocol.sw
+        results = TestResult.objects.filter(protocol=protocol).order_by("id")
+        protocol_detailed_file = DocxTemplate(docx_template.file)
+        results_table = []
+        for result in results:
+            result_string = {'category': result.test.category, 'name': result.test.name,
+                             'config': Listing(result.config), 'info': Listing(result.info)}
+            results_table.append(result_string)
+        context = {'vendor': vendor, 'model': model, 'hw': hw, 'sw': sw, 'tests': results_table}
+        protocol_detailed_file.render(context)
+        file = os.path.join(settings.MEDIA_ROOT + '/docx_generator/protocols_detailed/',
+                            'ProtocolDetailed_' + str(protocol.id) + '.docx')
+        protocol_detailed_file.save(file)
+        if os.path.exists(file):
+            with open(file, 'rb') as fh:
+                response = HttpResponse(fh.read(), content_type="application/vnd.ms-word")
+                response['Content-Disposition'] = 'inline; filename=' + os.path.basename(file)
+                return response
+        raise Http404
+    else:
+        message = [False, _('Page not found')]
+        return render(request, 'docx_generator/message.html', {'message': message})
 
 
 @login_required
@@ -170,14 +161,12 @@ def build_testplan(request):
     if request.method == "POST":
         testplan = get_object_or_404(TestPlan, id=request.POST['testplan_id'])
         docx_template = get_object_or_404(DocxTemplateFile, id=request.POST['docx_template_id'])
-
         tests_table = []
         tests = Test.objects.filter(testplan=testplan).order_by("id")
         for test in tests:
             test_string = {'category': test.category, 'name': test.name, 'procedure': Listing(test.procedure),
                            'expected': Listing(test.expected)}
             tests_table.append(test_string)
-
         testplan_file = DocxTemplate(docx_template.file)
         context = {'testplan': testplan.name, 'version': testplan.version, 'tests': tests_table}
         testplan_file.render(context)
