@@ -1,4 +1,4 @@
-from django.forms import ModelForm
+from django.forms import ModelForm, HiddenInput
 from device.models import DeviceType, Device
 from django.utils.translation import gettext_lazy as _
 
@@ -12,6 +12,8 @@ class DeviceTypeForm(ModelForm):
             'name': _('Description'),
         }
         fields = '__all__'
+        widgets = {'created_by': HiddenInput(), 'created_at': HiddenInput(),
+                   'updated_by': HiddenInput(), 'updated_at': HiddenInput()}
 
 
 class DeviceForm(ModelForm):

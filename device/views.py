@@ -12,6 +12,7 @@ from django.db.models import Q
 from django.utils.decorators import method_decorator
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.urls import reverse
+from django.utils import timezone
 
 
 @method_decorator(login_required, name='dispatch')
@@ -27,6 +28,9 @@ class DeviceTypeCreate(CreateView):
     form_class = DeviceTypeForm
     template_name = 'device/create.html'
 
+    def get_initial(self):
+        return {'created_by': self.request.user, 'updated_by': self.request.user}
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['back_url'] = reverse('device_types')
@@ -41,6 +45,9 @@ class DeviceTypeUpdate(UpdateView):
     model = DeviceType
     form_class = DeviceTypeForm
     template_name = 'device/update.html'
+
+    def get_initial(self):
+        return {'updated_by': self.request.user, 'updated_at': timezone.now()}
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
