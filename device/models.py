@@ -12,8 +12,8 @@ class DeviceType(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
     updated_by = models.ForeignKey(User, models.SET_NULL, related_name='device_type_u', blank=True, null=True)
     updated_at = models.DateTimeField(default=timezone.now)
-    main_type = models.CharField(max_length=50, blank=True, null=True)
-    sub_type = models.CharField(max_length=50, blank=True, null=True)
+    main_type = models.CharField(max_length=50, blank=True, null=True, default='predicate')
+    sub_type = models.CharField(max_length=50, blank=True, null=True, default='predicate')
 
     class Meta:
         ordering = ["name"]
