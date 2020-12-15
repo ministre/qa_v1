@@ -76,7 +76,10 @@ class DeviceTypeDelete(DeleteView):
 def device_type_details(request, pk, tab_id):
     device_type = get_object_or_404(DeviceType, id=pk)
     redmine_url = settings.REDMINE_URL
-    return render(request, 'device/device_type_details.html', {'device_type': device_type, 'redmine_url': redmine_url,
+    devices_count = device_type.devices_count()
+    return render(request, 'device/device_type_details.html', {'device_type': device_type,
+                                                               'devices_count': devices_count,
+                                                               'redmine_url': redmine_url,
                                                                'tab_id': tab_id})
 
 

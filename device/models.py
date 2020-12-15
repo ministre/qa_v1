@@ -21,6 +21,10 @@ class DeviceType(models.Model):
     def __str__(self):
         return self.name
 
+    def devices_count(self):
+        count = Device.objects.filter(type=self).count()
+        return count
+
 
 class Device(models.Model):
     project_id = models.CharField(max_length=50)
