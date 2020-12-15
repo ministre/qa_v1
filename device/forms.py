@@ -7,9 +7,10 @@ class DeviceTypeForm(ModelForm):
     class Meta:
         model = DeviceType
         labels = {
-            'main_type': _('Type'),
-            'sub_type': _('Subtype'),
-            'name': _('Description'),
+            'name': _('Name'),
+            'redmine_project': _('Redmine Project'),
+            'redmine_project_name': _('Redmine Project Name'),
+            'redmine_parent': _('Redmine Parent Project'),
         }
         fields = '__all__'
         widgets = {'created_by': HiddenInput(), 'created_at': HiddenInput(),

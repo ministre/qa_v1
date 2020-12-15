@@ -15,19 +15,35 @@
                 <table class="unstriped">
                     <tr>
                         <td>ID:</td>
-                        <td>{{ device.id }}</td>
+                        <td>{{ device_type.id }}</td>
                     </tr>
                     <tr>
-                        <td>{% trans "Type" %}:</td>
-                        <td>{{ device_type.main_type }}</td>
-                    </tr>
-                    <tr>
-                        <td>{% trans "Subtype" %}:</td>
-                        <td>{{ device_type.sub_type }}</td>
-                    </tr>
-                    <tr>
-                        <td>{% trans "Description" %}:</td>
+                        <td>{% trans "Name" %}:</td>
                         <td>{{ device_type.name }}</td>
+                    </tr>
+                    <tr>
+                        <td>{% trans "Redmine Project" %}:</td>
+                        <td>{% if device_type.redmine_project %}{{ device_type.redmine_project }}{% endif %}</td>
+                    </tr>
+                    <tr>
+                        <td>{% trans "Redmine Project Name" %}:</td>
+                        <td>{% if device_type.redmine_project_name %}{{ device_type.redmine_project_name }}{% endif %}</td>
+                    </tr>
+                    <tr>
+                        <td>{% trans "Redmine Parent Project" %}:</td>
+                        <td>{% if device_type.redmine_parent %}{{ device_type.redmine_parent }}{% endif %}</td>
+                    </tr>
+                    <tr>
+                        <td>{% trans "Created" %}:</td>
+                        <td>{{ device_type.created_at }} {% if device_type.created_by %}({{ device_type.created_by }}){% endif %}</td>
+                    </tr>
+                    <tr>
+                        <td>{% trans "Last Update" %}:</td>
+                        <td>{{ device_type.updated_at }} {% if device_type.updated_by %}({{ device_type.updated_by }}){% endif %}</td>
+                    </tr>
+                    <tr>
+                        <td>Tags:</td>
+                        <td>{{ device_type.main_type }} / {{ device_type.sub_type }}</td>
                     </tr>
                 </table>
             </div>
