@@ -21,7 +21,7 @@
     {% for device_type in device_types %}
     <tr data-href="{% url 'device_type_details' pk=device_type.id %}">
         <td>{{ device_type.id }}</td>
-        <td>{{ device_type.name }} ({{ device_type.main_type }} / {{ device_type.sub_type }})</td>
+        <td>{{ device_type.name }}</td>
         <td>{% if device_type.redmine_project %}{{ device_type.redmine_project }}{% endif %}</td>
         <td>{% if device_type.redmine_parent %}{{ device_type.redmine_parent }}{% endif %}</td>
     </tr>
