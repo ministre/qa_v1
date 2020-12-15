@@ -6,45 +6,77 @@
 
 <p><a href="{% url 'device_types' %}">{% trans "Device Types" %}</a> &raquo; {{ device_type }}</p>
 
-<div class="grid-x grid-margin-x">
-    <div class="cell">
-        <div class="card">
-            <div class="card-section">
-                <a href="{% url 'device_type_update' pk=device_type.id %}" class="button small">{% trans "Update" %}</a>
-                <a href="{% url 'device_type_delete' pk=device_type.id %}" class="button alert small">{% trans "Delete" %}</a>
-                <table class="unstriped">
-                    <tr>
-                        <td>ID:</td>
-                        <td>{{ device_type.id }}</td>
-                    </tr>
-                    <tr>
-                        <td>{% trans "Name" %}:</td>
-                        <td>{{ device_type.name }}</td>
-                    </tr>
-                    <tr>
-                        <td>{% trans "Redmine Project" %}:</td>
-                        <td>{% if device_type.redmine_project %}{{ device_type.redmine_project }}{% endif %}</td>
-                    </tr>
-                    <tr>
-                        <td>{% trans "Redmine Project Name" %}:</td>
-                        <td>{% if device_type.redmine_project_name %}{{ device_type.redmine_project_name }}{% endif %}</td>
-                    </tr>
-                    <tr>
-                        <td>{% trans "Redmine Parent Project" %}:</td>
-                        <td>{% if device_type.redmine_parent %}{{ device_type.redmine_parent }}{% endif %}</td>
-                    </tr>
-                    <tr>
-                        <td>{% trans "Created" %}:</td>
-                        <td>{{ device_type.created_at }} {% if device_type.created_by %}({{ device_type.created_by }}){% endif %}</td>
-                    </tr>
-                    <tr>
-                        <td>{% trans "Last Update" %}:</td>
-                        <td>{{ device_type.updated_at }} {% if device_type.updated_by %}({{ device_type.updated_by }}){% endif %}</td>
-                    </tr>
-                </table>
+<ul class="tabs" data-tabs id="device_type-tabs">
+    <li class="tabs-title {% if tab_id == 1 %} is-active{% endif %}">
+        <a data-tabs-target="general" href="#general">{% trans "General" %}</a>
+    </li>
+    <li class="tabs-title {% if tab_id == 2 %} is-active{% endif %}">
+        <a data-tabs-target="redmine" href="#redmine">Redmine</a>
+    </li>
+</ul>
+
+<div class="tabs-content" data-tabs-content="device_type-tabs">
+    <div class="tabs-panel{% if tab_id == 1 %} is-active{% endif %}" id="general">
+        <a href="{% url 'device_type_update' pk=device_type.id %}" class="button small">{% trans "Update" %}</a>
+        <a href="{% url 'device_type_delete' pk=device_type.id %}" class="button alert small">{% trans "Delete" %}</a>
+
+        <div class="grid-x grid-margin-x">
+            <div class="cell">
+                <div class="card">
+                    <div class="card-section">
+                        <table class="unstriped">
+                            <tr>
+                                <td>ID:</td>
+                                <td>{{ device_type.id }}</td>
+                            </tr>
+                            <tr>
+                                <td>{% trans "Name" %}:</td>
+                                <td>{{ device_type.name }}</td>
+                            </tr>
+                            <tr>
+                                <td>{% trans "Redmine Project" %}:</td>
+                                <td>{% if device_type.redmine_project %}{{ device_type.redmine_project }}{% endif %}</td>
+                            </tr>
+                            <tr>
+                                <td>{% trans "Redmine Project Name" %}:</td>
+                                <td>{% if device_type.redmine_project_name %}{{ device_type.redmine_project_name }}{% endif %}</td>
+                            </tr>
+                            <tr>
+                                <td>{% trans "Redmine Parent Project" %}:</td>
+                                <td>{% if device_type.redmine_parent %}{{ device_type.redmine_parent }}{% endif %}</td>
+                            </tr>
+                            <tr>
+                                <td>{% trans "Created" %}:</td>
+                                <td>{{ device_type.created_at }} {% if device_type.created_by %}({{ device_type.created_by }}){% endif %}</td>
+                            </tr>
+                            <tr>
+                                <td>{% trans "Last Update" %}:</td>
+                                <td>{{ device_type.updated_at }} {% if device_type.updated_by %}({{ device_type.updated_by }}){% endif %}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+
+    <div class="tabs-panel{% if tab_id == 2 %} is-active{% endif %}" id="redmine">
+        {% if device_type.redmine_project %}
+        <div class="grid-x grid-margin-x">
+            <div class="cell">
+                <div class="card">
+                    <div class="card-section">
+                        <h5>Redmine Project Wiki</h5>
+                        <p>
+                            <a href="{{ redmine_url }}/projects/{{ device_type.redmine_project }}/wiki/">{{ redmine_url }}/projects/{{ device_type.redmine_project }}/wiki/</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
 </div>
 
 {% endblock %}

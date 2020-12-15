@@ -37,7 +37,7 @@ class DeviceTypeCreate(CreateView):
         return context
 
     def get_success_url(self):
-        return reverse('device_types')
+        return reverse('device_type_details', kwargs={'pk': self.object.id, 'tab_id': 1})
 
 
 @method_decorator(login_required, name='dispatch')
@@ -51,11 +51,11 @@ class DeviceTypeUpdate(UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['back_url'] = reverse('device_type_details', kwargs={'pk': self.object.id})
+        context['back_url'] = reverse('device_type_details', kwargs={'pk': self.object.id, 'tab_id': 1})
         return context
 
     def get_success_url(self):
-        return reverse('device_types')
+        return reverse('device_type_details', kwargs={'pk': self.object.id, 'tab_id': 1})
 
 
 @method_decorator(login_required, name='dispatch')
@@ -65,7 +65,7 @@ class DeviceTypeDelete(DeleteView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['back_url'] = reverse('device_type_details', kwargs={'pk': self.object.id})
+        context['back_url'] = reverse('device_type_details', kwargs={'pk': self.object.id, 'tab_id': 1})
         return context
 
     def get_success_url(self):
@@ -73,9 +73,11 @@ class DeviceTypeDelete(DeleteView):
 
 
 @login_required
-def device_type_details(request, pk):
+def device_type_details(request, pk, tab_id):
     device_type = get_object_or_404(DeviceType, id=pk)
-    return render(request, 'device/device_type_details.html', {'device_type': device_type})
+    redmine_url = settings.REDMINE_URL
+    return render(request, 'device/device_type_details.html', {'device_type': device_type, 'redmine_url': redmine_url,
+                                                               'tab_id': tab_id})
 
 
 @method_decorator(login_required, name='dispatch')
