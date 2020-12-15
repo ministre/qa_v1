@@ -14,7 +14,8 @@ class DeviceTypeForm(ModelForm):
         }
         fields = '__all__'
         widgets = {'created_by': HiddenInput(), 'created_at': HiddenInput(),
-                   'updated_by': HiddenInput(), 'updated_at': HiddenInput()}
+                   'updated_by': HiddenInput(), 'updated_at': HiddenInput(),
+                   'main_type': HiddenInput(), 'sub_type': HiddenInput()}
 
 
 class DeviceForm(ModelForm):
