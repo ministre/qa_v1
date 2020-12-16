@@ -3,6 +3,20 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 
 
+class Vendor(models.Model):
+    name = models.CharField(max_length=400)
+    created_by = models.ForeignKey(User, models.SET_NULL, related_name='vendor_c', blank=True, null=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_by = models.ForeignKey(User, models.SET_NULL, related_name='vendor_u', blank=True, null=True)
+    updated_at = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        ordering = ["name"]
+
+    def __str__(self):
+        return self.name
+
+
 class DeviceType(models.Model):
     name = models.CharField(max_length=300)
     redmine_project = models.CharField(max_length=100, blank=True, null=True)

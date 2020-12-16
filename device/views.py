@@ -4,15 +4,79 @@ from qa_v1 import settings
 from redminelib import Redmine
 from redminelib.exceptions import ResourceNotFoundError
 import re
-from device.models import Device, DeviceType
+from device.models import Vendor, Device, DeviceType
 from django.http import HttpResponseRedirect
-from .forms import DeviceTypeForm, DeviceForm
+from .forms import VendorForm, DeviceTypeForm, DeviceForm
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
 from django.utils.decorators import method_decorator
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.urls import reverse
 from django.utils import timezone
+
+
+@method_decorator(login_required, name='dispatch')
+class VendorListView(ListView):
+    context_object_name = 'vendors'
+    queryset = Vendor.objects.all().order_by('name')
+    template_name = 'device/vendors.html'
+
+
+@method_decorator(login_required, name='dispatch')
+class VendorCreate(CreateView):
+    model = Vendor
+    form_class = VendorForm
+    template_name = 'device/create.html'
+
+    def get_initial(self):
+        return {'created_by': self.request.user, 'updated_by': self.request.user}
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('vendors')
+        return context
+
+    def get_success_url(self):
+        return reverse('vendors')
+
+
+@method_decorator(login_required, name='dispatch')
+class VendorUpdate(UpdateView):
+    model = Vendor
+    form_class = VendorForm
+    template_name = 'device/update.html'
+
+    def get_initial(self):
+        return {'updated_by': self.request.user, 'updated_at': timezone.now()}
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('vendor_details', kwargs={'pk': self.object.id})
+        return context
+
+    def get_success_url(self):
+        Item.update_timestamp(foo=self.object, user=self.request.user)
+        return reverse('vendor_details', kwargs={'pk': self.object.id})
+
+
+@method_decorator(login_required, name='dispatch')
+class VendorDelete(DeleteView):
+    model = Vendor
+    template_name = 'device/delete.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('vendor_details', kwargs={'pk': self.object.id})
+        return context
+
+    def get_success_url(self):
+        return reverse('vendors')
+
+
+@login_required
+def vendor_details(request, pk):
+    vendor = get_object_or_404(Vendor, id=pk)
+    return render(request, 'device/vendor_details.html', {'vendor': vendor})
 
 
 @method_decorator(login_required, name='dispatch')

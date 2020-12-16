@@ -1,0 +1,35 @@
+
+{% extends "device/wrapper.html" %}
+
+{% load i18n static %}
+
+{% block content %}
+
+<p><a href="{% url 'vendors' %}">{% trans "Vendors" %}</a> &raquo; {{ vendor.name}}</p>
+
+<div class="grid-x grid-margin-x">
+    <div class="cell">
+        <div class="card">
+            <div class="card-section">
+                <a href="{% url 'vendor_update' pk=vendor.id %}" class="button small">{% trans "Update" %}</a>
+                <a href="{% url 'vendor_delete' pk=vendor.id %}" class="button alert small">{% trans "Delete" %}</a>
+                <table>
+                    <tr>
+                        <td>{% trans "Name" %}:</td>
+                        <td>{{ vendor.name }}</td>
+                    </tr>
+                    <tr>
+                        <td>{% trans "Created" %}:</td>
+                        <td>{{ vendor.created_at }} {% if vendor.created_by %}({{ vendor.created_by }}){% endif %}</td>
+                    </tr>
+                    <tr>
+                        <td>{% trans "Last Update" %}:</td>
+                        <td>{{ vendor.updated_at }} {% if vendor.updated_by %}({{ vendor.updated_by }}){% endif %}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
