@@ -55,7 +55,6 @@ class VendorUpdate(UpdateView):
         return context
 
     def get_success_url(self):
-        Item.update_timestamp(foo=self.object, user=self.request.user)
         return reverse('vendor_details', kwargs={'pk': self.object.id})
 
 
