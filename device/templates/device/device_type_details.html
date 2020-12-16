@@ -42,6 +42,10 @@
                                 <td>{% if device_type.redmine_project_name %}{{ device_type.redmine_project_name }}{% endif %}</td>
                             </tr>
                             <tr>
+                                <td>{% trans "Redmine Project Description" %}:</td>
+                                <td>{% if device_type.redmine_project_desc %}{{ device_type.redmine_project_desc }}{% endif %}</td>
+                            </tr>
+                            <tr>
                                 <td>{% trans "Redmine Parent Project" %}:</td>
                                 <td>{% if device_type.redmine_parent %}{{ device_type.redmine_parent }}{% endif %}</td>
                             </tr>
