@@ -42,11 +42,11 @@ class DeviceType(models.Model):
 
 
 class Device(models.Model):
-    project_id = models.CharField(max_length=50)
     type = models.ForeignKey(DeviceType, on_delete=models.CASCADE)
-    vendor = models.CharField(max_length=50)
+    vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE, blank=True, null=True)
     model = models.CharField(max_length=50)
     hw = models.CharField(max_length=50, blank=True, null=True)
+    project_id = models.CharField(max_length=50, blank=True, null=True)
     interfaces = models.CharField(max_length=300, blank=True, null=True)
     leds = models.CharField(max_length=300, blank=True, null=True)
     buttons = models.CharField(max_length=300, blank=True, null=True)
