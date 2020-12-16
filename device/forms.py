@@ -10,6 +10,7 @@ class DeviceTypeForm(ModelForm):
             'name': _('Name'),
             'redmine_project': _('Redmine Project'),
             'redmine_project_name': _('Redmine Project Name'),
+            'redmine_project_desc': _('Redmine Project Description'),
             'redmine_parent': _('Redmine Parent Project'),
         }
         fields = '__all__'
