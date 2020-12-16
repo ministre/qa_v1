@@ -8,6 +8,11 @@ class TestPlan(models.Model):
     def __str__(self):
         return str(self.name) + ' (' + str(self.version) + ')'
 
+    def protocols_count(self):
+        from protocol.models import Protocol
+        count = Protocol.objects.filter(testplan=self).count()
+        return count
+
 
 class Test(models.Model):
     testplan = models.ForeignKey(TestPlan, on_delete=models.CASCADE)
