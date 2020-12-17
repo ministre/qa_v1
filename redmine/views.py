@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from device.models import DeviceType
 from .models import RedmineProject, RedmineDeviceType
 from django.shortcuts import get_object_or_404
@@ -7,6 +8,7 @@ from django.urls import reverse
 from django.utils.datastructures import MultiValueDictKeyError
 
 
+@login_required
 def redmine_device_type_export(request):
     if request.method == "POST":
         device_type = get_object_or_404(DeviceType, id=request.POST['device_type_id'])
