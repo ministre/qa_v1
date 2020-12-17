@@ -5,5 +5,5 @@ python-redmine==2.3.0
 python-docx==0.8.10
 docxtpl==0.11.2
 textile==4.0.1
-requests==2.25.0
+requests==2.25.1
 gunicorn==20.0.4

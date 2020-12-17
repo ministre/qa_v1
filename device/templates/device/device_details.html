@@ -4,7 +4,7 @@
 
 {% block content %}
 
-<p><a href="{% url 'devices' %}">{% trans "Devices" %}</a> &raquo; {{ device.vendor }} {{ device.model }} ({{ device.hw }})</p>
+<p><a href="{% url 'devices' %}">{% trans "Devices" %}</a> &raquo; {{ device.vendor }} {{ device }}</p>
 
 <ul class="tabs" data-tabs id="device-tabs">
     <li class="tabs-title {% if tab_id == 1 %} is-active{% endif %}">
@@ -47,7 +47,7 @@
                             </tr>
                             <tr>
                                 <td>{% trans "Hardware Version" %}:</td>
-                                <td>{{ device.hw }}</td>
+                                <td>{% if device.hw %}{{ device.hw }}{% endif %}</td>
                             </tr>
                             <tr>
                                 <td>{% trans "Interfaces" %}:</td>
