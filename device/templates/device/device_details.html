@@ -30,10 +30,6 @@
                                 <td>{{ device.id }}</td>
                             </tr>
                             <tr>
-                                <td>Redmine Project ID:</td>
-                                <td>{{ device.project_id }}</td>
-                            </tr>
-                            <tr>
                                 <td>{% trans "Device Type" %}:</td>
                                 <td>{{ device.type }}</td>
                             </tr>
@@ -48,6 +44,50 @@
                             <tr>
                                 <td>{% trans "Hardware Version" %}:</td>
                                 <td>{% if device.hw %}{{ device.hw }}{% endif %}</td>
+                            </tr>
+                            <tr>
+                                <td>{% trans "Redmine Project" %}:</td>
+                                <td>{% if device.redmine_project %}{{ device.redmine_project }}{% endif %}</td>
+                            </tr>
+                            <tr>
+                                <td>{% trans "Redmine Project Name" %}:</td>
+                                <td>{% if device.redmine_project_name %}{{ device.redmine_project_name }}{% endif %}</td>
+                            </tr>
+                            <tr>
+                                <td>{% trans "Redmine Project Description" %}:</td>
+                                <td>{% if device.redmine_project_desc %}{{ device.redmine_project_desc }}{% endif %}</td>
+                            </tr>
+                            <tr>
+                                <td>{% trans "Redmine Parent Project" %}:</td>
+                                <td>{% if device.redmine_parent %}{{ device.redmine_parent }}{% endif %}</td>
+                            </tr>
+                            <tr>
+                                <td>{% trans "Created" %}:</td>
+                                <td>{{ device.created_at }} {% if device.created_by %}({{ device.created_by }}){% endif %}</td>
+                            </tr>
+                            <tr>
+                                <td>{% trans "Last Update" %}:</td>
+                                <td>{{ device.updated_at }} {% if device.updated_by %}({{ device.updated_by }}){% endif %}</td>
+                            </tr>
+                            <tr>
+                                <td>{% trans "Protocols amount" %}:</td>
+                                <td>{{ protocols_count }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid-x grid-margin-x">
+            <div class="cell">
+                <div class="card">
+                    <div class="card-section">
+                        <h5>{% trans "Additional Information" %}</h5>
+                        <table class="unstriped">
+                            <tr>
+                                <td>Project ID:</td>
+                                <td>{{ device.project_id }}</td>
                             </tr>
                             <tr>
                                 <td>{% trans "Interfaces" %}:</td>
@@ -74,6 +114,7 @@
                 </div>
             </div>
         </div>
+
     </div>
 
     <div class="tabs-panel {% if tab_id == 2 %}is-active{% endif %}" id="redmine">

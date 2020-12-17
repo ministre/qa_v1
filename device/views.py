@@ -75,7 +75,8 @@ class VendorDelete(DeleteView):
 @login_required
 def vendor_details(request, pk):
     vendor = get_object_or_404(Vendor, id=pk)
-    return render(request, 'device/vendor_details.html', {'vendor': vendor})
+    devices_count = vendor.devices_count()
+    return render(request, 'device/vendor_details.html', {'vendor': vendor, 'devices_count': devices_count})
 
 
 @method_decorator(login_required, name='dispatch')
@@ -159,6 +160,9 @@ class DeviceCreate(CreateView):
     form_class = DeviceForm
     template_name = 'device/create.html'
 
+    def get_initial(self):
+        return {'created_by': self.request.user, 'updated_by': self.request.user}
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['back_url'] = reverse('devices')
@@ -173,6 +177,9 @@ class DeviceUpdate(UpdateView):
     model = Device
     form_class = DeviceForm
     template_name = 'device/update.html'
+
+    def get_initial(self):
+        return {'updated_by': self.request.user, 'updated_at': timezone.now()}
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -200,7 +207,9 @@ class DeviceDelete(DeleteView):
 @login_required
 def device_details(request, pk, tab_id):
     device = get_object_or_404(Device, id=pk)
-    return render(request, 'device/device_details.html', {'device': device, 'tab_id': tab_id})
+    protocols_count = device.protocols_count()
+    return render(request, 'device/device_details.html', {'device': device, 'protocols_count': protocols_count,
+                                                          'tab_id': tab_id})
 
 
 @login_required

@@ -16,6 +16,10 @@ class Vendor(models.Model):
     def __str__(self):
         return self.name
 
+    def devices_count(self):
+        count = Device.objects.filter(vendor=self).count()
+        return count
+
 
 class DeviceType(models.Model):
     name = models.CharField(max_length=300)
@@ -70,3 +74,8 @@ class Device(models.Model):
         if self.hw:
             name += ' (' + str(self.hw) + ')'
         return name
+
+    def protocols_count(self):
+        from protocol.models import Protocol
+        count = Protocol.objects.filter(device=self).count()
+        return count

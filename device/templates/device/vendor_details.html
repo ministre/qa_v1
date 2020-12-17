@@ -26,6 +26,10 @@
                         <td>{% trans "Last Update" %}:</td>
                         <td>{{ vendor.updated_at }} {% if vendor.updated_by %}({{ vendor.updated_by }}){% endif %}</td>
                     </tr>
+                    <tr>
+                        <td>{% trans "Devices amount" %}:</td>
+                        <td>{{ devices_count }}</td>
+                    </tr>
                 </table>
             </div>
         </div>
