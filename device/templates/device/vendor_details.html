@@ -13,7 +13,7 @@
             <div class="card-section">
                 <a href="{% url 'vendor_update' pk=vendor.id %}" class="button small">{% trans "Update" %}</a>
                 <a href="{% url 'vendor_delete' pk=vendor.id %}" class="button alert small">{% trans "Delete" %}</a>
-                <table>
+                <table class="unstriped">
                     <tr>
                         <td>{% trans "Name" %}:</td>
                         <td>{{ vendor.name }}</td>
