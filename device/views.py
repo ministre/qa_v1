@@ -208,8 +208,9 @@ class DeviceDelete(DeleteView):
 def device_details(request, pk, tab_id):
     device = get_object_or_404(Device, id=pk)
     protocols_count = device.protocols_count()
+    redmine_url = settings.REDMINE_URL
     return render(request, 'device/device_details.html', {'device': device, 'protocols_count': protocols_count,
-                                                          'tab_id': tab_id})
+                                                          'redmine_url': redmine_url, 'tab_id': tab_id})
 
 
 @login_required

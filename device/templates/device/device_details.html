@@ -113,18 +113,21 @@
 
     </div>
 
-    <div class="tabs-panel {% if tab_id == 2 %}is-active{% endif %}" id="redmine">
+    <div class="tabs-panel{% if tab_id == 2 %} is-active{% endif %}" id="redmine">
+        {% if device.redmine_project %}
         <div class="grid-x grid-margin-x">
             <div class="cell">
                 <div class="card">
-
                     <div class="card-section">
-                        <a href="{% url 'device_export' pk=device.id %}" class="button small">{% trans "Export" %}</a>
+                        <h5>Redmine Project Wiki</h5>
+                        <p>
+                            <a href="{{ redmine_url }}/projects/{{ device.redmine_project }}/wiki/">{{ redmine_url }}/projects/{{ device.redmine_project }}/wiki/</a>
+                        </p>
                     </div>
-
                 </div>
             </div>
         </div>
+        {% endif %}
     </div>
 
 </div>
