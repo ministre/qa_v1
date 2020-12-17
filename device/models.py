@@ -59,7 +59,6 @@ class Device(models.Model):
     updated_by = models.ForeignKey(User, models.SET_NULL, related_name='device_u', blank=True, null=True)
     updated_at = models.DateTimeField(default=timezone.now)
     #
-    project_id = models.CharField(max_length=50, blank=True, null=True)
     interfaces = models.CharField(max_length=300, blank=True, null=True)
     leds = models.CharField(max_length=300, blank=True, null=True)
     buttons = models.CharField(max_length=300, blank=True, null=True)

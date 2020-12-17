@@ -278,16 +278,6 @@ def device_export(request, pk):
 
 
 @login_required
-def copy_projects(request):
-    devices = Device.objects.all()
-    for device in devices:
-        if device.project_id:
-            device.redmine_project = device.project_id
-            device.save()
-    return HttpResponseRedirect('/device/')
-
-
-@login_required
 def device_import(request):
     if request.method == 'POST':
         project_id = request.POST['project_id']
