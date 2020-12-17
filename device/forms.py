@@ -34,11 +34,14 @@ class DeviceForm(ModelForm):
     class Meta:
         model = Device
         labels = {
-            'project_id': _('Project ID'),
             'type': _('Device Type'),
             'vendor': _('Vendor'),
             'model': _('Model'),
             'hw': _('Hardware Version'),
+            'redmine_project': _('Redmine Project'),
+            'redmine_project_name': _('Redmine Project Name'),
+            'redmine_project_desc': _('Redmine Project Description'),
+            'redmine_parent': _('Redmine Parent Project'),
             'interfaces': _('Interfaces'),
             'leds': _('Leds'),
             'buttons': _('Buttons'),
@@ -46,3 +49,5 @@ class DeviceForm(ModelForm):
             'memory': _('Memory'),
         }
         fields = '__all__'
+        widgets = {'created_by': HiddenInput(), 'created_at': HiddenInput(),
+                   'updated_by': HiddenInput(), 'updated_at': HiddenInput()}
