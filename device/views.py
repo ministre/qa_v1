@@ -7,6 +7,7 @@ import re
 from device.models import Vendor, Device, DeviceType
 from django.http import HttpResponseRedirect
 from .forms import VendorForm, DeviceTypeForm, DeviceForm
+from redmine.forms import RedmineDeviceTypeExportForm
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
 from django.utils.decorators import method_decorator
@@ -139,11 +140,18 @@ class DeviceTypeDelete(DeleteView):
 @login_required
 def device_type_details(request, pk, tab_id):
     device_type = get_object_or_404(DeviceType, id=pk)
-    redmine_url = settings.REDMINE_URL
     devices_count = device_type.devices_count()
+    redmine_url = settings.REDMINE_URL
+    export_form = RedmineDeviceTypeExportForm(initial={'device_type_id': device_type.id,
+                                                       'redmine_project': device_type.redmine_project,
+                                                       'redmine_project_name': device_type.redmine_project_name,
+                                                       'redmine_project_desc': device_type.redmine_project_name,
+                                                       'redmine_parent': device_type.redmine_parent,
+                                                       'general_info': True})
     return render(request, 'device/device_type_details.html', {'device_type': device_type,
                                                                'devices_count': devices_count,
                                                                'redmine_url': redmine_url,
+                                                               'export_form': export_form,
                                                                'tab_id': tab_id})
 
 

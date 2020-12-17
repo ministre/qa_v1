@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'testplan',
     'protocol',
     'docx_generator',
+    'redmine',
     'store',
     'shipment',
     'tcp_udp_check',

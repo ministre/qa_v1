@@ -27,6 +27,7 @@ urlpatterns = [
     path('testplan/', include('testplan.urls')),
     path('protocol/', include('protocol.urls')),
     path('docx/', include('docx_generator.urls')),
+    path('redmine/', include('redmine.urls')),
     path('store/', include('store.urls')),
     path('shipment/', include('shipment.urls')),
     path('tcp_udp_check/', include('tcp_udp_check.urls')),
