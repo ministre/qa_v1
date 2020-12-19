@@ -1,7 +1,7 @@
 from redminelib import Redmine
 from qa_v1 import settings
 from redminelib.exceptions import ResourceNotFoundError, ForbiddenError, AuthError, ValidationError
-from device.models import DeviceType
+from device.models import DeviceType, Device
 from django.utils.translation import gettext_lazy as _
 
 
@@ -82,7 +82,7 @@ class RedmineProject:
             else:
                 self.redmine.wiki_page.update(wiki_title, project_id=project, text=wiki_text)
             return [True, _('Wiki updated')]
-        elif is_wiki[0] == 400:
+        elif is_wiki[0] == 404:
             if parent_wiki_title:
                 self.redmine.wiki_page.create(project_id=project, title=wiki_title, text=wiki_text, parent_title='wiki')
             else:
@@ -115,6 +115,44 @@ class RedmineDeviceType:
             message = redmine_project[1]
             wiki = RedmineDeviceType.build_wiki(device_type=device_type, project_name=project_name,
                                                 general_info=general_info)
+            is_wiki = r.create_or_update_wiki(project=project, wiki_title='Wiki', wiki_text=wiki)
+            if not is_wiki[0]:
+                return is_wiki
+            else:
+                message += '. ' + str(is_wiki[1]) + '.'
+                return [True, message]
+
+
+class RedmineDevice:
+    @staticmethod
+    def build_wiki(device: Device, project_name: str, general_info: bool):
+        wiki = 'h1. ' + project_name + '\r\n\r'
+        if general_info:
+            wiki += '\nh2. ' + str(_('General')) + '\r' \
+                    '\n\r' \
+                    '\n| ' + str(_('Device Type')) + ': | ' + device.type.name + ' |\r' \
+                    '\n| ' + str(_('Vendor')) + ': | ' + device.vendor.name + ' |\r' \
+                    '\n| ' + str(_('Model')) + ': | ' + device.model + ' |\r'
+
+            if device.hw:
+                wiki += '\n| ' + str(_('Hardware Version')) + ': | ' + device.hw + ' |\r' \
+
+            wiki += '\n\r' \
+                    '\nh2. Внешний вид\r\n\r' \
+                    '\nh2. Результаты испытаний\r\n\r'
+        return wiki
+
+    @staticmethod
+    def export(device: Device, project: str, project_name: str, project_desc: str, project_parent: str,
+               general_info: bool):
+        r = RedmineProject()
+        redmine_project = r.create_or_update_project(project=project, project_name=project_name,
+                                                     project_desc=project_desc, project_parent=project_parent)
+        if not redmine_project[0]:
+            return redmine_project
+        else:
+            message = redmine_project[1]
+            wiki = RedmineDevice.build_wiki(device=device, project_name=project_name, general_info=general_info)
             is_wiki = r.create_or_update_wiki(project=project, wiki_title='Wiki', wiki_text=wiki)
             if not is_wiki[0]:
                 return is_wiki

@@ -26,6 +26,5 @@ urlpatterns = [
     path('details/<int:pk>/<int:tab_id>', views.device_details, name='device_details'),
 
     # Redmine
-    path('export/<int:pk>', views.device_export, name='device_export'),
     path('import/', views.device_import, name='device_import'),
 ]

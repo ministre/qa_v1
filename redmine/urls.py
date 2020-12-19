@@ -3,4 +3,5 @@ from . import views
 
 urlpatterns = [
     path('device_type/export', views.redmine_device_type_export, name='redmine_device_type_export'),
+    path('device/export', views.redmine_device_export, name='redmine_device_export'),
 ]

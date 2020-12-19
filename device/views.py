@@ -7,7 +7,7 @@ import re
 from device.models import Vendor, Device, DeviceType
 from django.http import HttpResponseRedirect
 from .forms import VendorForm, DeviceTypeForm, DeviceForm
-from redmine.forms import RedmineDeviceTypeExportForm
+from redmine.forms import RedmineDeviceTypeExportForm, RedmineDeviceExportForm
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
 from django.utils.decorators import method_decorator
@@ -221,73 +221,15 @@ def device_details(request, pk, tab_id):
     device = get_object_or_404(Device, id=pk)
     protocols_count = device.protocols_count()
     redmine_url = settings.REDMINE_URL
+    export_form = RedmineDeviceExportForm(initial={'device_id': device.id,
+                                                   'redmine_project': device.redmine_project,
+                                                   'redmine_project_name': device.redmine_project_name,
+                                                   'redmine_project_desc': device.redmine_project_desc,
+                                                   'redmine_parent': device.redmine_parent,
+                                                   'general_info': True})
     return render(request, 'device/device_details.html', {'device': device, 'protocols_count': protocols_count,
-                                                          'redmine_url': redmine_url, 'tab_id': tab_id})
-
-
-@login_required
-def device_export(request, pk):
-    device = get_object_or_404(Device, id=pk)
-    redmine = Redmine(settings.REDMINE_URL, key=settings.REDMINE_KEY, version='4.1.1')
-    try:
-        # если проект существует
-        project = redmine.project.get(device.project_id)
-        redmine.project.update(device.project_id, name=device.vendor + ' ' + device.model)
-        try:
-            wiki_page = redmine.wiki_page.get('Wiki', project_id=project.id)
-            blocks = wiki_page.text.split('h2. ')
-            for i, block in enumerate(blocks):
-                parser = re.search('Общая информация', block)
-                if parser:
-                    device_info = '| Производитель: | ' + device.vendor + ' |\n' \
-                                      '| Модель: | ' + device.model + ' |\n' \
-                                      '| Версия Hardware: | ' + device.hw + ' |\n'
-                    if device.interfaces != '':
-                        device_info = device_info + '| Интерфейсы: | ' + device.interfaces + ' |\n'
-                    if device.leds != '':
-                        device_info = device_info + '| Индикаторы: | ' + device.leds + ' |\n'
-                    if device.buttons != '':
-                        device_info = device_info + '| Кнопки: | ' + device.buttons + ' |\n'
-                    if device.chipsets != '':
-                        device_info = device_info + '| Чипсеты: | ' + device.chipsets + ' |\n'
-                    if device.memory != '':
-                        device_info = device_info + '| Память: | ' + device.memory + ' |\n'
-                    blocks[i] = 'Общая информация \n\n' + device_info + '\n\n'
-            blocks[0] = '__%{color:white} #' + device.type.main_type + '#' + device.type.sub_type \
-                        + '#%__\n\n---\n\nh1. ' + device.vendor + ' ' + device.model + '\n\n'
-            new_wiki_page = 'h2. '.join(blocks)
-            redmine.wiki_page.update('Wiki', project_id=project.id, text=new_wiki_page)
-            return HttpResponseRedirect('/device/')
-        except ResourceNotFoundError:
-            return HttpResponseRedirect('/')
-
-    except ResourceNotFoundError:
-        # если проект не найден, создаем его
-        parent_id = redmine.project.get(device.type.main_type).id
-        project = redmine.project.create(
-            name=device.vendor + ' ' + device.model,
-            identifier=device.project_id,
-            parent_id=parent_id,
-            inherit_members=True
-        )
-        new_wiki_page = '__%{color:white} #' + device.type.main_type + \
-                        '#' + device.type.sub_type + '#%__\n\n---\n\nh1. ' + device.vendor + ' ' \
-                        + device.model + '\n\nh2. Внешний вид\n\nh2. Общая информация\n\n| Производитель: | ' +\
-                        device.vendor + ' |\n| Модель: | ' +\
-                        device.model + ' |\n| Версия Hardware: | ' + device.hw + ' |\n'
-        if device.interfaces != '':
-            new_wiki_page = new_wiki_page + '| Интерфейсы: | ' + device.interfaces + ' |\n'
-        if device.leds != '':
-            new_wiki_page = new_wiki_page + '| Индикаторы: | ' + device.leds + ' |\n'
-        if device.buttons != '':
-            new_wiki_page = new_wiki_page + '| Кнопки: | ' + device.buttons + ' |\n'
-        if device.chipsets != '':
-            new_wiki_page = new_wiki_page + '| Чипсеты: | ' + device.chipsets + ' |\n'
-        if device.memory != '':
-            new_wiki_page = new_wiki_page + '| Память: | ' + device.memory + ' |\n'
-        new_wiki_page = new_wiki_page + '\nh2. Результаты испытаний\n'
-        redmine.wiki_page.update('Wiki', project_id=device.project_id, text=new_wiki_page)
-        return HttpResponseRedirect('/device/')
+                                                          'redmine_url': redmine_url, 'export_form': export_form,
+                                                          'tab_id': tab_id})
 
 
 @login_required
