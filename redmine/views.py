@@ -13,18 +13,12 @@ def redmine_device_type_export(request):
     if request.method == "POST":
         device_type = get_object_or_404(DeviceType, id=request.POST['device_type_id'])
         back_url = reverse('device_type_details', kwargs={'pk': device_type.id, 'tab_id': 2})
-        redmine_project = request.POST['redmine_project']
         general_info = False
         try:
             if request.POST['general_info']:
                 general_info = True
         except MultiValueDictKeyError:
             pass
-        # check project
-        is_project = RedmineProject().check_project(redmine_project=redmine_project)
-        if not is_project[0]:
-            return render(request, 'redmine/message.html', {'message': is_project, 'back_url': back_url})
-        # export
         message = RedmineDeviceType.export(device_type=device_type, project=request.POST['redmine_project'],
                                            project_name=request.POST['redmine_project_name'],
                                            project_desc=request.POST['redmine_project_desc'],

@@ -145,7 +145,7 @@ def device_type_details(request, pk, tab_id):
     export_form = RedmineDeviceTypeExportForm(initial={'device_type_id': device_type.id,
                                                        'redmine_project': device_type.redmine_project,
                                                        'redmine_project_name': device_type.redmine_project_name,
-                                                       'redmine_project_desc': device_type.redmine_project_name,
+                                                       'redmine_project_desc': device_type.redmine_project_desc,
                                                        'redmine_parent': device_type.redmine_parent,
                                                        'general_info': True})
     return render(request, 'device/device_type_details.html', {'device_type': device_type,
