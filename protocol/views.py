@@ -145,7 +145,7 @@ class TestResultUpdate(UpdateView):
 @login_required
 def protocol_export(request, pk):
     protocol = Protocol.objects.get(id=pk)
-    project_id = protocol.device.project_id
+    project_id = protocol.device.redmine_project
 
     if protocol.sysinfo != "":
         if ('.jpg' in protocol.sysinfo) or ('.png' in protocol.sysinfo):
