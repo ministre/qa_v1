@@ -100,7 +100,7 @@ class RedmineDeviceType:
         if general_info:
             wiki += '\nh2. Общая информация\r' \
                     '\n\r' \
-                    '\n| Название: | ' + device_type.name + ' |\r'
+                    '\n| ' + _('Name') + ': | ' + device_type.name + ' |\r'
         return wiki
 
     @staticmethod
