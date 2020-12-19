@@ -98,9 +98,9 @@ class RedmineDeviceType:
         wiki = 'h1. ' + project_name + '\r' \
                                        '\n\r'
         if general_info:
-            wiki += '\nh2. Общая информация\r' \
+            wiki += '\nh2. ' + str(_('General')) + '\r' \
                     '\n\r' \
-                    '\n| ' + _('Name') + ': | ' + device_type.name + ' |\r'
+                    '\n| ' + str(_('Name')) + ': | ' + device_type.name + ' |\r'
         return wiki
 
     @staticmethod
