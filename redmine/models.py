@@ -229,7 +229,7 @@ class RedmineProtocol:
         if is_project[0] != 200:
             return [False, is_project[1]]
         else:
-            project_name = str(_('Protocol')) + ' ' + protocol.device.vendor.name + str(protocol.device)
+            project_name = str(_('Protocol')) + ' ' + protocol.device.vendor.name + ' ' + str(protocol.device)
             wiki = RedmineProtocol.build_wiki(protocol=protocol, project_name=project_name, general_info=general_info)
             is_wiki = r.create_or_update_wiki(project=project, wiki_title=project_wiki, wiki_text=wiki,
                                               parent_wiki_title='wiki')
