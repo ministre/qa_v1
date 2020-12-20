@@ -101,11 +101,9 @@ class RedmineProject:
 class RedmineDeviceType:
     @staticmethod
     def build_wiki(device_type: DeviceType, project_name: str, general_info: bool):
-        wiki = 'h1. ' + project_name + '\r' \
-                                       '\n\r'
+        wiki = 'h1. ' + project_name + '\r\n\r'
         if general_info:
-            wiki += '\nh2. ' + str(_('General')) + '\r' \
-                    '\n\r' \
+            wiki += '\nh2. ' + str(_('General')) + '\r\n\r' \
                     '\n| ' + str(_('Name')) + ': | ' + device_type.name + ' |\r'
         return wiki
 
@@ -131,7 +129,7 @@ class RedmineDeviceType:
 
 class RedmineDevice:
     @staticmethod
-    def build_wiki(device: Device, project_name: str, general_info: bool):
+    def build_wiki(device: Device, project_name: str, general_info: bool, protocols: bool):
         wiki = 'h1. ' + project_name + '\r\n\r'
         if general_info:
             wiki += '\nh2. ' + str(_('General')) + '\r' \
@@ -143,14 +141,18 @@ class RedmineDevice:
             if device.hw:
                 wiki += '\n| ' + str(_('Hardware Version')) + ': | ' + device.hw + ' |\r' \
 
-            wiki += '\n\r' \
-                    '\nh2. Внешний вид\r\n\r' \
-                    '\nh2. Результаты испытаний\r\n\r'
+            wiki += '\n\r\nh2. Внешний вид\r\n\r'
+        if protocols:
+            wiki += '\nh2. ' + str(_('Protocols')) + '\r\n\r'
+            device_protocols = Protocol.objects.filter(device=device).order_by('id')
+            for device_protocol in device_protocols:
+                wiki += '\n* [[protocol_' + str(device_protocol.id) + '|' + str(device_protocol) + ']]\r'
+
         return wiki
 
     @staticmethod
     def export(device: Device, project: str, project_name: str, project_desc: str, project_parent: str,
-               general_info: bool):
+               general_info: bool, protocols: bool):
         r = RedmineProject()
         redmine_project = r.create_or_update_project(project=project, project_name=project_name,
                                                      project_desc=project_desc, project_parent=project_parent)
@@ -158,7 +160,8 @@ class RedmineDevice:
             return redmine_project
         else:
             message = redmine_project[1]
-            wiki = RedmineDevice.build_wiki(device=device, project_name=project_name, general_info=general_info)
+            wiki = RedmineDevice.build_wiki(device=device, project_name=project_name, general_info=general_info,
+                                            protocols=protocols)
             is_wiki = r.create_or_update_wiki(project=project, wiki_title='Wiki', wiki_text=wiki)
             if not is_wiki[0]:
                 return is_wiki

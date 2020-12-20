@@ -36,17 +36,22 @@ def redmine_device_export(request):
     if request.method == "POST":
         device = get_object_or_404(Device, id=request.POST['device_id'])
         back_url = reverse('device_details', kwargs={'pk': device.id, 'tab_id': 2})
-        general_info = False
+        general_info = protocols = False
         try:
             if request.POST['general_info']:
                 general_info = True
+        except MultiValueDictKeyError:
+            pass
+        try:
+            if request.POST['protocols']:
+                protocols = True
         except MultiValueDictKeyError:
             pass
         message = RedmineDevice.export(device=device, project=request.POST['redmine_project'],
                                        project_name=request.POST['redmine_project_name'],
                                        project_desc=request.POST['redmine_project_desc'],
                                        project_parent=request.POST['redmine_parent'],
-                                       general_info=general_info)
+                                       general_info=general_info, protocols=protocols)
     else:
         message = [False, _('Page not found')]
         back_url = reverse('device_types')
