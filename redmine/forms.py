@@ -4,7 +4,7 @@ from django.utils.translation import gettext_lazy as _
 
 class RedmineDeviceTypeExportForm(forms.Form):
     device_type_id = forms.IntegerField()
-    redmine_project = forms.CharField(label=_('Project'), max_length=100)
+    redmine_project = forms.CharField(label=_('Project ID'), max_length=100)
     redmine_project_name = forms.CharField(label=_('Project Name'), max_length=1000)
     redmine_project_desc = forms.CharField(label=_('Project Description'), max_length=100, required=False)
     redmine_parent = forms.CharField(label=_('Parent Project'), max_length=100, required=False)
@@ -17,7 +17,7 @@ class RedmineDeviceTypeExportForm(forms.Form):
 
 class RedmineDeviceExportForm(forms.Form):
     device_id = forms.IntegerField()
-    redmine_project = forms.CharField(label=_('Project'), max_length=100)
+    redmine_project = forms.CharField(label=_('Project ID'), max_length=100)
     redmine_project_name = forms.CharField(label=_('Project Name'), max_length=1000)
     redmine_project_desc = forms.CharField(label=_('Project Description'), max_length=100, required=False)
     redmine_parent = forms.CharField(label=_('Parent Project'), max_length=100, required=False)
@@ -26,3 +26,14 @@ class RedmineDeviceExportForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super(RedmineDeviceExportForm, self).__init__(*args, **kwargs)
         self.fields['device_id'].widget = forms.HiddenInput()
+
+
+class RedmineProtocolExportForm(forms.Form):
+    protocol_id = forms.IntegerField()
+    redmine_project = forms.CharField(label=_('Project ID'), max_length=100)
+    redmine_wiki = forms.CharField(label=_('Project Wiki'), max_length=100)
+    general_info = forms.BooleanField(label=_('General Information'), required=False)
+
+    def __init__(self, *args, **kwargs):
+        super(RedmineProtocolExportForm, self).__init__(*args, **kwargs)
+        self.fields['protocol_id'].widget = forms.HiddenInput()

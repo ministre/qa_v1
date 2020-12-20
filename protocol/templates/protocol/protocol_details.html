@@ -193,17 +193,37 @@
         </div>
     </div>
 
-    <div class="tabs-panel {% if tab_id == 5 %}is-active{% endif %}" id="redmine">
-
-        <div class="cell">
-            <div class="card">
-                <div class="card-section">
-                    <h5>{% trans "Export" %}</h5>
-                    <p><a href="{% url 'protocol_export' pk=protocol.id %}" class="button small">{% trans "Export" %}</a></p>
+    <div class="tabs-panel{% if tab_id == 5 %} is-active{% endif %}" id="redmine">
+        {% if protocol.device.redmine_project %}
+        <div class="grid-x grid-margin-x">
+            <div class="cell">
+                <div class="card">
+                    <div class="card-section">
+                        <h5>Redmine Project Wiki</h5>
+                        <p>
+                            <a href="{{ redmine_url }}/projects/{{ protocol.device.redmine_project }}/wiki/protocol_{{ protocol.id }}/">
+                                {{ redmine_url }}/projects/{{ protocol.device.redmine_project }}/wiki/protocol_{{ protocol.id }}/
+                            </a>
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
-
+        {% endif %}
+        <div class="grid-x grid-margin-x">
+            <div class="cell">
+                <div class="card">
+                    <div class="card-section">
+                        <h5>{% trans "Export to" %} Redmine</h5>
+                        <form action="{% url 'redmine_protocol_export' %}" method="post">
+                            {% csrf_token %}
+                            {{ export_form.as_p }}
+                            <input type="submit" value='{% trans "Export" %}' class="button small success" />
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
 </div>

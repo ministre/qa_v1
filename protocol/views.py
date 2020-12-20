@@ -5,6 +5,7 @@ from testplan.models import TestPlan, Test
 from protocol.models import Protocol, TestResult
 from django.http import HttpResponseRedirect
 from .forms import ProtocolForm, TestResultForm, ProtocolCopyTestResultsForm
+from redmine.forms import RedmineProtocolExportForm
 from docx_generator.forms import BuildProtocolForm, BuildProtocolDetailedForm
 from qa_v1 import settings
 from redminelib import Redmine
@@ -108,6 +109,12 @@ def protocol_details(request, pk, tab_id):
     protocol_detailed_form.fields['protocol_id'].widget = forms.HiddenInput()
     copy_test_results_form = ProtocolCopyTestResultsForm(device_id=protocol.device.id, dst_protocol=protocol.id)
 
+    redmine_url = settings.REDMINE_URL
+    export_form = RedmineProtocolExportForm(initial={'protocol_id': protocol.id,
+                                                     'redmine_project': protocol.device.redmine_project,
+                                                     'redmine_wiki': 'protocol_' + str(protocol.id),
+                                                     'general_info': True})
+
     return render(request, 'protocol/protocol_details.html', {'protocol': protocol,
                                                               'zipped_results': zipped_results,
                                                               'tests_all': tests_all,
@@ -120,6 +127,8 @@ def protocol_details(request, pk, tab_id):
                                                               'build_protocol_form': protocol_form,
                                                               'build_protocol_detailed_form': protocol_detailed_form,
                                                               'copy_test_results_form': copy_test_results_form,
+                                                              'redmine_url': redmine_url,
+                                                              'export_form': export_form,
                                                               'tab_id': tab_id})
 
 
@@ -140,79 +149,6 @@ class TestResultUpdate(UpdateView):
 
     def get_success_url(self):
         return reverse('protocol_details', kwargs={'pk': self.object.protocol.id, 'tab_id': 2})
-
-
-@login_required
-def protocol_export(request, pk):
-    protocol = Protocol.objects.get(id=pk)
-    project_id = protocol.device.redmine_project
-
-    if protocol.sysinfo != "":
-        if ('.jpg' in protocol.sysinfo) or ('.png' in protocol.sysinfo):
-            protocol.sysinfo = '!' + protocol.sysinfo + '!'
-        else:
-            protocol.sysinfo = '<pre>' + protocol.sysinfo + '</pre>'
-        protocol.sysinfo = '\n{{collapse(Системная информация)\n' + protocol.sysinfo + '\n}}\n'
-
-    if protocol.console != "":
-        protocol.console = '\n{{collapse(Параметры консольного порта)\n<pre>' + protocol.console + '</pre>\n}}'
-
-    if protocol.sw_checksum != "":
-        protocol.sw_checksum = ' |\n| Контрольная сумма ПО: | ' + protocol.sw_checksum + ' |\n'
-
-    new_content = '| Версия ПО: | ' + protocol.sw + ' |\n' + protocol.sw_checksum + \
-                  '| Дата тестирования: | ' + protocol.date_of_start.strftime('%d.%m.%Y') + ' - ' + \
-                  protocol.date_of_finish.strftime('%d.%m.%Y') + \
-                  ' |\n| Инженерный логин: | ' + protocol.engineer_login + ' |\n' \
-                  '| Инженерный пароль: | ' + protocol.engineer_password + ' |\n' + protocol.sysinfo + \
-                  protocol.console + '\n_Тестирование проведено в соответствии с ПМИ ' + \
-                  protocol.testplan.name + ' (Редакция: ' + protocol.testplan.version + ')_\n\n' \
-                  '|_. № |_. Название теста: |_. Результат: |_. Инфо: |_. Комментарии: |\n'
-
-    results = TestResult.objects.filter(protocol=pk).order_by("id")
-
-    numbers_of_testplan = get_numbers_of_results(results)
-    zipped_results = zip(results, numbers_of_testplan)
-
-    for result, num in zipped_results:
-        test_status = 'null'
-        if result.result == 0:
-            test_status = '{{checkbox(?)}}'
-        if result.result == 1:
-            test_status = '{{checkbox(0)}}'
-        if result.result == 2:
-            test_status = u'\u00b1'
-        if result.result == 3:
-            test_status = '{{checkbox(1)}}'
-        # вставляем заголовок
-        digit = num.split('.')
-        if digit[1] == '1':
-            header = '|_. ' + digit[0] + ' |' + '\\4. *' + result.test.category + '* |\n'
-        else:
-            header = ''
-        # конфиг и доп.сведения
-        url = result.test.url
-        keyword = url.split('/')
-        cfg = '[[cfg_' + keyword[6] + '|конфиг]], '
-        info = '[[res_' + keyword[6] + '|детали]]'
-        # формируем строку теста
-        result_string = header + '| ' + num + ' | "' + result.test.name + '":' + result.test.url + ' |_. ' + \
-                        test_status + ' | ' + cfg + ' ' + info + '| ' + result.comment + ' |\n'
-        new_content = new_content + result_string
-
-    redmine = Redmine(settings.REDMINE_URL, key=settings.REDMINE_KEY, version='4.1.1')
-    wiki_pages = redmine.wiki_page.filter(project_id=project_id)
-    for page in wiki_pages:
-        if page.title == 'Wiki':
-            blocks = page.text.split('h2. ')
-            for i, block in enumerate(blocks):
-                parser = re.search('Результаты испытаний', block)
-                if parser:
-                    blocks[i] = 'Результаты испытаний \n\n' + new_content + '\n\n'
-            new_wiki_page = 'h2. '.join(blocks)
-            # обновление Wiki-страницы устройства
-            redmine.wiki_page.update('Wiki', project_id=project_id, text=new_wiki_page)
-    return HttpResponseRedirect('/protocol/' + str(pk) + '/')
 
 
 @login_required
