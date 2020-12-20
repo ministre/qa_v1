@@ -38,7 +38,7 @@ class TestplanCreate(CreateView):
         return context
 
     def get_success_url(self):
-        return reverse('testplan_details', kwargs={'pk': self.object.id, 'tab_id': 1})
+        return reverse('testplan_details', kwargs={'pk': self.object.id, 'tab_id': 2})
 
 
 @method_decorator(login_required, name='dispatch')
