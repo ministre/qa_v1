@@ -181,6 +181,9 @@ class DeviceCreate(CreateView):
             if self.object.type.redmine_project:
                 self.object.redmine_parent = self.object.type.redmine_project
                 self.object.save()
+        if not self.object.redmine_project_name:
+            self.object.redmine_project_name = str(self.object.vendor) + ' ' + str(self.object.model)
+            self.object.save()
         return reverse('devices')
 
 
@@ -203,6 +206,9 @@ class DeviceUpdate(UpdateView):
             if self.object.type.redmine_project:
                 self.object.redmine_parent = self.object.type.redmine_project
                 self.object.save()
+        if not self.object.redmine_project_name:
+            self.object.redmine_project_name = str(self.object.vendor) + ' ' + str(self.object.model)
+            self.object.save()
         return reverse('device_details', kwargs={'pk': self.object.id, 'tab_id': 1})
 
 

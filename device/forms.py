@@ -39,7 +39,7 @@ class DeviceForm(ModelForm):
             'model': _('Model'),
             'hw': _('Hardware Version'),
             'redmine_project': _('Redmine Project'),
-            'redmine_project_name': _('Redmine Project Name'),
+            'redmine_project_name': _('Redmine Project Name (leave blank to set Vendor + Model)'),
             'redmine_project_desc': _('Redmine Project Description'),
             'redmine_parent': _('Redmine Parent Project (leave blank to copy project ID from device type)'),
             'interfaces': _('Interfaces'),
