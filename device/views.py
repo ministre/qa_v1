@@ -199,6 +199,10 @@ class DeviceUpdate(UpdateView):
         return context
 
     def get_success_url(self):
+        if not self.object.redmine_parent:
+            if self.object.type.redmine_project:
+                self.object.redmine_parent = self.object.type.redmine_project
+                self.object.save()
         return reverse('device_details', kwargs={'pk': self.object.id, 'tab_id': 1})
 
 
