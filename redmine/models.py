@@ -192,8 +192,8 @@ class RedmineProtocol:
                         '\r\n}}\r'
 
             wiki += '\n\r\nh2. ' + str(_('Test Results')) + '\r\n\r' \
-                    '\n|_. № |_. ' + str(_('Test Name')) + ': |_. ' \
-                    + str(_('Result')) + ': |_. ' + str(_('Details')) + ': |_. ' + str(_('Comments')) + ': |\r'
+                    '\n|_. № |_. ' + str(_('Names')) + ': |_. ' + str(_('Results')) + \
+                    ': |_. ' + str(_('Comments')) + ': |\r'
 
             results = TestResult.objects.filter(protocol=protocol).order_by("id")
             numbers_of_testplan = get_numbers_of_results(results)
@@ -208,17 +208,15 @@ class RedmineProtocol:
                     test_status = u'\u00b1'
                 elif result.result == 3:
                     test_status = '{{checkbox(1)}}'
-                # вставляем заголовок
+                # category header row
                 digit = num.split('.')
                 if digit[1] == '1':
                     header = '|_. ' + digit[0] + ' |' + '\\4. *' + result.test.category + '* |\n'
                 else:
                     header = ''
-                # конфиг и доп.сведения
-                details_link = 'result_' + str(result.id)
-                # формируем строку теста
-                wiki += header + '| ' + num + ' | ' + result.test.name + ' |_. ' + \
-                        test_status + ' | [[' + details_link + '|' + str(_('Details')) + ']] | ' + result.comment + ' |\n'
+                # test row
+                wiki += header + '| ' + num + ' | [[test_result_' + str(result.id) + '|' + \
+                        result.test.name + ']] |_. ' + test_status + ' | ' + result.comment + ' |\n'
         return wiki
 
     @staticmethod
