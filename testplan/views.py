@@ -22,7 +22,7 @@ from django import forms
 @method_decorator(login_required, name='dispatch')
 class TestplanListView(ListView):
     context_object_name = 'testplans'
-    queryset = TestPlan.objects.all().order_by("-id")
+    queryset = TestPlan.objects.all().order_by("name")
     template_name = 'testplan/testplans.html'
 
 
