@@ -15,8 +15,8 @@
         <th>ID</th>
         <th>{% trans "Device" %}</th>
         <th>{% trans "Software Version" %}</th>
-        <th>{% trans "Started" %}</th>
-        <th>{% trans "Completed" %}</th>
+        <th>{% trans "Date of testing" %}</th>
+        <th>{% trans "Device Type" %}</th>
     </tr>
     </thead>
     <tbody>
@@ -25,8 +25,8 @@
         <td>{{ protocol.id }}</td>
         <td>{{ protocol.device.vendor }} {{ protocol.device.model }}</td>
         <td>{{ protocol.sw }}</td>
-        <td>{{ protocol.date_of_start }}</td>
-        <td>{{ protocol.date_of_finish }}</td>
+        <td>{{ protocol.date_of_start|date:"d.m.Y" }}{% if protocol.date_of_finish %} - {{ protocol.date_of_finish|date:"d.m.Y" }}{% endif %}</td>
+        <td>{{ protocol.device.type }}</td>
     </tr>
     {% endfor %}
     </tbody>

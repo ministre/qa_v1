@@ -83,7 +83,7 @@ def vendor_details(request, pk):
 @method_decorator(login_required, name='dispatch')
 class DeviceTypeListView(ListView):
     context_object_name = 'device_types'
-    queryset = DeviceType.objects.all().order_by("-id")
+    queryset = DeviceType.objects.all().order_by("name")
     template_name = 'device/device_types.html'
 
 
