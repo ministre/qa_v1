@@ -77,6 +77,10 @@ class RedmineProject:
             return [403, _('Requested wiki resource is forbidden')]
 
     def create_or_update_wiki(self, project: str, wiki_title: str, wiki_text: str, parent_wiki_title=None):
+        if parent_wiki_title:
+            is_parent_wiki = self.get_wiki(project=project, wiki_title=parent_wiki_title)
+            if is_parent_wiki[0] != 200:
+                return [False, str(_('Parent Wiki error')) + ': ' + str(is_parent_wiki[1])]
         is_wiki = self.get_wiki(project=project, wiki_title=wiki_title)
         if is_wiki[0] == 200:
             if parent_wiki_title:
