@@ -186,12 +186,13 @@ class RedmineProtocol:
             if protocol.engineer_password:
                 wiki += '\n| ' + str(_('Engineer Password')) + ': | ' + protocol.engineer_password + ' |\r'
             if protocol.sysinfo:
-                wiki += '\n\r\n{{collapse(' + str(_('System Information')) + ')\n' + protocol.sysinfo + '\n}}\n'
+                wiki += '\n\r\n{{collapse(' + str(_('System Information')) + ')\r\n' + protocol.sysinfo + '\r\n}}\r'
             if protocol.console:
-                wiki += '\n\r\n{{collapse(' + str(_('Console port parameters')) + ')\n' + protocol.console + '\n}}\n'
+                wiki += '\n\r\n{{collapse(' + str(_('Console port parameters')) + ')\r\n' + protocol.console + \
+                        '\r\n}}\r'
 
-            wiki += '\nh2. ' + str(_('Test Results')) + '\r\n\r' \
-                    '\n\r\n|_. № |_. ' + str(_('Test Name')) + ': |_. ' \
+            wiki += '\n\r\nh2. ' + str(_('Test Results')) + '\r\n\r' \
+                    '\n|_. № |_. ' + str(_('Test Name')) + ': |_. ' \
                     + str(_('Result')) + ': |_. ' + str(_('Details')) + ': |_. ' + str(_('Comments')) + ': |\r'
 
             results = TestResult.objects.filter(protocol=protocol).order_by("id")
