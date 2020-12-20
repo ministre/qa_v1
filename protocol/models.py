@@ -10,7 +10,7 @@ class Protocol(models.Model):
     sw = models.CharField(max_length=50)
     sw_checksum = models.CharField(max_length=50, blank=True, null=True)
     engineer_login = models.CharField(max_length=50, blank=True, null=True)
-    engineer_password = models.CharField(max_length=50, blank=True, null=True)
+    engineer_password = models.CharField(max_length=200, blank=True, null=True)
     sysinfo = models.TextField(blank=True, null=True)
     console = models.TextField(blank=True, null=True)
     date_of_start = models.DateField(default=datetime.now, blank=True)
