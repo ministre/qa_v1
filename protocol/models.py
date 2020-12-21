@@ -1,4 +1,6 @@
 from django.db import models
+from django.contrib.auth.models import User
+from django.utils import timezone
 from device.models import Device
 from testplan.models import TestPlan, Test
 from datetime import datetime
@@ -8,13 +10,18 @@ class Protocol(models.Model):
     device = models.ForeignKey(Device, on_delete=models.CASCADE)
     testplan = models.ForeignKey(TestPlan, on_delete=models.CASCADE)
     sw = models.CharField(max_length=50)
+    result = models.IntegerField(default=0)
     sw_checksum = models.CharField(max_length=50, blank=True, null=True)
     engineer_login = models.CharField(max_length=50, blank=True, null=True)
     engineer_password = models.CharField(max_length=200, blank=True, null=True)
     sysinfo = models.TextField(blank=True, null=True)
     console = models.TextField(blank=True, null=True)
-    date_of_start = models.DateField(default=datetime.now, blank=True)
+    date_of_start = models.DateField(default=timezone.now)
     date_of_finish = models.DateField(default=datetime.now, blank=True)
+    created_by = models.ForeignKey(User, related_name='protocol_c', on_delete=models.CASCADE)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_by = models.ForeignKey(User, related_name='protocol_u', on_delete=models.CASCADE)
+    updated_at = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         name = 'ID: ' + str(self.id)
