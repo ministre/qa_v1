@@ -45,12 +45,16 @@
                             </tr>
                             <tr>
                                 <td>{% trans "Testplan" %}:</td>
-                                <td>{% trans "Testplan" %} {{ protocol.testplan }}</td>
+                                <td><a href="{% url 'testplan_details' pk=protocol.testplan.id tab_id=2 %}">
+                                    {% trans "Testplan" %} {{ protocol.testplan }}</a>
+                                </td>
                             </tr>
                             <tr>
                                 <td>{% trans "Device" %}:</td>
-                                <td>{{ protocol.device.vendor }} {{ protocol.device.model }}
-                                    {% if protocol.device.hw %}({{ protocol.device.hw }}){% endif %}</td>
+                                <td><a href="{% url 'device_details' pk=protocol.device.id tab_id=1 %}">
+                                    {{ protocol.device.vendor }} {{ protocol.device.model }}
+                                    {% if protocol.device.hw %}({{ protocol.device.hw }}){% endif %}</a>
+                                </td>
                             </tr>
                             <tr>
                                 <td>{% trans "Software Version" %}:</td>
