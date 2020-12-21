@@ -18,9 +18,9 @@ class Protocol(models.Model):
     console = models.TextField(blank=True, null=True)
     date_of_start = models.DateField(default=timezone.now)
     date_of_finish = models.DateField(default=datetime.now, blank=True)
-    created_by = models.ForeignKey(User, related_name='protocol_c', on_delete=models.CASCADE)
+    created_by = models.ForeignKey(User, models.SET_NULL, related_name='protocol_c', blank=True, null=True)
     created_at = models.DateTimeField(default=timezone.now)
-    updated_by = models.ForeignKey(User, related_name='protocol_u', on_delete=models.CASCADE)
+    updated_by = models.ForeignKey(User, models.SET_NULL, related_name='protocol_u', blank=True, null=True)
     updated_at = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
