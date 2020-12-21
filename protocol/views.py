@@ -37,7 +37,7 @@ class ProtocolCreate(CreateView):
     template_name = 'protocol/create.html'
 
     def get_initial(self):
-        return {'created_by': self.request.user, 'updated_by': self.request.user}
+        return {'created_by': self.request.user, 'updated_by': self.request.user, 'date_of_start': timezone.now}
 
     def get_form(self, form_class=ProtocolForm):
         form = super(ProtocolCreate, self).get_form(form_class)
