@@ -12,7 +12,7 @@
 
 <p>
     <a href="{% url 'testplans' %}">{% trans "Testplans" %}</a> &raquo;
-    <a href="{% url 'testplan_details' pk=object.test.testplan.id tab_id=2 %}">{{ object.test.testplan }} ({{ object.test.testplan.version }})</a> &raquo;
+    <a href="{% url 'testplan_details' pk=object.test.testplan.id tab_id=2 %}">{{ object.test.testplan }}</a> &raquo;
     {{ object.test.category }} &raquo;
     <a href="{% url 'test_details' pk=object.test.id tab_id=1 %}">{{ object.test.name }}</a>
 </p>
