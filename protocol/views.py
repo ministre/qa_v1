@@ -37,12 +37,7 @@ class ProtocolCreate(CreateView):
     template_name = 'protocol/create.html'
 
     def get_initial(self):
-        return {'created_by': self.request.user, 'updated_by': self.request.user, 'date_of_finish': None}
-
-    def get_form(self, form_class=ProtocolForm):
-        form = super(ProtocolCreate, self).get_form(form_class)
-        form.fields['date_of_finish'].widget = forms.HiddenInput()
-        return form
+        return {'created_by': self.request.user, 'updated_by': self.request.user}
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
