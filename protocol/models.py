@@ -3,7 +3,6 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 from device.models import Device
 from testplan.models import TestPlan, Test
-from datetime import datetime
 
 
 class Protocol(models.Model):
@@ -17,7 +16,7 @@ class Protocol(models.Model):
     sysinfo = models.TextField(blank=True, null=True)
     console = models.TextField(blank=True, null=True)
     date_of_start = models.DateField(default=timezone.now)
-    date_of_finish = models.DateField(default=datetime.now, blank=True)
+    date_of_finish = models.DateField(default=timezone.now, blank=True)
     created_by = models.ForeignKey(User, models.SET_NULL, related_name='protocol_c', blank=True, null=True)
     created_at = models.DateTimeField(default=timezone.now)
     updated_by = models.ForeignKey(User, models.SET_NULL, related_name='protocol_u', blank=True, null=True)
