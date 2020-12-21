@@ -19,8 +19,20 @@ class ProtocolForm(ModelForm):
             'console': _('Console port parameters'),
             'date_of_start': _('Started'),
             'date_of_finish': _('Completed'),
+            'result': _('Result'),
         }
         fields = '__all__'
+        RESULT = (
+            ('0', _('Testing')),
+            ('1', _('Not recommended')),
+            ('2', _('Limited')),
+            ('3', _('Recommended')),
+        )
+        widgets = {
+            'result': forms.Select(choices=RESULT, attrs={'class': 'form-control'}),
+            'created_by': HiddenInput(), 'created_at': HiddenInput(),
+            'updated_by': HiddenInput(), 'updated_at': HiddenInput()
+        }
 
 
 class TestResultForm(ModelForm):

@@ -9,7 +9,6 @@ class Protocol(models.Model):
     device = models.ForeignKey(Device, on_delete=models.CASCADE)
     testplan = models.ForeignKey(TestPlan, on_delete=models.CASCADE)
     sw = models.CharField(max_length=50)
-    result = models.IntegerField(default=0)
     sw_checksum = models.CharField(max_length=50, blank=True, null=True)
     engineer_login = models.CharField(max_length=50, blank=True, null=True)
     engineer_password = models.CharField(max_length=200, blank=True, null=True)
@@ -21,6 +20,7 @@ class Protocol(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
     updated_by = models.ForeignKey(User, models.SET_NULL, related_name='protocol_u', blank=True, null=True)
     updated_at = models.DateTimeField(default=timezone.now)
+    result = models.IntegerField(default=0)
 
     def __str__(self):
         name = 'ID: ' + str(self.id)

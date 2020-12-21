@@ -15,6 +15,7 @@
         <th>ID</th>
         <th>{% trans "Device" %}</th>
         <th>{% trans "Software Version" %}</th>
+        <th>{% trans "Result" %}</th>
         <th>{% trans "Date of testing" %}</th>
         <th>{% trans "Device Type" %}</th>
     </tr>
@@ -25,6 +26,20 @@
         <td>{{ protocol.id }}</td>
         <td>{{ protocol.device.vendor }} {{ protocol.device.model }}</td>
         <td>{{ protocol.sw }}</td>
+        <td width="10%">
+            {% if protocol.result == 0 %}
+            <span class="label" style="width:110px; text-align: center; background-color: gray; color: white">{% trans "Testing" %}</span>
+            {% endif %}
+            {% if protocol.result == 1 %}
+            <span class="label alert" style="width:110px; text-align: center">{% trans "Not recommended" %}</span>
+            {% endif %}
+            {% if protocol.result == 2 %}
+            <span class="label warning" style="width:110px; text-align: center">{% trans "Limited" %}</span>
+            {% endif %}
+            {% if protocol.result == 3 %}
+            <span class="label success" style="width:110px; text-align: center; background-color: green; color: white">{% trans "Recommended" %}</span>
+            {% endif %}
+        </td>
         <td>{{ protocol.date_of_start|date:"d.m.Y" }}{% if protocol.date_of_finish %} - {{ protocol.date_of_finish|date:"d.m.Y" }}{% endif %}</td>
         <td>{{ protocol.device.type }}</td>
     </tr>

@@ -189,7 +189,7 @@ class RedmineProtocol:
             if protocol.engineer_password:
                 wiki += '\n| ' + str(_('Engineer Password')) + ': | ' + protocol.engineer_password + ' |\r'
             if protocol.sysinfo:
-                wiki += '\n\r\n{{collapse(' + str(_('System Information')) + ')\r\n' + protocol.sysinfo + '\r\n}}\r'
+                wiki += '\n\r\n{{collapse(' + str(_('System Information')) + ')\r\n<pre>' + protocol.sysinfo + '</pre>\r\n}}\r'
             if protocol.console:
                 wiki += '\n\r\n{{collapse(' + str(_('Console port parameters')) + ')\r\n' + protocol.console + \
                         '\r\n}}\r'
