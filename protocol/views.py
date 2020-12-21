@@ -41,6 +41,7 @@ class ProtocolCreate(CreateView):
 
     def get_form(self, form_class=ProtocolForm):
         form = super(ProtocolCreate, self).get_form(form_class)
+        form.fields['date_of_start'].widget = forms.HiddenInput()
         form.fields['date_of_finish'].widget = forms.HiddenInput()
         return form
 
