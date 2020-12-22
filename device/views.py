@@ -16,6 +16,14 @@ from django.urls import reverse
 from django.utils import timezone
 
 
+class Item(object):
+    @staticmethod
+    def update_timestamp(foo, user):
+        foo.updated_by = user
+        foo.updated_at = timezone.now()
+        foo.save()
+
+
 @method_decorator(login_required, name='dispatch')
 class VendorListView(ListView):
     context_object_name = 'vendors'

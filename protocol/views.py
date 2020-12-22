@@ -2,16 +2,15 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from device.models import Device
 from testplan.models import TestPlan, Test
-from protocol.models import Protocol, TestResult
+from .models import Protocol, TestResult, TestResultConfig
 from django.http import HttpResponseRedirect
-from .forms import ProtocolForm, TestResultForm, ProtocolCopyTestResultsForm
+from .forms import ProtocolForm, ResultForm, ResultConfigForm, ProtocolCopyResultsForm
 from redmine.forms import RedmineProtocolExportForm
 from docx_generator.forms import BuildProtocolForm, BuildProtocolDetailedForm
 from qa_v1 import settings
 from redminelib import Redmine
 from redminelib.exceptions import ResourceNotFoundError
 import re
-from datetime import datetime
 from django.db.models import Q
 import textile
 from django.utils.decorators import method_decorator
@@ -22,6 +21,7 @@ from django.utils.translation import gettext_lazy as _
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from datetime import datetime
+from device.views import Item
 
 
 @method_decorator(login_required, name='dispatch')
@@ -99,7 +99,7 @@ class ProtocolDelete(DeleteView):
 
 @login_required
 def protocol_details(request, pk, tab_id):
-    protocol = Protocol.objects.get(id=pk)
+    protocol = get_object_or_404(Protocol, id=pk)
     results = TestResult.objects.filter(protocol=pk).order_by("id")
 
     numbers_of_testplan = get_numbers_of_results(results)
@@ -120,7 +120,7 @@ def protocol_details(request, pk, tab_id):
     protocol_form.fields['protocol_id'].widget = forms.HiddenInput()
     protocol_detailed_form = BuildProtocolDetailedForm(initial={'protocol_id': protocol.id})
     protocol_detailed_form.fields['protocol_id'].widget = forms.HiddenInput()
-    copy_test_results_form = ProtocolCopyTestResultsForm(device_id=protocol.device.id, dst_protocol=protocol.id)
+    copy_test_results_form = ProtocolCopyResultsForm(device_id=protocol.device.id, dst_protocol=protocol.id)
 
     redmine_url = settings.REDMINE_URL
     export_form = RedmineProtocolExportForm(initial={'protocol_id': protocol.id,
@@ -146,22 +146,80 @@ def protocol_details(request, pk, tab_id):
 
 
 @method_decorator(login_required, name='dispatch')
-class TestResultUpdate(UpdateView):
+class ResultUpdate(UpdateView):
     model = TestResult
-    form_class = TestResultForm
+    form_class = ResultForm
     template_name = 'protocol/update_test_result.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['back_url'] = reverse('protocol_details', kwargs={'pk': self.object.protocol.id, 'tab_id': 2})
-
-        context['procedure'] = textile.textile(self.object.test.procedure)
-        context['expected'] = textile.textile(self.object.test.expected)
-
         return context
 
     def get_success_url(self):
         return reverse('protocol_details', kwargs={'pk': self.object.protocol.id, 'tab_id': 2})
+
+
+@login_required
+def result_details(request, pk, tab_id):
+    result = get_object_or_404(TestResult, id=pk)
+    procedure = textile.textile(result.test.procedure)
+    expected = textile.textile(result.test.expected)
+    return render(request, 'protocol/result_details.html', {'result': result, 'procedure': procedure,
+                                                            'expected': expected, 'tab_id': tab_id})
+
+
+@method_decorator(login_required, name='dispatch')
+class ResultConfigCreate(CreateView):
+    model = TestResultConfig
+    form_class = ResultConfigForm
+    template_name = 'protocol/create.html'
+
+    def get_initial(self):
+        return {'result': self.kwargs.get('result'), 'created_by': self.request.user, 'updated_by': self.request.user}
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('result_details', kwargs={'pk': self.kwargs.get('result'), 'tab_id': 3})
+        return context
+
+    def get_success_url(self):
+        Item.update_timestamp(foo=self.object.result, user=self.request.user)
+        return reverse('result_details', kwargs={'pk': self.object.result.id, 'tab_id': 3})
+
+
+@method_decorator(login_required, name='dispatch')
+class ResultConfigUpdate(UpdateView):
+    model = TestResultConfig
+    form_class = ResultConfigForm
+    template_name = 'protocol/update.html'
+
+    def get_initial(self):
+        return {'updated_by': self.request.user, 'updated_at': timezone.now}
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('result_details', kwargs={'pk': self.object.result.id, 'tab_id': 3})
+        return context
+
+    def get_success_url(self):
+        Item.update_timestamp(foo=self.object.result, user=self.request.user)
+        return reverse('result_details', kwargs={'pk': self.object.result.id, 'tab_id': 3})
+
+
+@method_decorator(login_required, name='dispatch')
+class ResultConfigDelete(DeleteView):
+    model = TestResultConfig
+    template_name = 'protocol/delete.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('result_details', kwargs={'pk': self.object.result.id, 'tab_id': 3})
+        return context
+
+    def get_success_url(self):
+        Item.update_timestamp(foo=self.object.result, user=self.request.user)
+        return reverse('result_details', kwargs={'pk': self.object.result.id, 'tab_id': 3})
 
 
 @login_required
@@ -273,7 +331,6 @@ def protocol_import(request):
                 test_result.save()
         # context = wiki_cfg_url
         return HttpResponseRedirect('/protocol/')
-        # return render(request, 'protocol/debug.html', {'context': context})
     else:
         devices = Device.objects.all()
         return render(request, 'protocol/protocol_import.html', {'devices': devices})

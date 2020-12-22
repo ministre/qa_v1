@@ -168,7 +168,7 @@
         </thead>
         <tbody>
         {% for result, num in zipped_results %}
-        <tr data-href="{% url 'test_result_update' pk=result.id %}">
+        <tr data-href="{% url 'result_details' pk=result.id tab_id=4 %}">
             <td>{{ forloop.counter }}</td>
             <td>
                 {% if result.result == 0 %}

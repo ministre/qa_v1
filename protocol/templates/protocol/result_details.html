@@ -1,0 +1,130 @@
+{% extends "device/wrapper.html" %}
+
+{% load i18n static %}
+
+{% block content %}
+
+<p>
+    <a href="{% url 'protocols' %}">{% trans "Protocols" %}</a> &raquo;
+    <a href="{% url 'protocol_details' pk=result.protocol.id tab_id=2 %}">{{ result.protocol.device.vendor }} {{ result.protocol.device.model }}
+    {% if result.protocol.device.hw %}({{result.protocol.device.hw }}){% endif %}</a>
+</p>
+<p>
+    <a href="{% url 'testplans' %}">{% trans "Testplans" %}</a> &raquo;
+    <a href="{% url 'testplan_details' pk=result.test.testplan.id tab_id=2 %}">{{ result.test.testplan }}</a> &raquo;
+    {{ result.test.category }} &raquo;
+    <a href="{% url 'test_details' pk=result.test.id tab_id=1 %}">{{ result.test.name }}</a>
+</p>
+
+<ul class="tabs" data-tabs id="result-tabs">
+    <li class="tabs-title {% if tab_id == 1 %} is-active{% endif %}">
+        <a data-tabs-target="general" href="#general">{% trans "General" %}</a>
+    </li>
+    <li class="tabs-title {% if tab_id == 2 %} is-active{% endif %}">
+        <a data-tabs-target="details" href="#details">{% trans "Test Details" %}</a>
+    </li>
+    <li class="tabs-title{% if tab_id == 3 %} is-active{% endif %}">
+        <a data-tabs-target="configs" href="#configs">{% trans "Configurations" %}
+            {% if result.result_config.all.count > 0 %}({{ result.result_config.all.count }}){% endif %}
+        </a>
+    </li>
+    <li class="tabs-title {% if tab_id == 4 %} is-active{% endif %}">
+        <a data-tabs-target="result" href="#result">{% trans "Result" %}</a>
+    </li>
+    <li class="tabs-title {% if tab_id == 5 %} is-active{% endif %}">
+        <a data-tabs-target="redmine" href="#redmine">{% trans "Redmine" %}</a>
+    </li>
+</ul>
+
+<div class="tabs-content" data-tabs-content="result-tabs">
+    <div class="tabs-panel{% if tab_id == 1 %} is-active{% endif %}" id="general">
+        <table class="unstriped">
+            <tbody>
+            <tr>
+                <td>{% trans "Created" %}:</td>
+                <td>{{ result.created_at }} ({{ result.created_by }})</td>
+            </tr>
+            <tr>
+                <td>{% trans "Last Update" %}:</td>
+                <td>{{ result.updated_at }} ({{ result.updated_by }})</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="tabs-panel{% if tab_id == 2 %} is-active{% endif %}" id="details">
+        <div class="grid-x grid-margin-x">
+            <div class="cell">
+                <div class="card">
+                    <div class="card-section">
+                        <h4>{% trans "Procedure" %}</h4>
+                        <p>{{ procedure|safe }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="grid-x grid-margin-x">
+            <div class="cell">
+                <div class="card">
+                    <div class="card-section">
+                        <h4>{% trans "Expected result" %}</h4>
+                        <p>{{ expected|safe }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tabs-panel{% if tab_id == 3 %} is-active{% endif %}" id="configs">
+        <div class="grid-x grid-margin-x">
+            <div class="cell">
+                <div class="card">
+                    <div class="card-section">
+                        <a href="{% url 'result_config_create' result=result.id %}" class="button small">{% trans "Add" %}</a>
+                        {% for config in result.result_config.all|dictsort:"id" %}
+                        <p>
+                            {% if config.desc %}{{ config.desc }}{% endif %}
+                            <a href="{% url 'result_config_update' pk=config.id %}"><i class="step fi-pencil" style="color: #7700ff"></i></a>
+                            <a href="{% url 'result_config_delete' pk=config.id %}"><i class="step fi-minus" style="color: red"></i></a>
+                        </p>
+                        <pre><code data-language="{{ config.lang }}">{{ config.config }}</code></pre>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tabs-panel{% if tab_id == 4 %} is-active{% endif %}" id="result">
+        <div class="grid-x grid-margin-x">
+            <div class="cell">
+                <div class="card">
+                    <div class="card-section">
+                        <form method="post" action="">
+                            <input type="submit" value='{% trans "Update" %}' class="button success small" />
+                            {% csrf_token %}
+                            {{ form }}
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tabs-panel{% if tab_id == 5 %} is-active{% endif %}" id="redmine">
+        <div class="grid-x grid-margin-x">
+            <div class="cell">
+                <div class="card">
+                    <div class="card-section">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script src="{% static 'rainbow/rainbow-custom.min.js' %}"></script>
+
+{% endblock %}

@@ -1,5 +1,5 @@
 from django.forms import ModelForm, HiddenInput
-from protocol.models import Protocol, TestResult
+from protocol.models import Protocol, TestResult, TestResultConfig
 from django.utils.translation import gettext_lazy as _
 from django import forms
 from django.db.models import Q
@@ -35,7 +35,7 @@ class ProtocolForm(ModelForm):
         }
 
 
-class TestResultForm(ModelForm):
+class ResultForm(ModelForm):
     class Meta:
         model = TestResult
         labels = {
@@ -58,16 +58,52 @@ class TestResultForm(ModelForm):
         }
 
 
-class ProtocolCopyTestResultsForm(forms.Form):
+class ProtocolCopyResultsForm(forms.Form):
     src_protocol = forms.ModelChoiceField(queryset=Protocol.objects.all(), label=_('Source Protocol'))
     dst_protocol = forms.IntegerField()
 
     def __init__(self, *args, **kwargs):
         device_id = kwargs.pop('device_id', None)
         dst_protocol = kwargs.pop('dst_protocol', None)
-        super(ProtocolCopyTestResultsForm, self).__init__(*args, **kwargs)
+        super(ProtocolCopyResultsForm, self).__init__(*args, **kwargs)
 
         self.fields['dst_protocol'].initial = dst_protocol
         self.fields['dst_protocol'].widget = forms.HiddenInput()
         if device_id:
             self.fields['src_protocol'].queryset = Protocol.objects.filter(Q(device=device_id) & ~Q(id=dst_protocol))
+
+
+class ResultConfigForm(ModelForm):
+    class Meta:
+        model = TestResultConfig
+        labels = {
+            'desc': _('Description'),
+            'lang': _('Style'),
+            'config': _('Configuration'),
+        }
+        fields = '__all__'
+        LANG = (
+            ('json', 'JSON'),
+            ('c', 'C'),
+            ('coffee', 'Coffeescript'),
+            ('csharp', 'C#'),
+            ('css', 'CSS'),
+            ('d', 'D'),
+            ('go', 'Go'),
+            ('haskell', 'Haskell'),
+            ('html', 'HTML'),
+            ('javascript', 'JavaScript'),
+            ('lua', 'Lua'),
+            ('php', 'PHP'),
+            ('python', 'Python'),
+            ('r', 'R'),
+            ('ruby', 'Ruby'),
+            ('scheme', 'Scheme'),
+            ('shell', 'Shell'),
+        )
+        widgets = {
+            'result': HiddenInput(),
+            'lang': forms.Select(choices=LANG, attrs={'class': 'form-control'}),
+            'created_by': HiddenInput(), 'created_at': HiddenInput(),
+            'updated_by': HiddenInput(), 'updated_at': HiddenInput()
+        }
