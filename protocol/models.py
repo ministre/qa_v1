@@ -45,3 +45,14 @@ class TestResult(models.Model):
     result = models.IntegerField(default=0)
     info = models.TextField(default=None, blank=True, null=True)
     config = models.TextField(default=None, blank=True, null=True)
+
+
+class TestResultConfig(models.Model):
+    result = models.ForeignKey(TestResult, on_delete=models.CASCADE, related_name='result_config')
+    desc = models.CharField(max_length=1000, blank=True, null=True)
+    lang = models.CharField(max_length=40, blank=True, null=True)
+    config = models.TextField()
+    created_by = models.ForeignKey(User, models.SET_NULL, related_name='result_config_c')
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_by = models.ForeignKey(User, models.SET_NULL, related_name='result_config_u')
+    updated_at = models.DateTimeField(default=timezone.now)
