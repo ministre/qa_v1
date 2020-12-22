@@ -37,7 +37,7 @@ class Protocol(models.Model):
 class TestResult(models.Model):
     test = models.ForeignKey(Test, on_delete=models.CASCADE)
     protocol = models.ForeignKey(Protocol, on_delete=models.CASCADE)
-    comments = models.TextField(blank=True, null=True)
+    comment = models.TextField(blank=True, null=True)
     created_by = models.ForeignKey(User, models.SET_NULL, related_name='result_c', blank=True, null=True)
     created_at = models.DateTimeField(default=timezone.now)
     updated_by = models.ForeignKey(User, models.SET_NULL, related_name='result_u', blank=True, null=True)
