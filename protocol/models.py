@@ -37,12 +37,12 @@ class Protocol(models.Model):
 class TestResult(models.Model):
     test = models.ForeignKey(Test, on_delete=models.CASCADE)
     protocol = models.ForeignKey(Protocol, on_delete=models.CASCADE)
+    result = models.IntegerField(default=0)
     comment = models.TextField(blank=True, null=True)
     created_by = models.ForeignKey(User, models.SET_NULL, related_name='result_c', blank=True, null=True)
     created_at = models.DateTimeField(default=timezone.now)
     updated_by = models.ForeignKey(User, models.SET_NULL, related_name='result_u', blank=True, null=True)
     updated_at = models.DateTimeField(default=timezone.now)
-    result = models.IntegerField(default=0)
     info = models.TextField(default=None, blank=True, null=True)
     config = models.TextField(default=None, blank=True, null=True)
 
@@ -55,4 +55,14 @@ class TestResultConfig(models.Model):
     created_by = models.ForeignKey(User, models.SET_NULL, related_name='result_config_c', blank=True, null=True)
     created_at = models.DateTimeField(default=timezone.now)
     updated_by = models.ForeignKey(User, models.SET_NULL, related_name='result_config_u', blank=True, null=True)
+    updated_at = models.DateTimeField(default=timezone.now)
+
+
+class TestResultIssue(models.Model):
+    result = models.ForeignKey(TestResult, on_delete=models.CASCADE, related_name='result_issue')
+    text = models.TextField()
+    ticket = models.CharField(max_length=1000, blank=True, null=True)
+    created_by = models.ForeignKey(User, models.SET_NULL, related_name='result_issue_c', blank=True, null=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_by = models.ForeignKey(User, models.SET_NULL, related_name='result_issue_u', blank=True, null=True)
     updated_at = models.DateTimeField(default=timezone.now)
