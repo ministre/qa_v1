@@ -15,6 +15,13 @@ urlpatterns = [
     path('result/config/create/<int:result>/', views.ResultConfigCreate.as_view(), name='result_config_create'),
     path('result/config/update/<int:pk>/', views.ResultConfigUpdate.as_view(), name='result_config_update'),
     path('result/config/delete/<int:pk>/', views.ResultConfigDelete.as_view(), name='result_config_delete'),
+    # issues
+    path('result/issue/create/<int:result>/', views.ResultIssueCreate.as_view(), name='result_issue_create'),
+    path('result/issue/update/<int:pk>/', views.ResultIssueUpdate.as_view(), name='result_issue_update'),
+    path('result/issue/delete/<int:pk>/', views.ResultIssueDelete.as_view(), name='result_issue_delete'),
+
+    path('restore_configs/<int:pk>/', views.restore_configs, name='restore_configs'),
+    path('delete_configs/<int:pk>/', views.delete_configs, name='delete_configs'),
 
 
     path('import/', views.protocol_import, name='protocol_import'),

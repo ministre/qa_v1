@@ -33,6 +33,57 @@ class Protocol(models.Model):
             name += ' - ' + str(self.date_of_finish.strftime('%d.%m.%Y'))
         return name
 
+    def get_results(self):
+        results = TestResult.objects.filter(protocol=self).order_by('id')
+        tests = []
+        category = None
+        i = j = 0
+        for result in results:
+            new_category = result.test.category
+            if new_category == category:
+                j = j + 1
+                result_issues = []
+                issues = TestResultIssue.objects.filter(result=result).order_by('id')
+                for issue in issues:
+                    result_issues.append({'id': issue.id, 'text': issue.text, 'ticket': issue.ticket})
+                result_configs = []
+                configs = TestResultConfig.objects.filter(result=result).order_by('id')
+                for config in configs:
+                    result_configs.append(config.id)
+                tests.append({'test_id': result.test.id,
+                              'test_num': str(i) + '.' + str(j),
+                              'test_name': result.test.name,
+                              'test_category': result.test.category,
+                              'result_id': result.id,
+                              'result_result': result.result,
+                              'result_comment': result.comment,
+                              'result_issues': result_issues,
+                              'result_configs': result_configs
+                              })
+            else:
+                i = i + 1
+                j = 1
+                result_issues = []
+                issues = TestResultIssue.objects.filter(result=result).order_by('id')
+                for issue in issues:
+                    result_issues.append({'id': issue.id, 'text': issue.text, 'ticket': issue.ticket})
+                result_configs = []
+                configs = TestResultConfig.objects.filter(result=result).order_by('id')
+                for config in configs:
+                    result_configs.append(config.id)
+                tests.append({'test_id': result.test.id,
+                              'test_num': str(i) + '.' + str(j),
+                              'test_name': result.test.name,
+                              'test_category': result.test.category,
+                              'result_id': result.id,
+                              'result_result': result.result,
+                              'result_comment': result.comment,
+                              'result_issues': result_issues,
+                              'result_configs': result_configs
+                              })
+                category = result.test.category
+        return tests
+
 
 class TestResult(models.Model):
     test = models.ForeignKey(Test, on_delete=models.CASCADE)

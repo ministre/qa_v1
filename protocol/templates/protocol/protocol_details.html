@@ -33,6 +33,8 @@
     <div class="tabs-panel {% if tab_id == 1 %}is-active{% endif %}" id="general">
         <a href="{% url 'protocol_update' pk=protocol.id %}" class="button small">{% trans "Update" %}</a>
         <a href="{% url 'protocol_delete' pk=protocol.id %}" class="button alert small">{% trans "Delete" %}</a>
+        <a href="{% url 'restore_configs' pk=protocol.id %}" class="button alert small">Восстановить конфиги</a>
+        <a href="{% url 'delete_configs' pk=protocol.id %}" class="button alert small">Удалить конфиги</a>
 
         <div class="grid-x grid-margin-x">
             <div class="cell">
@@ -161,32 +163,43 @@
             <tr style="background-color: #E8E8E8">
                 <th>ID</th>
                 <th width="110px">{% trans "Results" %}</th>
-                <th>{% trans "Tests" %}</th>
+                <th  width="35%">{% trans "Tests" %}</th>
                 <th>{% trans "Category" %}</th>
-                <th width="45%">{% trans "Comments" %}</th>
+                <th>{% trans "Issues" %}</th>
+                <th>{% trans "Comments" %}</th>
             </tr>
         </thead>
         <tbody>
-        {% for result, num in zipped_results %}
-        <tr data-href="{% url 'result_details' pk=result.id tab_id=4 %}">
-            <td>{{ forloop.counter }}</td>
+        {% for result in results %}
+        <tr data-href="{% url 'result_details' pk=result.result_id tab_id=4 %}">
+            <td>{{ result.test_id }}</td>
             <td>
-                {% if result.result == 0 %}
+                {% if result.result_result == 0 %}
                 <span class="label" style="width:100px; text-align: center; background-color: gray; color: white">{% trans "Not tested" %}</span>
                 {% endif %}
-                {% if result.result == 1 %}
+                {% if result.result_result == 1 %}
                 <span class="label alert" style="width:100px; text-align: center">{% trans "Failed" %}</span>
                 {% endif %}
-                {% if result.result == 2 %}
+                {% if result.result_result == 2 %}
                 <span class="label warning" style="width:100px; text-align: center">{% trans "Warning" %}</span>
                 {% endif %}
-                {% if result.result == 3 %}
+                {% if result.result_result == 3 %}
                 <span class="label success" style="width:100px; text-align: center; background-color: green; color: white">{% trans "Success" %}</span>
                 {% endif %}
             </td>
-            <td><i>{{ num }}. {{ result.test.name }}</i></td>
-            <td>{{ result.test.category }}</td>
-            <td>{{ result.comment }}</td>
+            <td>
+                <i>{{ result.test_num }}. {{ result.test_name }}</i>
+                {% if result.result_configs %}<i class="step fi-widget" style="color: #7700ff"></i>{% endif %}
+            </td>
+            <td>{{ result.test_category }}</td>
+            <td>
+                <ul>
+                {% for issue in result.result_issues %}
+                    <li>{{ issue.text }}</li>
+                {% endfor %}
+                </ul>
+            </td>
+            <td>{% if result.result_comment %}{{ result.result_comment }}{% endif %}</td>
         </tr>
         {% endfor %}
         </tbody>

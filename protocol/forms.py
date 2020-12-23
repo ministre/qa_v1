@@ -1,5 +1,5 @@
 from django.forms import ModelForm, HiddenInput
-from protocol.models import Protocol, TestResult, TestResultConfig
+from protocol.models import Protocol, TestResult, TestResultConfig, TestResultIssue
 from django.utils.translation import gettext_lazy as _
 from django import forms
 from django.db.models import Q
@@ -42,7 +42,7 @@ class ResultForm(ModelForm):
             'result': _('Result'),
             'config': _('Configuration'),
             'info': _('Additional Information'),
-            'comment': _('Comments'),
+            'comment': _('Comment'),
         }
         fields = '__all__'
         STATUS = (
@@ -55,6 +55,10 @@ class ResultForm(ModelForm):
         widgets = {
             'result': forms.Select(choices=STATUS, attrs={'class': 'form-control'}),
             'test': HiddenInput(), 'protocol': HiddenInput(),
+            'comment': forms.Textarea(attrs={'rows': '3'}),
+            'created_by': HiddenInput(), 'created_at': HiddenInput(),
+            'updated_by': HiddenInput(), 'updated_at': HiddenInput(),
+            'info': HiddenInput(), 'config': HiddenInput()
         }
 
 
@@ -104,6 +108,22 @@ class ResultConfigForm(ModelForm):
         widgets = {
             'result': HiddenInput(),
             'lang': forms.Select(choices=LANG, attrs={'class': 'form-control'}),
+            'created_by': HiddenInput(), 'created_at': HiddenInput(),
+            'updated_by': HiddenInput(), 'updated_at': HiddenInput()
+        }
+
+
+class ResultIssueForm(ModelForm):
+    class Meta:
+        model = TestResultIssue
+        labels = {
+            'text': _('Text'),
+            'ticket': _('Ticket'),
+        }
+        fields = '__all__'
+        widgets = {
+            'result': HiddenInput(),
+            'text': forms.Textarea(attrs={'rows': '4'}),
             'created_by': HiddenInput(), 'created_at': HiddenInput(),
             'updated_by': HiddenInput(), 'updated_at': HiddenInput()
         }

@@ -2,9 +2,9 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from device.models import Device
 from testplan.models import TestPlan, Test
-from .models import Protocol, TestResult, TestResultConfig
+from .models import Protocol, TestResult, TestResultConfig, TestResultIssue
 from django.http import HttpResponseRedirect
-from .forms import ProtocolForm, ResultForm, ResultConfigForm, ProtocolCopyResultsForm
+from .forms import ProtocolForm, ResultForm, ResultConfigForm, ProtocolCopyResultsForm, ResultIssueForm
 from redmine.forms import RedmineProtocolExportForm
 from docx_generator.forms import BuildProtocolForm, BuildProtocolDetailedForm
 from qa_v1 import settings
@@ -102,9 +102,6 @@ def protocol_details(request, pk, tab_id):
     protocol = get_object_or_404(Protocol, id=pk)
     results = TestResult.objects.filter(protocol=pk).order_by("id")
 
-    numbers_of_testplan = get_numbers_of_results(results)
-    zipped_results = zip(results, numbers_of_testplan)
-
     tests_all = results.count()
     tests_completed = TestResult.objects.filter(Q(protocol=pk) & ~Q(result=0)).count()
     if tests_all > 0:
@@ -127,9 +124,9 @@ def protocol_details(request, pk, tab_id):
                                                      'redmine_project': protocol.device.redmine_project,
                                                      'redmine_wiki': 'protocol_' + str(protocol.id),
                                                      'general_info': True})
-
+    results = protocol.get_results()
     return render(request, 'protocol/protocol_details.html', {'protocol': protocol,
-                                                              'zipped_results': zipped_results,
+                                                              'results': results,
                                                               'tests_all': tests_all,
                                                               'tests_completed': tests_completed,
                                                               'tests_completed_percent': tests_completed_percent,
@@ -163,10 +160,21 @@ class ResultUpdate(UpdateView):
 @login_required
 def result_details(request, pk, tab_id):
     result = get_object_or_404(TestResult, id=pk)
-    procedure = textile.textile(result.test.procedure)
-    expected = textile.textile(result.test.expected)
-    return render(request, 'protocol/result_details.html', {'result': result, 'procedure': procedure,
-                                                            'expected': expected, 'tab_id': tab_id})
+    if request.method == "POST":
+        form = ResultForm(request.POST, instance=result)
+        if form.is_valid():
+            test = form.save(commit=False)
+            test.updated_at = timezone.now()
+            test.updated_by = request.user
+            test.save()
+            return HttpResponseRedirect(reverse('protocol_details', kwargs={'pk': result.protocol.id, 'tab_id': 2}))
+    else:
+        procedure = textile.textile(result.test.procedure)
+        expected = textile.textile(result.test.expected)
+        result_form = ResultForm(instance=result)
+        return render(request, 'protocol/result_details.html', {'result': result, 'procedure': procedure,
+                                                                'expected': expected, 'result_form': result_form,
+                                                                'tab_id': tab_id})
 
 
 @method_decorator(login_required, name='dispatch')
@@ -220,6 +228,59 @@ class ResultConfigDelete(DeleteView):
     def get_success_url(self):
         Item.update_timestamp(foo=self.object.result, user=self.request.user)
         return reverse('result_details', kwargs={'pk': self.object.result.id, 'tab_id': 3})
+
+
+@method_decorator(login_required, name='dispatch')
+class ResultIssueCreate(CreateView):
+    model = TestResultIssue
+    form_class = ResultIssueForm
+    template_name = 'protocol/create.html'
+
+    def get_initial(self):
+        return {'result': self.kwargs.get('result'), 'created_by': self.request.user, 'updated_by': self.request.user}
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('result_details', kwargs={'pk': self.kwargs.get('result'), 'tab_id': 4})
+        return context
+
+    def get_success_url(self):
+        Item.update_timestamp(foo=self.object.result, user=self.request.user)
+        return reverse('result_details', kwargs={'pk': self.object.result.id, 'tab_id': 4})
+
+
+@method_decorator(login_required, name='dispatch')
+class ResultIssueUpdate(UpdateView):
+    model = TestResultIssue
+    form_class = ResultIssueForm
+    template_name = 'protocol/update.html'
+
+    def get_initial(self):
+        return {'updated_by': self.request.user, 'updated_at': timezone.now}
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('result_details', kwargs={'pk': self.object.result.id, 'tab_id': 4})
+        return context
+
+    def get_success_url(self):
+        Item.update_timestamp(foo=self.object.result, user=self.request.user)
+        return reverse('result_details', kwargs={'pk': self.object.result.id, 'tab_id': 4})
+
+
+@method_decorator(login_required, name='dispatch')
+class ResultIssueDelete(DeleteView):
+    model = TestResultIssue
+    template_name = 'protocol/delete.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('result_details', kwargs={'pk': self.object.result.id, 'tab_id': 4})
+        return context
+
+    def get_success_url(self):
+        Item.update_timestamp(foo=self.object.result, user=self.request.user)
+        return reverse('result_details', kwargs={'pk': self.object.result.id, 'tab_id': 4})
 
 
 @login_required
@@ -374,3 +435,23 @@ def get_numbers_of_results(results):
             numbers_of_testplan.append(str(i) + '.' + str(j))
             category = res.test.category
     return numbers_of_testplan
+
+
+@login_required
+def restore_configs(request, pk):
+    protocol = get_object_or_404(Protocol, id=pk)
+    results = TestResult.objects.filter(protocol=protocol)
+    for result in results:
+        if result.config:
+            cfg = TestResultConfig.objects.create(result=result, config=result.config)
+            cfg.save()
+    return HttpResponseRedirect(reverse('protocol_details', kwargs={'pk': protocol.id, 'tab_id': 2}))
+
+
+@login_required
+def delete_configs(request, pk):
+    protocol = get_object_or_404(Protocol, id=pk)
+    results = TestResult.objects.filter(protocol=protocol)
+    for result in results:
+            TestResultConfig.objects.filter(result=result).delete()
+    return HttpResponseRedirect(reverse('protocol_details', kwargs={'pk': protocol.id, 'tab_id': 2}))
