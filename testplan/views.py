@@ -17,6 +17,7 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 import textile
 from django import forms
+from django.utils import timezone
 
 
 @method_decorator(login_required, name='dispatch')
@@ -32,6 +33,9 @@ class TestplanCreate(CreateView):
     form_class = TestPlanForm
     template_name = 'testplan/create.html'
 
+    def get_initial(self):
+        return {'created_by': self.request.user, 'updated_by': self.request.user}
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['back_url'] = reverse('testplans')
@@ -46,6 +50,9 @@ class TestplanUpdate(UpdateView):
     model = TestPlan
     form_class = TestPlanForm
     template_name = 'testplan/update.html'
+
+    def get_initial(self):
+        return {'updated_by': self.request.user, 'updated_at': timezone.now()}
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
