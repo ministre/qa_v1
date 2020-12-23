@@ -33,8 +33,6 @@
     <div class="tabs-panel {% if tab_id == 1 %}is-active{% endif %}" id="general">
         <a href="{% url 'protocol_update' pk=protocol.id %}" class="button small">{% trans "Update" %}</a>
         <a href="{% url 'protocol_delete' pk=protocol.id %}" class="button alert small">{% trans "Delete" %}</a>
-        <a href="{% url 'restore_configs' pk=protocol.id %}" class="button alert small">Восстановить конфиги</a>
-        <a href="{% url 'delete_configs' pk=protocol.id %}" class="button alert small">Удалить конфиги</a>
 
         <div class="grid-x grid-margin-x">
             <div class="cell">

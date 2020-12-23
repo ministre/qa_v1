@@ -20,8 +20,8 @@ urlpatterns = [
     path('result/issue/update/<int:pk>/', views.ResultIssueUpdate.as_view(), name='result_issue_update'),
     path('result/issue/delete/<int:pk>/', views.ResultIssueDelete.as_view(), name='result_issue_delete'),
 
-    path('restore_configs/<int:pk>/', views.restore_configs, name='restore_configs'),
-    path('delete_configs/<int:pk>/', views.delete_configs, name='delete_configs'),
+    # path('restore_configs/<int:pk>/', views.restore_configs, name='restore_configs'),
+    # path('delete_configs/<int:pk>/', views.delete_configs, name='delete_configs'),
 
 
     path('import/', views.protocol_import, name='protocol_import'),
