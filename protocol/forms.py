@@ -43,6 +43,7 @@ class ResultForm(ModelForm):
             'config': _('Configuration'),
             'info': _('Additional Information'),
             'comment': _('Comment'),
+            'redmine_wiki': _('Redmine Wiki'),
         }
         fields = '__all__'
         STATUS = (
@@ -58,7 +59,7 @@ class ResultForm(ModelForm):
             'comment': forms.Textarea(attrs={'rows': '3'}),
             'created_by': HiddenInput(), 'created_at': HiddenInput(),
             'updated_by': HiddenInput(), 'updated_at': HiddenInput(),
-            'info': HiddenInput(), 'config': HiddenInput()
+            # 'info': HiddenInput(), 'config': HiddenInput(), 'redmine_wiki': HiddenInput()
         }
 
 

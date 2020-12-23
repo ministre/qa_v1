@@ -38,8 +38,15 @@
 
 <div class="tabs-content" data-tabs-content="result-tabs">
     <div class="tabs-panel{% if tab_id == 1 %} is-active{% endif %}" id="general">
+        <a href="{% url 'result_update' pk=result.id %}" class="button small">{% trans "Update" %}</a>
         <table class="unstriped">
             <tbody>
+            {% if result.redmine_wiki %}
+            <tr>
+                <td>{% trans "Redmine Wiki" %}:</td>
+                <td>{{ result.redmine_wiki }}</td>
+            </tr>
+            {% endif %}
             <tr>
                 <td>{% trans "Created" %}:</td>
                 <td>{{ result.created_at }} ({{ result.created_by }})</td>
@@ -141,7 +148,9 @@
                     <div class="card-section">
                         <h5>Redmine Project Wiki</h5>
                         <p>
-                            <a href="{{ redmine_url }}/projects/{{ device.redmine_project }}/wiki/">{{ redmine_url }}/projects/{{ device.redmine_project }}/wiki/</a>
+                            <a href="{{ redmine_url }}/projects/{{ result.protocol.device.redmine_project }}/wiki/{{ result.redmine_wiki }}/">
+                                {{ redmine_url }}/projects/{{ result.protocol.device.redmine_project }}/wiki/{{ result.redmine_wiki }}/
+                            </a>
                         </p>
                     </div>
                 </div>

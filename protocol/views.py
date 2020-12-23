@@ -148,13 +148,21 @@ class ResultUpdate(UpdateView):
     form_class = ResultForm
     template_name = 'protocol/update.html'
 
+    def get_form(self, form_class=ResultForm):
+        form = super(ResultUpdate, self).get_form(form_class)
+        form.fields['result'].widget = forms.HiddenInput()
+        form.fields['comment'].widget = forms.HiddenInput()
+        form.fields['info'].widget = forms.HiddenInput()
+        form.fields['config'].widget = forms.HiddenInput()
+        return form
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['back_url'] = reverse('protocol_details', kwargs={'pk': self.object.protocol.id, 'tab_id': 1})
+        context['back_url'] = reverse('result_details', kwargs={'pk': self.object.id, 'tab_id': 1})
         return context
 
     def get_success_url(self):
-        return reverse('protocol_details', kwargs={'pk': self.object.protocol.id, 'tab_id': 1})
+        return reverse('result_details', kwargs={'pk': self.object.id, 'tab_id': 1})
 
 
 @login_required
@@ -171,7 +179,12 @@ def result_details(request, pk, tab_id):
     else:
         procedure = textile.textile(result.test.procedure)
         expected = textile.textile(result.test.expected)
+
         result_form = ResultForm(instance=result)
+        result_form.fields['redmine_wiki'].widget = forms.HiddenInput()
+        result_form.fields['info'].widget = forms.HiddenInput()
+        result_form.fields['config'].widget = forms.HiddenInput()
+
         redmine_url = settings.REDMINE_URL
         return render(request, 'protocol/result_details.html', {'result': result, 'procedure': procedure,
                                                                 'expected': expected, 'result_form': result_form,

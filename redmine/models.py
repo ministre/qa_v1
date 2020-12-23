@@ -189,7 +189,8 @@ class RedmineProtocol:
             if protocol.engineer_password:
                 wiki += '\n| ' + str(_('Engineer Password')) + ': | ' + protocol.engineer_password + ' |\r'
             if protocol.sysinfo:
-                wiki += '\n\r\n{{collapse(' + str(_('System Information')) + ')\r\n<pre>' + protocol.sysinfo + '</pre>\r\n}}\r'
+                wiki += '\n\r\n{{collapse(' + str(_('System Information')) + ')\r\n<pre>' + protocol.sysinfo + \
+                        '</pre>\r\n}}\r'
             if protocol.console:
                 wiki += '\n\r\n{{collapse(' + str(_('Console port parameters')) + ')\r\n' + protocol.console + \
                         '\r\n}}\r'
@@ -218,8 +219,8 @@ class RedmineProtocol:
                 else:
                     header = ''
                 # test row
-                wiki += header + '| ' + num + ' | [[test_result_' + str(result.id) + '|' + \
-                        result.test.name + ']] |_. ' + test_status + ' | ' + result.comment + ' |\n'
+                wiki += header + '| ' + num + ' | [[result_' + str(result.id) + '|' + result.test.name + ']] |_. ' + \
+                        test_status + ' | ' + result.comment + ' |\n'
         return wiki
 
     @staticmethod
