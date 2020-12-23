@@ -439,7 +439,8 @@ def get_numbers_of_results(results):
 
 @login_required
 def restore_configs(request, pk):
-    protocol = get_object_or_404(Protocol, id=pk)
+    #protocol = get_object_or_404(Protocol, id=pk)
+    protocol = Protocol.objects.all()
     if protocol.device.type.id < 4:
         results = TestResult.objects.filter(protocol=protocol)
         for result in results:
