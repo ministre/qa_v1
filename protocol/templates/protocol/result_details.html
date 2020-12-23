@@ -134,10 +134,30 @@
     </div>
 
     <div class="tabs-panel{% if tab_id == 5 %} is-active{% endif %}" id="redmine">
+        {% if result.redmine_wiki %}
         <div class="grid-x grid-margin-x">
             <div class="cell">
                 <div class="card">
                     <div class="card-section">
+                        <h5>Redmine Project Wiki</h5>
+                        <p>
+                            <a href="{{ redmine_url }}/projects/{{ device.redmine_project }}/wiki/">{{ redmine_url }}/projects/{{ device.redmine_project }}/wiki/</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        <div class="grid-x grid-margin-x">
+            <div class="cell">
+                <div class="card">
+                    <div class="card-section">
+                        <h5>{% trans "Export to" %} Redmine</h5>
+                        <form action="{% url 'redmine_device_export' %}" method="post">
+                            {% csrf_token %}
+                            {{ export_form.as_p }}
+                            <input type="submit" value='{% trans "Export" %}' class="button small success" />
+                        </form>
                     </div>
                 </div>
             </div>

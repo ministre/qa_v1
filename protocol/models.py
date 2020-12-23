@@ -90,12 +90,13 @@ class TestResult(models.Model):
     protocol = models.ForeignKey(Protocol, on_delete=models.CASCADE)
     result = models.IntegerField(default=0)
     comment = models.TextField(blank=True, null=True)
+    redmine_wiki = models.CharField(max_length=100, blank=True, null=True)
     created_by = models.ForeignKey(User, models.SET_NULL, related_name='result_c', blank=True, null=True)
     created_at = models.DateTimeField(default=timezone.now)
     updated_by = models.ForeignKey(User, models.SET_NULL, related_name='result_u', blank=True, null=True)
     updated_at = models.DateTimeField(default=timezone.now)
-    info = models.TextField(default=None, blank=True, null=True)
-    config = models.TextField(default=None, blank=True, null=True)
+    info = models.TextField(blank=True, null=True)
+    config = models.TextField(blank=True, null=True)
 
 
 class TestResultConfig(models.Model):

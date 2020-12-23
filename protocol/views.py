@@ -146,15 +146,15 @@ def protocol_details(request, pk, tab_id):
 class ResultUpdate(UpdateView):
     model = TestResult
     form_class = ResultForm
-    template_name = 'protocol/update_test_result.html'
+    template_name = 'protocol/update.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['back_url'] = reverse('protocol_details', kwargs={'pk': self.object.protocol.id, 'tab_id': 2})
+        context['back_url'] = reverse('protocol_details', kwargs={'pk': self.object.protocol.id, 'tab_id': 1})
         return context
 
     def get_success_url(self):
-        return reverse('protocol_details', kwargs={'pk': self.object.protocol.id, 'tab_id': 2})
+        return reverse('protocol_details', kwargs={'pk': self.object.protocol.id, 'tab_id': 1})
 
 
 @login_required
@@ -172,9 +172,10 @@ def result_details(request, pk, tab_id):
         procedure = textile.textile(result.test.procedure)
         expected = textile.textile(result.test.expected)
         result_form = ResultForm(instance=result)
+        redmine_url = settings.REDMINE_URL
         return render(request, 'protocol/result_details.html', {'result': result, 'procedure': procedure,
                                                                 'expected': expected, 'result_form': result_form,
-                                                                'tab_id': tab_id})
+                                                                'redmine_url': redmine_url, 'tab_id': tab_id})
 
 
 @method_decorator(login_required, name='dispatch')
