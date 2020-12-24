@@ -4,7 +4,6 @@ from django.utils import timezone
 from datetime import datetime
 from device.models import Device
 from testplan.models import TestPlan, Category, Test
-#from django.core.exceptions import ObjectDoesNotExist
 
 
 class Protocol(models.Model):
@@ -47,13 +46,17 @@ class Protocol(models.Model):
                     issues = []
                     for issue in test_issues:
                         issues.append(issue.text)
+                    test_configs = TestResultConfig.objects.filter(result=result)
+                    configs = []
+                    for config in test_configs:
+                        configs.append(config.id)
                     result_id = result.id
                     result = result.result
                 except TestResult.DoesNotExist:
-                    result = result_id = issues = comment = None
+                    result = result_id = issues = configs = comment = None
                 results.append({'num': str(i+1) + '.' + str(j+1), 'test_name': test.name, 'test_id': test.id,
                                 'category': test.cat, 'result': result, 'result_id': result_id, 'comment': comment,
-                                'issues': issues})
+                                'issues': issues, 'configs': configs})
         return results
 
 

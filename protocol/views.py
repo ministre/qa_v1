@@ -475,27 +475,3 @@ def get_numbers_of_results(results):
             numbers_of_testplan.append(str(i) + '.' + str(j))
             category = res.test.category
     return numbers_of_testplan
-
-
-@login_required
-def restore_configs(request, pk):
-    i = 0
-    protocols = Protocol.objects.all()
-    for protocol in protocols:
-        if protocol.device.type.id == pk:
-            results = TestResult.objects.filter(protocol=protocol)
-            for result in results:
-                if result.config:
-                    cfg = TestResultConfig.objects.create(result=result, config=result.config)
-                    cfg.save()
-                    i += 1
-    return render(request, 'docx_generator/message.html', {'message': [True, i]})
-
-
-@login_required
-def delete_configs(request, pk):
-    protocol = get_object_or_404(Protocol, id=pk)
-    results = TestResult.objects.filter(protocol=protocol)
-    for result in results:
-            TestResultConfig.objects.filter(result=result).delete()
-    return HttpResponseRedirect(reverse('protocol_details', kwargs={'pk': protocol.id, 'tab_id': 2}))

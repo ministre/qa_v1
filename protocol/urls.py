@@ -7,7 +7,6 @@ urlpatterns = [
     path('update/<int:pk>/', views.ProtocolUpdate.as_view(), name='protocol_update'),
     path('delete/<int:pk>/', views.ProtocolDelete.as_view(), name='protocol_delete'),
     path('<int:pk>/<int:tab_id>/', views.protocol_details, name='protocol_details'),
-
     # results
     path('result/create/<int:protocol_id>/<int:test_id>/', views.result_create, name='result_create'),
     path('result/update/<int:pk>/', views.ResultUpdate.as_view(), name='result_update'),
@@ -22,9 +21,5 @@ urlpatterns = [
     path('result/issue/update/<int:pk>/', views.ResultIssueUpdate.as_view(), name='result_issue_update'),
     path('result/issue/delete/<int:pk>/', views.ResultIssueDelete.as_view(), name='result_issue_delete'),
 
-    # path('restore_configs/<int:pk>/', views.restore_configs, name='restore_configs'),
-    # path('delete_configs/<int:pk>/', views.delete_configs, name='delete_configs'),
-
-    path('import/', views.protocol_import, name='protocol_import'),
     path('copy_results/', views.protocol_copy_results, name='protocol_copy_results'),
 ]
