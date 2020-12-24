@@ -112,7 +112,7 @@
                                         {% if forloop.counter != 1 %}
                                         <a href="{% url 'test_up' pk=test.id %}"><i class="step fi-arrow-up" style="color: #ff4f12"></i></a>
                                         {% endif %}
-                                        {% if forloop.counter != t_category.category_test.all.count %}
+                                        {% if forloop.counter != category.cat_test.all.count %}
                                         <a href="{% url 'test_down' pk=test.id %}"><i class="step fi-arrow-down" style="color: #ff4f12"></i></a>
                                         {% endif %}
                                     </li>

@@ -8,6 +8,8 @@ urlpatterns = [
     path('delete/<int:pk>/', views.ProtocolDelete.as_view(), name='protocol_delete'),
     path('<int:pk>/<int:tab_id>/', views.protocol_details, name='protocol_details'),
 
+    # results
+    path('result/create/<int:protocol_id>/<int:test_id>/', views.result_create, name='result_create'),
     path('result/update/<int:pk>/', views.ResultUpdate.as_view(), name='result_update'),
     path('result/<int:pk>/<int:tab_id>/', views.result_details, name='result_details'),
     # configs

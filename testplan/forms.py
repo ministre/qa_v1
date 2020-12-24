@@ -35,7 +35,7 @@ class CategoryForm(ModelForm):
             'redmine_parent': _('Redmine Parent Project'),
         }
         fields = '__all__'
-        widgets = {'testplan': HiddenInput(),
+        widgets = {'testplan': HiddenInput(), 'priority': HiddenInput(),
                    'created_by': HiddenInput(), 'created_at': HiddenInput(),
                    'updated_by': HiddenInput(), 'updated_at': HiddenInput()}
 

@@ -47,10 +47,13 @@ class Protocol(models.Model):
                     issues = []
                     for issue in test_issues:
                         issues.append(issue.text)
+                    result_id = result.id
+                    result = result.result
                 except TestResult.DoesNotExist:
-                    result = issues = comment = None
-                results.append({'num': str(i+1) + '.' + str(j+1), 'test_name': test.name, 'category': test.cat,
-                                'result': result.result, 'result_id': result.id, 'comment': comment, 'issues': issues})
+                    result = result_id = issues = comment = None
+                results.append({'num': str(i+1) + '.' + str(j+1), 'test_name': test.name, 'test_id': test.id,
+                                'category': test.cat, 'result': result, 'result_id': result_id, 'comment': comment,
+                                'issues': issues})
         return results
 
 
@@ -58,14 +61,14 @@ class TestResult(models.Model):
     test = models.ForeignKey(Test, on_delete=models.CASCADE)
     protocol = models.ForeignKey(Protocol, on_delete=models.CASCADE)
     result = models.IntegerField(default=0)
-    comment = models.TextField(blank=True, null=True)
-    redmine_wiki = models.CharField(max_length=100, blank=True, null=True)
+    comment = models.TextField(max_length=3000, blank=True)
+    redmine_wiki = models.CharField(max_length=100, blank=True)
     created_by = models.ForeignKey(User, models.SET_NULL, related_name='result_c', blank=True, null=True)
     created_at = models.DateTimeField(default=timezone.now)
     updated_by = models.ForeignKey(User, models.SET_NULL, related_name='result_u', blank=True, null=True)
     updated_at = models.DateTimeField(default=timezone.now)
-    info = models.TextField(blank=True, null=True)
-    config = models.TextField(blank=True, null=True)
+    info = models.TextField(blank=True)
+    config = models.TextField(blank=True)
 
 
 class TestResultConfig(models.Model):

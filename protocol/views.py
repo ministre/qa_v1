@@ -143,6 +143,16 @@ def protocol_details(request, pk, tab_id):
                                                               'tab_id': tab_id})
 
 
+@login_required
+def result_create(request, protocol_id: int, test_id: int):
+    protocol = get_object_or_404(Protocol, id=protocol_id)
+    test = get_object_or_404(Test, id=test_id)
+    result, create = TestResult.objects.update_or_create(protocol=protocol, test=test,
+                                                         defaults={'created_by': request.user,
+                                                                   'updated_by': request.user})
+    return HttpResponseRedirect(reverse('result_details', kwargs={'pk': result.id, 'tab_id': 4}))
+
+
 @method_decorator(login_required, name='dispatch')
 class ResultUpdate(UpdateView):
     model = TestResult

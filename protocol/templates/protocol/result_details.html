@@ -11,8 +11,8 @@
 </p>
 <p>
     <a href="{% url 'testplans' %}">{% trans "Testplans" %}</a> &raquo;
-    <a href="{% url 'testplan_details' pk=result.test.testplan.id tab_id=2 %}">{{ result.test.testplan }}</a> &raquo;
-    {{ result.test.category }} &raquo;
+    <a href="{% url 'testplan_details' pk=result.test.cat.testplan.id tab_id=2 %}">{{ result.test.cat.testplan }}</a> &raquo;
+    {{ result.test.cat }} &raquo;
     <a href="{% url 'test_details' pk=result.test.id tab_id=1 %}">{{ result.test.name }}</a>
 </p>
 
