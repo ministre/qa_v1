@@ -34,24 +34,12 @@
               <li>
                   <a href="{% url 'devices' %}">{% trans "Devices" %}</a>
                   <ul class="menu vertical">
-                      <li><a href="{% url 'device_create' %}">{% trans "Create" %}</a></li>
                       <li><a href="{% url 'device_types' %}">{% trans "Device Types" %}</a></li>
                       <li><a href="{% url 'vendors' %}">{% trans "Vendors" %}</a></li>
                   </ul>
               </li>
-              <li>
-                  <a href="{% url 'testplans' %}">{% trans "Testplans" %}</a>
-                  <ul class="menu vertical">
-                      <li><a href="{% url 'testplan_create' %}">{% trans "Create" %}</a></li>
-                  </ul>
-              </li>
-              <li>
-                  <a href="{% url 'protocols' %}">{% trans "Protocols" %}</a>
-                  <ul class="menu vertical">
-                      <li><a href="{% url 'protocol_create' %}">{% trans "Create" %}</a></li>
-                      <li><a href="{% url 'protocol_import' %}">{% trans "Import from" %} Redmine</a></li>
-                  </ul>
-              </li>
+              <li><a href="{% url 'testplans' %}">{% trans "Testplans" %}</a></li>
+              <li><a href="{% url 'protocols' %}">{% trans "Protocols" %}</a></li>
               <li>
                   <a href="{% url 'docx_templates' %}">{% trans "Templates" %}</a>
                   <ul class="menu vertical">

@@ -127,6 +127,7 @@ def protocol_details(request, pk, tab_id):
     results = protocol.get_results()
     return render(request, 'protocol/protocol_details.html', {'protocol': protocol,
                                                               'results': results,
+
                                                               'tests_all': tests_all,
                                                               'tests_completed': tests_completed,
                                                               'tests_completed_percent': tests_completed_percent,

@@ -106,7 +106,7 @@
                                 {% for test in category.cat_test.all|dictsort:"priority" %}
                                 <ul style="list-style: none">
                                     <li>
-                                        <a href="{% url 'test_details' pk=test.id tab_id=1 %}">
+                                        <a href="{% url 'test_details' pk=test.id tab_id=2 %}">
                                             {{ forloop.parentloop.counter}}.{{ forloop.counter }}. {{ test.name }}
                                         </a>
                                         {% if forloop.counter != 1 %}

@@ -3,7 +3,8 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 from datetime import datetime
 from device.models import Device
-from testplan.models import TestPlan, Test
+from testplan.models import TestPlan, Category, Test
+#from django.core.exceptions import ObjectDoesNotExist
 
 
 class Protocol(models.Model):
@@ -34,55 +35,23 @@ class Protocol(models.Model):
         return name
 
     def get_results(self):
-        results = TestResult.objects.filter(protocol=self).order_by('id')
-        tests = []
-        category = None
-        i = j = 0
-        for result in results:
-            new_category = result.test.category
-            if new_category == category:
-                j = j + 1
-                result_issues = []
-                issues = TestResultIssue.objects.filter(result=result).order_by('id')
-                for issue in issues:
-                    result_issues.append({'id': issue.id, 'text': issue.text, 'ticket': issue.ticket})
-                result_configs = []
-                configs = TestResultConfig.objects.filter(result=result).order_by('id')
-                for config in configs:
-                    result_configs.append(config.id)
-                tests.append({'test_id': result.test.id,
-                              'test_num': str(i) + '.' + str(j),
-                              'test_name': result.test.name,
-                              'test_category': result.test.category,
-                              'result_id': result.id,
-                              'result_result': result.result,
-                              'result_comment': result.comment,
-                              'result_issues': result_issues,
-                              'result_configs': result_configs
-                              })
-            else:
-                i = i + 1
-                j = 1
-                result_issues = []
-                issues = TestResultIssue.objects.filter(result=result).order_by('id')
-                for issue in issues:
-                    result_issues.append({'id': issue.id, 'text': issue.text, 'ticket': issue.ticket})
-                result_configs = []
-                configs = TestResultConfig.objects.filter(result=result).order_by('id')
-                for config in configs:
-                    result_configs.append(config.id)
-                tests.append({'test_id': result.test.id,
-                              'test_num': str(i) + '.' + str(j),
-                              'test_name': result.test.name,
-                              'test_category': result.test.category,
-                              'result_id': result.id,
-                              'result_result': result.result,
-                              'result_comment': result.comment,
-                              'result_issues': result_issues,
-                              'result_configs': result_configs
-                              })
-                category = result.test.category
-        return tests
+        results = []
+        categories = Category.objects.filter(testplan=self.testplan).order_by('priority')
+        for i, category in enumerate(categories):
+            tests = Test.objects.filter(cat=category).order_by('priority')
+            for j, test in enumerate(tests):
+                try:
+                    result = TestResult.objects.get(protocol=self, test=test)
+                    comment = result.comment
+                    test_issues = TestResultIssue.objects.filter(result=result)
+                    issues = []
+                    for issue in test_issues:
+                        issues.append(issue.text)
+                except TestResult.DoesNotExist:
+                    result = issues = comment = None
+                results.append({'num': str(i+1) + '.' + str(j+1), 'test_name': test.name, 'category': test.cat,
+                                'result': result.result, 'result_id': result.id, 'comment': comment, 'issues': issues})
+        return results
 
 
 class TestResult(models.Model):

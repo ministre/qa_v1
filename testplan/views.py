@@ -20,7 +20,6 @@ from django.utils import timezone
 from django.http import HttpResponseRedirect
 from device.views import Item
 from django.db.models import Max, Min
-from django.core.exceptions import ObjectDoesNotExist
 
 
 @method_decorator(login_required, name='dispatch')
@@ -130,31 +129,6 @@ def clear_tests(request, pk):
         back_url = reverse('testplan_details', kwargs={'pk': pk, 'tab_id': 2})
         message = _('Are you sure?')
         return render(request, 'testplan/clear.html', {'back_url': back_url, 'message': message})
-
-
-@login_required
-def migrate(request, pk):
-    testplan = get_object_or_404(TestPlan, id=pk)
-    tests = Test.objects.filter(testplan=testplan).order_by('id')
-    for test in tests:
-        try:
-            category = Category.objects.get(name=test.category, testplan=testplan)
-            test.cat = category
-            max_test = Test.objects.filter(cat=category).latest('priority')
-            priority = max_test.priority + 1
-            test.priority = priority
-            test.save()
-
-        except Category.DoesNotExist:
-            new_category = Category.objects.create(testplan=testplan, name=test.category)
-            max_category = Category.objects.filter(testplan=testplan).latest('priority')
-            priority = max_category.priority + 1
-            new_category.priority = priority
-            new_category.save()
-            test.priority = 1
-            test.cat = new_category
-            test.save()
-    return HttpResponseRedirect(reverse('testplan_details', kwargs={'pk': pk, 'tab_id': 2}))
 
 
 @method_decorator(login_required, name='dispatch')

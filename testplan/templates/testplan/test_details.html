@@ -16,16 +16,64 @@
         <a data-tabs-target="general" href="#general">{% trans "General" %}</a>
     </li>
     <li class="tabs-title {% if tab_id == 2 %} is-active{% endif %}">
+        <a data-tabs-target="desc" href="#desc">{% trans "Description" %}</a>
+    </li>
+    <li class="tabs-title {% if tab_id == 3 %} is-active{% endif %}">
         <a data-tabs-target="redmine" href="#redmine">Redmine</a>
     </li>
 </ul>
 
 <div class="tabs-content" data-tabs-content="test-tabs">
-
     <div class="tabs-panel {% if tab_id == 1 %}is-active{% endif %}" id="general">
         <a href="{% url 'test_update' pk=test.id %}" class="button small">{% trans "Update" %}</a>
         <a href="{% url 'test_delete' pk=test.id %}" class="button alert small">{% trans "Delete" %}</a>
+        <div class="grid-x grid-margin-x">
+            <div class="cell">
+                <div class="card">
+                    <div class="card-section">
+                        <table class="unstriped">
+                            <tr>
+                                <td>ID:</td>
+                                <td>{{ test.id }}</td>
+                            </tr>
+                            <tr>
+                                <td>{% trans "Name" %}:</td>
+                                <td>{{ test }}</td>
+                            </tr>
+                            <tr>
+                                <td>{% trans "Category" %}:</td>
+                                <td>{{ test.cat }}</td>
+                            </tr>
+                            <tr>
+                                <td>{% trans "Redmine Wiki" %}:</td>
+                                <td>{% if test.redmine_wiki %}{{ test.redmine_wiki }}{% endif %}</td>
+                            </tr>
+                            <tr>
+                                <td>{% trans "Created" %}:</td>
+                                <td>{{ test.created_at }} {% if test.created_by %}({{ test.created_by }}){% endif %}</td>
+                            </tr>
+                            <tr>
+                                <td>{% trans "Last Update" %}:</td>
+                                <td>{{ test.updated_at }} {% if test.updated_by %}({{ test.updated_by }}){% endif %}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
+    <div class="tabs-panel {% if tab_id == 2 %}is-active{% endif %}" id="desc">
+        {% if test.purpose %}
+        <div class="cell">
+            <div class="card">
+                <div class="card-section">
+                    <h4>{% trans "Purpose" %}</h4>
+                    <p>{{ test.purpose }}</p>
+                </div>
+            </div>
+        </div>
+        {% endif %}
         <div class="cell">
             <div class="card">
                 <div class="card-section">
@@ -34,7 +82,6 @@
                 </div>
             </div>
         </div>
-
         <div class="cell">
             <div class="card">
                 <div class="card-section">
@@ -43,41 +90,9 @@
                 </div>
             </div>
         </div>
-
     </div>
 
-    <div class="tabs-panel {% if tab_id == 2 %}is-active{% endif %}" id="redmine">
-
-        <div class="cell">
-            <div class="card">
-                <div class="card-section">
-                    <h4>{% trans "Import" %}</h4>
-
-                    <form method="post" action="{% url 'test_import_details' %}">
-                        {% csrf_token %}
-                        <input type='hidden' id='test_id' name='test_id' value='{{ test.id }}'>
-                        <select name="tag" id="tag">
-                            <option value="">{% trans "Without tag" %}</option>
-                            {% for tag in tags %}
-                            <option value="{{ tag.sub_type }}">{{ tag.sub_type }}</option>
-                            {% endfor %}
-                        </select>
-                        <input type='submit' value='{% trans "Import" %}' class='button small success' />
-                    </form>
-
-                </div>
-            </div>
-        </div>
-
-        <div class="cell">
-            <div class="card">
-                <div class="card-section">
-                    <h4>Redmine Wiki</h4>
-                    <p>{{ test.url }}</p>
-                </div>
-            </div>
-        </div>
-
+    <div class="tabs-panel {% if tab_id == 3 %}is-active{% endif %}" id="redmine">
     </div>
 
 </div>
