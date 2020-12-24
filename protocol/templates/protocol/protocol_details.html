@@ -176,6 +176,9 @@
                 {% endif %}>
             <td>{{ forloop.counter }}</td>
             <td>
+                {% if result.result == None %}
+                <span class="label" style="width:100px; text-align: center; background-color: gray; color: white">{% trans "Not tested" %}</span>
+                {% endif %}
                 {% if result.result == 0 %}
                 <span class="label" style="width:100px; text-align: center; background-color: gray; color: white">{% trans "Not tested" %}</span>
                 {% endif %}

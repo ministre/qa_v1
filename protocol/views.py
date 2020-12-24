@@ -176,6 +176,21 @@ class ResultUpdate(UpdateView):
         return reverse('result_details', kwargs={'pk': self.object.id, 'tab_id': 1})
 
 
+@method_decorator(login_required, name='dispatch')
+class ResultDelete(DeleteView):
+    model = TestResult
+    template_name = 'protocol/delete.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('result_details', kwargs={'pk': self.object.id, 'tab_id': 1})
+        return context
+
+    def get_success_url(self):
+        Item.update_timestamp(foo=self.object.protocol, user=self.request.user)
+        return reverse('protocol_details', kwargs={'pk': self.object.protocol.id, 'tab_id': 2})
+
+
 @login_required
 def result_details(request, pk, tab_id):
     result = get_object_or_404(TestResult, id=pk)

@@ -11,6 +11,7 @@ urlpatterns = [
     # results
     path('result/create/<int:protocol_id>/<int:test_id>/', views.result_create, name='result_create'),
     path('result/update/<int:pk>/', views.ResultUpdate.as_view(), name='result_update'),
+    path('result/delete/<int:pk>/', views.ResultDelete.as_view(), name='result_delete'),
     path('result/<int:pk>/<int:tab_id>/', views.result_details, name='result_details'),
     # configs
     path('result/config/create/<int:result>/', views.ResultConfigCreate.as_view(), name='result_config_create'),

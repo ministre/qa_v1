@@ -39,6 +39,7 @@
 <div class="tabs-content" data-tabs-content="result-tabs">
     <div class="tabs-panel{% if tab_id == 1 %} is-active{% endif %}" id="general">
         <a href="{% url 'result_update' pk=result.id %}" class="button small">{% trans "Update" %}</a>
+        <a href="{% url 'result_delete' pk=result.id %}" class="button alert small">{% trans "Delete" %}</a>
         <table class="unstriped">
             <tbody>
             {% if result.redmine_wiki %}
@@ -49,11 +50,11 @@
             {% endif %}
             <tr>
                 <td>{% trans "Created" %}:</td>
-                <td>{{ result.created_at }} ({{ result.created_by }})</td>
+                <td>{{ result.created_at }} {% if result.created_by %}({{ result.created_by }}){% endif %}</td>
             </tr>
             <tr>
                 <td>{% trans "Last Update" %}:</td>
-                <td>{{ result.updated_at }} ({{ result.updated_by }})</td>
+                <td>{{ result.updated_at }} {% if result.updated_by %}({{ result.updated_by }}){% endif %}</td>
             </tr>
             </tbody>
         </table>
