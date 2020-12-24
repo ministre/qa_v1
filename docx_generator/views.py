@@ -6,9 +6,8 @@ from docxtpl import DocxTemplate, RichText, Listing
 import os
 from django.conf import settings
 from django.http import HttpResponse, Http404
-from protocol.models import Protocol, TestResult
+from protocol.models import Protocol, TestResult, TestResultIssue
 from testplan.models import TestPlan, Test
-from protocol.views import get_numbers_of_results
 from django.utils.formats import localize
 from django.utils.decorators import method_decorator
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
@@ -73,24 +72,27 @@ def build_protocol(request):
     if request.method == "POST":
         protocol = get_object_or_404(Protocol, id=request.POST['protocol_id'])
         docx_template = get_object_or_404(DocxTemplateFile, id=request.POST['docx_template_id'])
-        tests = comments = []
-        results = TestResult.objects.filter(protocol=protocol).order_by("id")
-        zipped_results = zip(results, get_numbers_of_results(results))
+        tests = []
+        results = protocol.get_results()
         status = None
-        for result, num in zipped_results:
-            if result.result == 0:
+        summary_issues = []
+        for result in results:
+            if result['result'] == 0 or ['result'] is None:
                 status = RichText('Пропущен', color='black')
-            elif result.result == 1:
+            elif result['result'] == 1:
                 status = RichText('X', color='red', bold=True)
-            elif result.result == 2:
+            elif result['result'] == 2:
                 status = RichText(u'\u00b1', color='black', bold=True)
-            elif result.result == 3:
+            elif result['result'] == 3:
                 status = RichText(u'\u221a', color='green', bold=True)
-            test = {'num': num, 'name': result.test.name, 'status': status, 'comment': Listing(result.comment)}
+            test = {'num': result['num'], 'name': result['test_name'], 'status': status,
+                    'comment': Listing(result['comment'])}
             tests.append(test)
-            if result.comment != '' and result.comment != ' ':
-                comment = {'text': Listing(result.comment)}
-                comments.append(comment)
+
+            issues = TestResultIssue.objects.filter(result=result['result_id']).order_by('id')
+            for issue in issues:
+                summary_issues.append(issue.text)
+
         protocol_file = DocxTemplate(docx_template.file)
         context = {'testplan': protocol.testplan.name,
                    'vendor': protocol.device.vendor,
@@ -107,7 +109,7 @@ def build_protocol(request):
                    'completed': localize(protocol.date_of_finish),
                    'version': protocol.testplan.version,
                    'tests': tests,
-                   'comments': comments
+                   'issues': summary_issues
                    }
         protocol_file.render(context)
         file = os.path.join(settings.MEDIA_ROOT + '/docx_generator/protocols/',
