@@ -128,32 +128,6 @@
                 </div>
             </div>
         </div>
-
-        <table>
-
-        </table>
-
-        <br>
-
-        <table id="tests_table" class="hover unstriped" style="width:100%">
-            <thead>
-            <tr>
-                <th>#</th>
-                <th>{% trans "Name" %}</th>
-                <th>{% trans "Category" %}</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for test, num in tests %}
-            <tr data-href="{% url 'test_details' pk=test.id tab_id=1 %}">
-                <td>{{ num }}</td>
-                <td>{{ test.name }}</td>
-                <td>{{ test.category }}</td>
-            </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-
     </div>
 
     <div class="tabs-panel {% if tab_id == 3 %}is-active{% endif %}" id="docx">
@@ -176,28 +150,5 @@
     </div>
 
 </div>
-
-<script>
-    $(document).ready(function() {
-        var table = $('#tests_table').DataTable({
-        {% if LANGUAGE_CODE == 'ru' %}
-            "language": { "url": "{% static '/DataTables/i18n/Russian.json' %}" },
-        {% endif %}
-        "pageLength": 100,
-
-        });
-    });
-
-    document.addEventListener("DOMContentLoaded", () => {
-        const rows = document.querySelectorAll("tr[data-href]");
-        rows.forEach(row => {
-            row.addEventListener("click", () => {
-                window.location.href = row.dataset.href;
-            });
-        });
-    });
-</script>
-
-<script type="text/javascript" src="{% static 'DataTables/datatables.js' %}"></script>
 
 {% endblock %}
