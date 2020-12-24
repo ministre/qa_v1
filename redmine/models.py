@@ -139,7 +139,17 @@ class RedmineDevice:
                     '\n| ' + str(_('Model')) + ': | ' + device.model + ' |\r'
 
             if device.hw:
-                wiki += '\n| ' + str(_('Hardware Version')) + ': | ' + device.hw + ' |\r' \
+                wiki += '\n| ' + str(_('Hardware Version')) + ': | ' + device.hw + ' |\r'
+            if device.interfaces:
+                wiki += '\n| ' + str(_('Interfaces')) + ': | ' + device.interfaces + ' |\r'
+            if device.leds:
+                wiki += '\n| ' + str(_('Leds')) + ': | ' + device.leds + ' |\r'
+            if device.buttons:
+                wiki += '\n| ' + str(_('Buttons')) + ': | ' + device.buttons + ' |\r'
+            if device.chipsets:
+                wiki += '\n| ' + str(_('Chipsets')) + ': | ' + device.chipsets + ' |\r'
+            if device.memory:
+                wiki += '\n| ' + str(_('Memory')) + ': | ' + device.memory + ' |\r'
 
             wiki += '\n\r\nh2. Внешний вид\r\n\r'
         if protocols:
