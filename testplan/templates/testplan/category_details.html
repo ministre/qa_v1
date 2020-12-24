@@ -1,0 +1,43 @@
+{% extends "device/wrapper.html" %}
+
+{% load i18n %}
+
+{% block content %}
+
+<p><a href="{% url 'testplans' %}">{% trans "Testplans" %}</a> &raquo;
+    <a href="{% url 'testplan_details' pk=category.testplan.id tab_id=2 %}">{{ category.testplan.name }}</a> &raquo;
+    {{ category.name }}
+</p>
+
+<ul class="tabs" data-tabs id="testplan-tabs">
+    <li class="tabs-title {% if tab_id == 1 %} is-active{% endif %}">
+        <a data-tabs-target="general" href="#general">{% trans "General" %}</a>
+    </li>
+</ul>
+
+<div class="tabs-content" data-tabs-content="testplan-tabs">
+    <div class="tabs-panel {% if tab_id == 1 %}is-active{% endif %}" id="general">
+        <a href="{% url 'category_update' pk=category.id %}" class="button small">{% trans "Update" %}</a>
+        <a href="{% url 'category_delete' pk=category.id %}" class="button alert small">{% trans "Delete" %}</a>
+
+        <table class="hover unstriped">
+            <tbody>
+            <tr>
+                <td>{% trans "Category name" %}:</td>
+                <td>{{ category.name }}</td>
+            </tr>
+            <tr>
+                <td>{% trans "Created" %}:</td>
+                <td>{{ category.created_at }} ({{ category.created_by }})</td>
+            </tr>
+            <tr>
+                <td>{% trans "Last Update" %}:</td>
+                <td>{{ category.updated_at }} ({{ category.updated_by }})</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+{% endblock %}

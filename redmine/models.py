@@ -219,8 +219,8 @@ class RedmineProtocol:
                 else:
                     header = ''
                 # test row
-                wiki += header + '| ' + num + ' | [[result_' + str(result.id) + '|' + result.test.name + ']] |_. ' + \
-                        test_status + ' | ' + result.comment + ' |\n'
+                wiki += header + '| ' + num + ' | [[test_result_' + str(result.id) + '|' + \
+                        result.test.name + ']] |_. ' + test_status + ' | ' + result.comment + ' |\n'
         return wiki
 
     @staticmethod

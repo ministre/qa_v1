@@ -6,10 +6,10 @@
 
 <p>
     <a href="{% url 'testplans' %}">{% trans "Testplans" %}</a> &raquo;
-    <a href="{% url 'testplan_details' pk=test.testplan.id tab_id=2 %}">{{ test.testplan.name }} ({{ test.testplan.version }})</a>
+    <a href="{% url 'testplan_details' pk=test.cat.testplan.id tab_id=2 %}">{{ test.cat.testplan.name }} ({{ test.cat.testplan.version }})</a>
 </p>
 
-<h5>{{ test.category }} &raquo; {{ test.name }}</h5><br>
+<h5>{{ test.cat }} &raquo; {{ test.name }}</h5><br>
 
 <ul class="tabs" data-tabs id="test-tabs">
     <li class="tabs-title {% if tab_id == 1 %} is-active{% endif %}">

@@ -28,27 +28,113 @@
         <a href="{% url 'testplan_update' pk=testplan.id %}" class="button small">{% trans "Update" %}</a>
         <a href="{% url 'testplan_clone' pk=testplan.id %}" class="button small">{% trans "Clone" %}</a>
         <a href="{% url 'testplan_delete' pk=testplan.id %}" class="button alert small">{% trans "Delete" %}</a>
-
-        <table class="unstriped">
-            <tr>
-                <td>{% trans "Name" %}:</td>
-                <td>{{ testplan.name }}</td>
-            </tr>
-            <tr>
-                <td>{% trans "Version" %}:</td>
-                <td>{{ testplan.version }}</td>
-            </tr>
-            <tr>
-                <td>{% trans "Protocols amount" %}:</td>
-                <td>{{ protocols_count }}</td>
-            </tr>
-        </table>
-
+        <div class="grid-x grid-margin-x">
+            <div class="cell">
+                <div class="card">
+                    <div class="card-section">
+                        <table class="unstriped">
+                            <tr>
+                                <td>ID:</td>
+                                <td>{{ testplan.id }}</td>
+                            </tr>
+                            <tr>
+                                <td>{% trans "Name" %}:</td>
+                                <td>{{ testplan.name }}</td>
+                            </tr>
+                            <tr>
+                                <td>{% trans "Version" %}:</td>
+                                <td>{{ testplan.version }}</td>
+                            </tr>
+                            <tr>
+                                <td>{% trans "Redmine Project" %}:</td>
+                                <td>{% if testplan.redmine_project %}{{ testplan.redmine_project }}{% endif %}</td>
+                            </tr>
+                            <tr>
+                                <td>{% trans "Redmine Project Name" %}:</td>
+                                <td>{% if testplan.redmine_project_name %}{{ testplan.redmine_project_name }}{% endif %}</td>
+                            </tr>
+                            <tr>
+                                <td>{% trans "Redmine Project Description" %}:</td>
+                                <td>{% if testplan.redmine_project_desc %}{{ testplan.redmine_project_desc }}{% endif %}</td>
+                            </tr>
+                            <tr>
+                                <td>{% trans "Redmine Parent Project" %}:</td>
+                                <td>{% if testplan.redmine_parent %}{{ testplan.redmine_parent }}{% endif %}</td>
+                            </tr>
+                            <tr>
+                                <td>{% trans "Created" %}:</td>
+                                <td>{{ testplan.created_at }} {% if testplan.created_by %}({{ testplan.created_by }}){% endif %}</td>
+                            </tr>
+                            <tr>
+                                <td>{% trans "Last Update" %}:</td>
+                                <td>{{ testplan.updated_at }} {% if testplan.updated_by %}({{ testplan.updated_by }}){% endif %}</td>
+                            </tr>
+                            <tr>
+                                <td>{% trans "Protocols amount" %}:</td>
+                                <td>{{ protocols_count }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="tabs-panel {% if tab_id == 2 %}is-active{% endif %}" id="tests">
-        <a href="{% url 'test_create' tp_id=testplan.id %}" class="button small">{% trans "Add" %}</a>
-        <a href="{% url 'clear_tests' tp_id=testplan.id %}" class="button small alert">{% trans "Clear" %}</a>
+        <a href="{% url 'category_create' testplan_id=testplan.id %}" class="button small">{% trans "Add" %}</a>
+        <a href="{% url 'clear_tests' pk=testplan.id %}" class="button small alert">{% trans "Clear" %}</a>
+        <a href="{% url 'migrate' pk=testplan.id %}" class="button small">{% trans "Migrate" %}</a>
+        <div class="grid-x grid-margin-x">
+            <div class="cell">
+                <div class="card">
+                    <div class="card-section">
+                        {% for category in testplan.testplan_category.all|dictsort:"priority" %}
+                        <ul style="list-style: none">
+                            <li>
+                                <a href="{% url 'category_details' pk=category.id tab_id=1 %}"
+                                   style="font-weight: bold; color: black; padding: 10px;"
+                                   onmouseover="this.style.color='red';"
+                                   onmouseout="this.style.color='black';">
+                                    {{ forloop.counter }}. {{ category.name }}
+                                </a>
+                                {% if forloop.counter != 1 %}
+                                <a href="{% url 'category_up' pk=category.id %}"><i class="step fi-arrow-up" style="color: #ff4f12"></i></a>
+                                {% endif %}
+                                {% if forloop.counter != testplan.testplan_category.all.count %}
+                                <a href="{% url 'category_down' pk=category.id %}"><i class="step fi-arrow-down" style="color: #ff4f12"></i></a>
+                                {% endif %}
+
+                                {% for test in category.cat_test.all|dictsort:"priority" %}
+                                <ul style="list-style: none">
+                                    <li>
+                                        <a href="{% url 'test_details' pk=test.id tab_id=1 %}">
+                                            {{ forloop.parentloop.counter}}.{{ forloop.counter }}. {{ test.name }}
+                                        </a>
+                                        {% if forloop.counter != 1 %}
+                                        <a href="{% url 'test_up' pk=test.id %}"><i class="step fi-arrow-up" style="color: #ff4f12"></i></a>
+                                        {% endif %}
+                                        {% if forloop.counter != t_category.category_test.all.count %}
+                                        <a href="{% url 'test_down' pk=test.id %}"><i class="step fi-arrow-down" style="color: #ff4f12"></i></a>
+                                        {% endif %}
+                                    </li>
+                                </ul>
+                                {% endfor %}
+                                <blockquote>
+                                    <a href="{% url 'test_create' category_id=category.id %}"><i class="step fi-plus"></i></a>
+                                </blockquote>
+                            </li>
+                        </ul>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <table>
+
+        </table>
+
+        <br>
 
         <table id="tests_table" class="hover unstriped" style="width:100%">
             <thead>
