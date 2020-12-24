@@ -46,7 +46,7 @@ class Category(models.Model):
 class Test(models.Model):
     cat = models.ForeignKey(Category, related_name='cat_test', on_delete=models.CASCADE)
     name = models.CharField(max_length=300)
-    purpose = models.TextField(max_length=5000, null=True, blank=True)
+    purpose = models.CharField(max_length=1000, null=True, blank=True)
     procedure = models.TextField()
     expected = models.TextField()
     priority = models.IntegerField(default=0)
