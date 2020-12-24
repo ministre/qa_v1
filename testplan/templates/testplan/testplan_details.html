@@ -83,7 +83,6 @@
     <div class="tabs-panel {% if tab_id == 2 %}is-active{% endif %}" id="tests">
         <a href="{% url 'category_create' testplan_id=testplan.id %}" class="button small">{% trans "Add" %}</a>
         <a href="{% url 'clear_tests' pk=testplan.id %}" class="button small alert">{% trans "Clear" %}</a>
-        <a href="{% url 'migrate' pk=testplan.id %}" class="button small">{% trans "Migrate" %}</a>
         <div class="grid-x grid-margin-x">
             <div class="cell">
                 <div class="card">

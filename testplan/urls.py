@@ -9,7 +9,6 @@ urlpatterns = [
     path('<int:pk>/<int:tab_id>/', views.testplan_details, name='testplan_details'),
     path('clone/<int:pk>/', views.testplan_clone, name='testplan_clone'),
     path('clear_tests/<int:pk>/', views.clear_tests, name='clear_tests'),
-    path('migrate/<int:pk>/', views.migrate, name='migrate'),
 
     # categories
     path('category/create/<int:testplan_id>/', views.CategoryCreate.as_view(), name='category_create'),
