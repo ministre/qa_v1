@@ -55,7 +55,7 @@ class Test(models.Model):
     updated_by = models.ForeignKey(User, models.SET_NULL, related_name='test_u', blank=True, null=True)
     updated_at = models.DateTimeField(default=timezone.now)
     #
-    url = models.CharField(max_length=300, null=True, blank=True)
+    redmine_wiki = models.CharField(max_length=300, null=True, blank=True)
     testplan = models.ForeignKey(TestPlan, on_delete=models.CASCADE, null=True, blank=True)
     category = models.CharField(max_length=300, null=True, blank=True)
 
