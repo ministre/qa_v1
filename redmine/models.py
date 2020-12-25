@@ -219,11 +219,18 @@ class RedmineProtocol:
                 if result['header']:
                     wiki += '\n|_. ' + str(result['num']) + '|\\5. *' + result['category_name'] + '* |\r'
                 else:
-                    wiki += '\n| ' + str(result['num'][0]) + '.' + str(result['num'][1]) + ' | ' + \
-                            str(result['test_name']) + '|_. '
-                    if result['result'] < 1:
+                    wiki += '\n| ' + str(result['num'][0]) + '.' + str(result['num'][1]) + ' | '
+                    if result['result_id']:
+                        wiki += '[[results_' + str(result['num'][0]) + '_' + str(result['num'][1]) + '_'
+                        if result['result_redmine_wiki']:
+                            wiki += str(result['result_redmine_wiki']) + '_'
+                        wiki += str(result['result_id']) + '|' + str(result['test_name']) + ']]'
+                    else:
+                        wiki += str(result['test_name'])
+                    wiki += ' |_. '
+                    if not result['result'] or result['result'] == 0:
                         wiki += '{{checkbox(?)}}'
-                    elif result['result'] == 1:
+                    if result['result'] == 1:
                         wiki += '{{checkbox(0)}}'
                     elif result['result'] == 2:
                         wiki += u'\u00b1'
@@ -232,7 +239,11 @@ class RedmineProtocol:
                     wiki += ' | '
                     for issue in result['issues']:
                         wiki += str(issue) + ' '
-                    wiki += ' | ' + str(result['comment']) + '|\r'
+                    wiki += ' | '
+                    if result['comment']:
+                        wiki += str(result['comment'])
+                    else:
+                        wiki += ' |\r'
         return wiki
 
     @staticmethod

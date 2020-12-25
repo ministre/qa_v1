@@ -53,15 +53,21 @@ class Protocol(models.Model):
                     for config in test_configs:
                         configs.append(config.id)
                     result_id = result.id
+                    if result.redmine_wiki:
+                        result_redmine_wiki = result.redmine_wiki
+                    else:
+                        result_redmine_wiki = None
                     result = result.result
                 except TestResult.DoesNotExist:
-                    result = result_id = issues = configs = comment = None
+                    result_id = result = comment = result_redmine_wiki = None
+                    issues = configs = []
                 results.append({'header': False,
                                 'num': [i+1, j+1],
                                 'category_name': test.cat,
                                 'test_id': test.id,
                                 'test_name': test.name,
                                 'result_id': result_id,
+                                'result_redmine_wiki': result_redmine_wiki,
                                 'result': result,
                                 'comment': comment,
                                 'issues': issues,

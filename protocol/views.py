@@ -51,11 +51,6 @@ class ProtocolCreate(CreateView):
         return context
 
     def get_success_url(self):
-        tests = Test.objects.filter(testplan=self.object.testplan).order_by("id")
-        for test in tests:
-            test_results = TestResult(test=test, protocol=self.object, result=0,
-                                      config='', info='', comment='')
-            test_results.save()
         return reverse('protocols')
 
 
