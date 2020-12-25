@@ -4,7 +4,7 @@
 
 {% block content %}
 
-<p><a href="{% url 'testplans' %}">{% trans "Testplans" %}</a> &raquo; {{ testplan.name }} ({{ testplan.version }})</p>
+<p>{% trans "Testplans" %} {{ testplan.name }} ({{ testplan.version }})</p>
 
 <ul class="tabs" data-tabs id="testplan-tabs">
     <li class="tabs-title {% if tab_id == 1 %} is-active{% endif %}">

@@ -5,11 +5,10 @@
 {% block content %}
 
 <p>
-    <a href="{% url 'testplans' %}">{% trans "Testplans" %}</a> &raquo;
-    <a href="{% url 'testplan_details' pk=test.cat.testplan.id tab_id=2 %}">{{ test.cat.testplan.name }} ({{ test.cat.testplan.version }})</a>
+    <a href="{% url 'testplan_details' pk=test.cat.testplan.id tab_id=2 %}">{% trans "Testplans" %} {{ test.cat.testplan.name }} ({{ test.cat.testplan.version }})</a>
+    <br>
+    {{ test.cat }} &raquo; {{ num.0 }}.{{ num.1 }} {{ test.name }}
 </p>
-
-<h5>{{ test.cat }} &raquo; {{ test.name }}</h5><br>
 
 <ul class="tabs" data-tabs id="test-tabs">
     <li class="tabs-title {% if tab_id == 1 %} is-active{% endif %}">

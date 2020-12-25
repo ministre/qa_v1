@@ -282,10 +282,11 @@ class TestDelete(DeleteView):
 @login_required
 def test_details(request, pk, tab_id):
     test = get_object_or_404(Test, id=pk)
+    num = test.get_num()
     procedure = textile.textile(test.procedure)
     expected = textile.textile(test.expected)
-    return render(request, 'testplan/test_details.html', {'test': test, 'procedure': procedure, 'expected': expected,
-                                                          'tab_id': tab_id})
+    return render(request, 'testplan/test_details.html', {'test': test, 'num': num, 'procedure': procedure,
+                                                          'expected': expected, 'tab_id': tab_id})
 
 
 @login_required

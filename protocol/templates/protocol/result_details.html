@@ -5,15 +5,11 @@
 {% block content %}
 
 <p>
-    <a href="{% url 'protocols' %}">{% trans "Protocols" %}</a> &raquo;
-    <a href="{% url 'protocol_details' pk=result.protocol.id tab_id=2 %}">{{ result.protocol.device.vendor }} {{ result.protocol.device.model }}
+    <a href="{% url 'testplan_details' pk=result.test.cat.testplan.id tab_id=2 %}">{% trans "Testplan" %} {{ result.test.cat.testplan }}</a> &raquo;
+    {{ result.test.cat }} &raquo; <a href="{% url 'test_details' pk=result.test.id tab_id=1 %}">{{ num.0 }}.{{ num.1 }} {{ result.test.name }}</a>
+    <br>
+    <a href="{% url 'protocol_details' pk=result.protocol.id tab_id=2 %}">{% trans "Protocol" %} {{ result.protocol.device.vendor }} {{ result.protocol.device.model }}
     {% if result.protocol.device.hw %}({{result.protocol.device.hw }}){% endif %}</a>
-</p>
-<p>
-    <a href="{% url 'testplans' %}">{% trans "Testplans" %}</a> &raquo;
-    <a href="{% url 'testplan_details' pk=result.test.cat.testplan.id tab_id=2 %}">{{ result.test.cat.testplan }}</a> &raquo;
-    {{ result.test.cat }} &raquo;
-    <a href="{% url 'test_details' pk=result.test.id tab_id=1 %}">{{ num.0 }}.{{ num.1 }} {{ result.test.name }}</a>
 </p>
 
 <ul class="tabs" data-tabs id="result-tabs">
