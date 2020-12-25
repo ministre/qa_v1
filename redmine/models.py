@@ -156,7 +156,12 @@ class RedmineDevice:
             wiki += '\nh2. ' + str(_('Protocols')) + '\r\n\r'
             device_protocols = Protocol.objects.filter(device=device).order_by('id')
             for device_protocol in device_protocols:
-                wiki += '\n* [[protocol_' + str(device_protocol.id) + '|' + str(device_protocol) + ']]\r'
+                wiki += '\n* [[protocol_' + str(device_protocol.id) + '|' + str(_('SW Ver.')) + ': ' + \
+                        str(device_protocol.sw) + ' / ' + str(_('Date of testing')) + ': ' + \
+                        str(device_protocol.date_of_start.strftime('%d.%m.%Y'))
+                if device_protocol.date_of_finish:
+                    wiki += ' - ' + str(device_protocol.date_of_finish.strftime('%d.%m.%Y'))
+                wiki += ']]\r'
 
         return wiki
 
