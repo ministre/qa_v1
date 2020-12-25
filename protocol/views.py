@@ -205,7 +205,7 @@ def result_details(request, pk, tab_id):
     else:
         procedure = textile.textile(result.test.procedure)
         expected = textile.textile(result.test.expected)
-
+        num = result.test.get_num()
         result_form = ResultForm(instance=result)
         result_form.fields['redmine_wiki'].widget = forms.HiddenInput()
         result_form.fields['info'].widget = forms.HiddenInput()
@@ -213,7 +213,8 @@ def result_details(request, pk, tab_id):
 
         redmine_url = settings.REDMINE_URL
         return render(request, 'protocol/result_details.html', {'result': result, 'procedure': procedure,
-                                                                'expected': expected, 'result_form': result_form,
+                                                                'expected': expected, 'num': num,
+                                                                'result_form': result_form,
                                                                 'redmine_url': redmine_url, 'tab_id': tab_id})
 
 

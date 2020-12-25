@@ -61,3 +61,12 @@ class Test(models.Model):
 
     def __str__(self):
         return self.name
+
+    def get_num(self):
+        categories = Category.objects.filter(testplan=self.cat.testplan).order_by('priority')
+        for i, category in enumerate(categories):
+            tests = Test.objects.filter(cat=category).order_by('priority')
+            for j, test in enumerate(tests):
+                if test == self:
+                    return [i+1, j+1]
+        return []

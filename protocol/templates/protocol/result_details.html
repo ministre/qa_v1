@@ -13,7 +13,7 @@
     <a href="{% url 'testplans' %}">{% trans "Testplans" %}</a> &raquo;
     <a href="{% url 'testplan_details' pk=result.test.cat.testplan.id tab_id=2 %}">{{ result.test.cat.testplan }}</a> &raquo;
     {{ result.test.cat }} &raquo;
-    <a href="{% url 'test_details' pk=result.test.id tab_id=1 %}">{{ result.test.name }}</a>
+    <a href="{% url 'test_details' pk=result.test.id tab_id=1 %}">{{ num.0 }}.{{ num.1 }} {{ result.test.name }}</a>
 </p>
 
 <ul class="tabs" data-tabs id="result-tabs">
@@ -65,7 +65,7 @@
             <div class="cell">
                 <div class="card">
                     <div class="card-section">
-                        <h4>{% trans "Procedure" %}</h4>
+                        <h5>{% trans "Procedure" %}</h5>
                         <p>{{ procedure|safe }}</p>
                     </div>
                 </div>
@@ -75,7 +75,7 @@
             <div class="cell">
                 <div class="card">
                     <div class="card-section">
-                        <h4>{% trans "Expected result" %}</h4>
+                        <h5>{% trans "Expected result" %}</h5>
                         <p>{{ expected|safe }}</p>
                     </div>
                 </div>
