@@ -242,8 +242,7 @@ class RedmineProtocol:
                     wiki += ' | '
                     if result['comment']:
                         wiki += str(result['comment'])
-                    else:
-                        wiki += ' |\r'
+                    wiki += ' |\r'
         return wiki
 
     @staticmethod
