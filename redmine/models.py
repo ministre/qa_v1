@@ -187,11 +187,12 @@ class RedmineDevice:
 
 class RedmineProtocol:
     @staticmethod
-    def build_wiki(protocol: Protocol, project_name: str, general_info: bool):
+    def build_wiki(protocol: Protocol, project_name: str, general=False, results=False):
         wiki = 'h1. ' + project_name + '\r\n\r'
-        if general_info:
+        if general:
             wiki += '\nh2. ' + str(_('General')) + '\r\n\r' \
-                    '\n| ' + str(_('Device')) + ': | ' + protocol.device.vendor.name + ' ' + str(protocol.device) + ' |\r' \
+                    '\n| ' + str(_('Device')) + ': | ' + protocol.device.vendor.name + ' ' + str(protocol.device) + \
+                    ' |\r' \
                     '\n| ' + str(_('Testplan')) + ': | ' + str(_('Testplan')) + ' ' + str(protocol.testplan) + ' |\r' \
                     '\n| ' + str(_('Software Version')) + ': | ' + protocol.sw + ' |\r'
             if protocol.sw_checksum:
@@ -209,44 +210,41 @@ class RedmineProtocol:
             if protocol.console:
                 wiki += '\n\r\n{{collapse(' + str(_('Console port parameters')) + ')\r\n' + protocol.console + \
                         '\r\n}}\r'
-
             wiki += '\n\r\nh2. ' + str(_('Test Results')) + '\r\n\r' \
-                    '\n|_. № |_. ' + str(_('Names')) + ': |_. ' + str(_('Results')) + \
+                    '\n|_. № |_. ' + str(_('Names')) + ': |_. ' + str(_('Results')) + ': |_. ' + str(_('Issues')) + \
                     ': |_. ' + str(_('Comments')) + ': |\r'
-
-            results = TestResult.objects.filter(protocol=protocol).order_by("id")
-            numbers_of_testplan = get_numbers_of_results(results)
-            zipped_results = zip(results, numbers_of_testplan)
-            for result, num in zipped_results:
-                test_status = None
-                if result.result == 0:
-                    test_status = '{{checkbox(?)}}'
-                elif result.result == 1:
-                    test_status = '{{checkbox(0)}}'
-                elif result.result == 2:
-                    test_status = u'\u00b1'
-                elif result.result == 3:
-                    test_status = '{{checkbox(1)}}'
-                # category header row
-                digit = num.split('.')
-                if digit[1] == '1':
-                    header = '|_. ' + digit[0] + ' |' + '\\4. *' + result.test.category + '* |\n'
+        if results:
+            results = protocol.get_results(headers=True)
+            for result in results:
+                if result['header']:
+                    wiki += '\n|_. ' + str(result['num']) + '|\\5. *' + result['category_name'] + '* |\r'
                 else:
-                    header = ''
-                # test row
-                wiki += header + '| ' + num + ' | [[test_result_' + str(result.id) + '|' + \
-                        result.test.name + ']] |_. ' + test_status + ' | ' + result.comment + ' |\n'
+                    wiki += '\n| ' + str(result['num'][0]) + '.' + str(result['num'][1]) + ' | ' + \
+                            str(result['test_name']) + '|_. '
+                    if result['result'] < 1:
+                        wiki += '{{checkbox(?)}}'
+                    elif result['result'] == 1:
+                        wiki += '{{checkbox(0)}}'
+                    elif result['result'] == 2:
+                        wiki += u'\u00b1'
+                    elif result['result'] == 3:
+                        wiki += '{{checkbox(1)}}'
+                    wiki += ' | '
+                    for issue in result['issues']:
+                        wiki += str(issue) + ' '
+                    wiki += ' | ' + str(result['comment']) + '|\r'
         return wiki
 
     @staticmethod
-    def export(protocol: Protocol, project: str, project_wiki: str, general_info: bool):
+    def export(protocol: Protocol, project: str, project_wiki: str, general=False, results=False):
         r = RedmineProject()
         is_project = r.check_project(project=project)
         if is_project[0] != 200:
             return [False, is_project[1]]
         else:
             project_name = str(_('Protocol')) + ' ' + protocol.device.vendor.name + ' ' + str(protocol.device)
-            wiki = RedmineProtocol.build_wiki(protocol=protocol, project_name=project_name, general_info=general_info)
+            wiki = RedmineProtocol.build_wiki(protocol=protocol, project_name=project_name, general=general,
+                                              results=results)
             is_wiki = r.create_or_update_wiki(project=project, wiki_title=project_wiki, wiki_text=wiki,
                                               parent_wiki_title='wiki')
             return is_wiki

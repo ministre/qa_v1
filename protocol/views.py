@@ -123,11 +123,10 @@ def protocol_details(request, pk, tab_id):
     export_form = RedmineProtocolExportForm(initial={'protocol_id': protocol.id,
                                                      'redmine_project': protocol.device.redmine_project,
                                                      'redmine_wiki': 'protocol_' + str(protocol.id),
-                                                     'general_info': True})
+                                                     'general': True, 'results': True})
     results = protocol.get_results()
     return render(request, 'protocol/protocol_details.html', {'protocol': protocol,
                                                               'results': results,
-
                                                               'tests_all': tests_all,
                                                               'tests_completed': tests_completed,
                                                               'tests_completed_percent': tests_completed_percent,

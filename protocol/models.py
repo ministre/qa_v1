@@ -33,10 +33,12 @@ class Protocol(models.Model):
             name += ' - ' + str(self.date_of_finish.strftime('%d.%m.%Y'))
         return name
 
-    def get_results(self):
+    def get_results(self, headers=False):
         results = []
         categories = Category.objects.filter(testplan=self.testplan).order_by('priority')
         for i, category in enumerate(categories):
+            if headers:
+                results.append({'header': True, 'num': i+1, 'category_name': category.name})
             tests = Test.objects.filter(cat=category).order_by('priority')
             for j, test in enumerate(tests):
                 try:
@@ -54,9 +56,16 @@ class Protocol(models.Model):
                     result = result.result
                 except TestResult.DoesNotExist:
                     result = result_id = issues = configs = comment = None
-                results.append({'num': str(i+1) + '.' + str(j+1), 'test_name': test.name, 'test_id': test.id,
-                                'category': test.cat, 'result': result, 'result_id': result_id, 'comment': comment,
-                                'issues': issues, 'configs': configs})
+                results.append({'header': False,
+                                'num': [i+1, j+1],
+                                'category_name': test.cat,
+                                'test_id': test.id,
+                                'test_name': test.name,
+                                'result_id': result_id,
+                                'result': result,
+                                'comment': comment,
+                                'issues': issues,
+                                'configs': configs})
         return results
 
 

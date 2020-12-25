@@ -193,10 +193,10 @@
                 {% endif %}
             </td>
             <td>
-                <i>{{ result.num }}. {{ result.test_name }}</i>
+                <i>{{ result.num.0 }}.{{ result.num.1 }}. {{ result.test_name }}</i>
                 {% if result.configs %}<i class="step fi-widget" style="color: #7700ff"></i>{% endif %}
             </td>
-            <td>{{ result.category }}</td>
+            <td>{{ result.category_name }}</td>
             <td>
                 <ul>
                 {% for issue in result.issues %}
