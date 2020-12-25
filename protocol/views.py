@@ -141,9 +141,17 @@ def protocol_details(request, pk, tab_id):
 def result_create(request, protocol_id: int, test_id: int):
     protocol = get_object_or_404(Protocol, id=protocol_id)
     test = get_object_or_404(Test, id=test_id)
+    num = test.get_num()
+    if test.redmine_wiki:
+        redmine_wiki = str(num[0]) + '_' + str(num[1]) + '_' + test.redmine_wiki + '_'
+    else:
+        redmine_wiki = str(num[0]) + '_' + str(num[1]) + '_'
     result, create = TestResult.objects.update_or_create(protocol=protocol, test=test,
                                                          defaults={'created_by': request.user,
                                                                    'updated_by': request.user})
+    redmine_wiki += str(result.id)
+    result.redmine_wiki = redmine_wiki
+    result.save()
     return HttpResponseRedirect(reverse('result_details', kwargs={'pk': result.id, 'tab_id': 4}))
 
 

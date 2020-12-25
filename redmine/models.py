@@ -221,10 +221,10 @@ class RedmineProtocol:
                 else:
                     wiki += '\n| ' + str(result['num'][0]) + '.' + str(result['num'][1]) + ' | '
                     if result['result_id']:
-                        wiki += '[[results_' + str(result['num'][0]) + '_' + str(result['num'][1]) + '_'
                         if result['result_redmine_wiki']:
-                            wiki += str(result['result_redmine_wiki']) + '_'
-                        wiki += str(result['result_id']) + '|' + str(result['test_name']) + ']]'
+                            wiki += '[[' + str(result['result_redmine_wiki']) + '|' + str(result['test_name']) + ']]'
+                        else:
+                            wiki += str(result['test_name'])
                     else:
                         wiki += str(result['test_name'])
                     wiki += ' |_. '
