@@ -470,3 +470,13 @@ def protocol_copy_results(request):
     else:
         message = [False, _('Page not found')]
         return render(request, 'docx_generator/message.html', {'message': message})
+
+
+@login_required
+def migrate(request):
+    protocols = Protocol.objects.all().order_by('id')
+    i = 0
+    for i, protocol in enumerate(protocols):
+        protocol.redmine_wiki = 'Protocol_' + str(protocol.id)
+        protocol.save()
+    return render(request, 'docx_generator/message.html', {'message': [True, i+1]})

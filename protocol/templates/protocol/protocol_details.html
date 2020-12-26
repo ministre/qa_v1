@@ -84,7 +84,7 @@
                             </tr>
                             <tr>
                                 <td>{% trans "Completed" %}:</td>
-                                <td>{{ protocol.date_of_finish }}</td>
+                                <td>{% if protocol.date_of_finish %}{{ protocol.date_of_finish }}{% endif %}</td>
                             </tr>
                             {% if protocol.redmine_wiki %}
                             <tr>
