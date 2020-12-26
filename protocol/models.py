@@ -17,11 +17,12 @@ class Protocol(models.Model):
     console = models.CharField(max_length=400, blank=True, null=True)
     date_of_start = models.DateField(default=datetime.now)
     date_of_finish = models.DateField(blank=True, null=True)
+    redmine_wiki = models.CharField(max_length=100, blank=True, null=True)
+    result = models.IntegerField(default=0)
     created_by = models.ForeignKey(User, models.SET_NULL, related_name='protocol_c', blank=True, null=True)
     created_at = models.DateTimeField(default=timezone.now)
     updated_by = models.ForeignKey(User, models.SET_NULL, related_name='protocol_u', blank=True, null=True)
     updated_at = models.DateTimeField(default=timezone.now)
-    result = models.IntegerField(default=0)
 
     def __str__(self):
         name = 'ID: ' + str(self.id)
@@ -80,7 +81,7 @@ class TestResult(models.Model):
     protocol = models.ForeignKey(Protocol, on_delete=models.CASCADE)
     result = models.IntegerField(default=0)
     comment = models.TextField(max_length=3000, blank=True)
-    redmine_wiki = models.CharField(max_length=100, blank=True)
+    redmine_wiki = models.CharField(max_length=100, blank=True, null=True)
     created_by = models.ForeignKey(User, models.SET_NULL, related_name='result_c', blank=True, null=True)
     created_at = models.DateTimeField(default=timezone.now)
     updated_by = models.ForeignKey(User, models.SET_NULL, related_name='result_u', blank=True, null=True)

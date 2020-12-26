@@ -5,7 +5,7 @@ from testplan.models import TestPlan, Test
 from .models import Protocol, TestResult, TestResultConfig, TestResultIssue
 from django.http import HttpResponseRedirect
 from .forms import ProtocolForm, ResultForm, ResultConfigForm, ProtocolCopyResultsForm, ResultIssueForm
-from redmine.forms import RedmineProtocolExportForm
+from redmine.forms import RedmineProtocolExportForm, RedmineResultExportForm
 from docx_generator.forms import BuildProtocolForm, BuildProtocolDetailedForm
 from qa_v1 import settings
 from redminelib import Redmine
@@ -214,6 +214,12 @@ def result_details(request, pk, tab_id):
         result_form.fields['config'].widget = forms.HiddenInput()
 
         redmine_url = settings.REDMINE_URL
+        export_form = RedmineResultExportForm(initial={'result_id': result.id,
+                                                       'redmine_project': result.protocol.device.redmine_project,
+                                                       'redmine_wiki': result.redmine_wiki,
+                                                       'redmine_parent_wiki': result.protocol.redmine_wiki,
+                                                         'general': True, 'results': True})
+
         return render(request, 'protocol/result_details.html', {'result': result, 'procedure': procedure,
                                                                 'expected': expected, 'num': num,
                                                                 'result_form': result_form,
@@ -459,22 +465,3 @@ def protocol_copy_results(request):
     else:
         message = [False, _('Page not found')]
         return render(request, 'docx_generator/message.html', {'message': message})
-
-
-def get_numbers_of_results(results):
-    # генерируем нумерованный список тестов
-    numbers_of_testplan = []
-    category = None
-    i = 0
-    j = 0
-    for res in results:
-        new_category = res.test.category
-        if new_category == category:
-            j = j + 1
-            numbers_of_testplan.append(str(i) + '.' + str(j))
-        else:
-            i = i + 1
-            j = 1
-            numbers_of_testplan.append(str(i) + '.' + str(j))
-            category = res.test.category
-    return numbers_of_testplan
