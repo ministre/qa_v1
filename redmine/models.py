@@ -2,8 +2,7 @@ from redminelib import Redmine
 from qa_v1 import settings
 from redminelib.exceptions import ResourceNotFoundError, ForbiddenError, AuthError, ValidationError
 from device.models import DeviceType, Device
-from protocol.models import Protocol, TestResult
-from protocol.views import get_numbers_of_results
+from protocol.models import Protocol
 from django.utils.translation import gettext_lazy as _
 
 
