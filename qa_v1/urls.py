@@ -26,6 +26,7 @@ urlpatterns = [
     path('device/', include('device.urls')),
     path('testplan/', include('testplan.urls')),
     path('protocol/', include('protocol.urls')),
+    path('docx_builder/', include('docx_builder.urls')),
     path('docx/', include('docx_generator.urls')),
     path('redmine/', include('redmine.urls')),
     path('store/', include('store.urls')),

@@ -29,7 +29,7 @@
   <div class="top-bar">
       <div class="top-bar-left">
           <ul class="dropdown menu" data-dropdown-menu>
-              <li class="menu-text">Quality Assurance v.1</li>
+              <li class="menu-text">Quality Assurance</li>
               {% if user.is_authenticated %}
               <li>
                   <a href="{% url 'devices' %}">{% trans "Devices" %}</a>
@@ -38,13 +38,22 @@
                       <li><a href="{% url 'vendors' %}">{% trans "Vendors" %}</a></li>
                   </ul>
               </li>
-              <li><a href="{% url 'testplans' %}">{% trans "Testplans" %}</a></li>
+              <li><a href="{% url 'testplans' %}">{% trans "Testplans" %}</a>
+                  <ul class="menu vertical">
+                      <li><a href="{# url 'testplan_patterns' #}">{% trans "Testplan Patterns" %}</a></li>
+                  </ul>
+              </li>
               <li><a href="{% url 'protocols' %}">{% trans "Protocols" %}</a></li>
-              <li><a href="{% url 'docx_templates' %}">{% trans "Templates" %}</a></li>
-              <li><a href="{% url 'items' %}">{% trans "Store" %}</a></li>
-              <li><a href="{% url 'shipments' %}">{% trans "Shipment" %}</a></li>
-              <li>
-                  <a href="#">{% trans "Tools" %}</a>
+              <li><a href="#">{% trans "Technical reqs" %}</a></li>
+              <li><a href="#">{% trans "Others" %}</a>
+                  <ul class="menu vertical">
+                      <li><a href="{# url 'docx_profiles' #}">{% trans "Docx profiles" %}</a></li>
+                      <li><a href="{% url 'docx_templates' %}">{% trans "Docx templates" %}</a></li>
+                      <li><a href="{% url 'shipments' %}">{% trans "Shipment" %}</a></li>
+                      <li><a href="{% url 'items' %}">{% trans "Store" %}</a></li>
+                  </ul>
+              </li>
+              <li><a href="#">{% trans "Tools" %}</a>
                   <ul class="menu vertical">
                       <li><a href="{% url 'tcp_udp_check' %}">{% trans "Port Forwarding Check" %}</a></li>
                       <li><a href="{% url 'sip_invite' %}">{% trans "Fake SIP Invite" %}</a></li>

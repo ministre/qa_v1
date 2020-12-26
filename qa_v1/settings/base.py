@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'device',
     'testplan',
     'protocol',
+    'docx_builder',
     'docx_generator',
     'redmine',
     'store',

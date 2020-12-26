@@ -72,26 +72,26 @@ def build_protocol(request):
     if request.method == "POST":
         protocol = get_object_or_404(Protocol, id=request.POST['protocol_id'])
         docx_template = get_object_or_404(DocxTemplateFile, id=request.POST['docx_template_id'])
-        tests = []
         results = protocol.get_results()
-        status = None
-        summary_issues = []
+        tests = issues = []
         for result in results:
-            if result['result'] == 0 or ['result'] is None:
-                status = RichText('Пропущен', color='black')
-            elif result['result'] == 1:
+            status = RichText('Пропущен', color='black')
+            if result['result'] == 1:
                 status = RichText('X', color='red', bold=True)
             elif result['result'] == 2:
                 status = RichText(u'\u00b1', color='black', bold=True)
             elif result['result'] == 3:
                 status = RichText(u'\u221a', color='green', bold=True)
-            test = {'num': result['num'], 'name': result['test_name'], 'status': status,
+
+            test = {'num': str(result['num'][0]) + '.' + str(result['num'][1]),
+                    'name': result['test_name'],
+                    'status': status,
                     'comment': Listing(result['comment'])}
             tests.append(test)
 
-            issues = TestResultIssue.objects.filter(result=result['result_id']).order_by('id')
-            for issue in issues:
-                summary_issues.append(issue.text)
+            result_issues = TestResultIssue.objects.filter(result=result['result_id']).order_by('id')
+            for result_issue in result_issues:
+                issues.append(result_issue)
 
         protocol_file = DocxTemplate(docx_template.file)
         context = {'testplan': protocol.testplan.name,
@@ -109,7 +109,7 @@ def build_protocol(request):
                    'completed': localize(protocol.date_of_finish),
                    'version': protocol.testplan.version,
                    'tests': tests,
-                   'issues': summary_issues
+                   #'issues': issues
                    }
         protocol_file.render(context)
         file = os.path.join(settings.MEDIA_ROOT + '/docx_generator/protocols/',

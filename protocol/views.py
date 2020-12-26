@@ -6,6 +6,7 @@ from .models import Protocol, TestResult, TestResultConfig, TestResultIssue
 from django.http import HttpResponseRedirect
 from .forms import ProtocolForm, ResultForm, ResultConfigForm, ProtocolCopyResultsForm, ResultIssueForm
 from redmine.forms import RedmineProtocolExportForm, RedmineResultExportForm
+from docx_builder.forms import BuildDocxProtocolForm
 from docx_generator.forms import BuildProtocolForm, BuildProtocolDetailedForm
 from qa_v1 import settings
 from redminelib import Redmine
@@ -111,7 +112,9 @@ def protocol_details(request, pk, tab_id):
     tests_warn = TestResult.objects.filter(Q(protocol=pk) & Q(result=2)).count()
     tests_fail = TestResult.objects.filter(Q(protocol=pk) & Q(result=1)).count()
 
+    build_protocol_form = BuildDocxProtocolForm(initial={'protocol_id': protocol.id})
     protocol_form = BuildProtocolForm(initial={'protocol_id': protocol.id})
+
     protocol_form.fields['protocol_id'].widget = forms.HiddenInput()
     protocol_detailed_form = BuildProtocolDetailedForm(initial={'protocol_id': protocol.id})
     protocol_detailed_form.fields['protocol_id'].widget = forms.HiddenInput()
@@ -133,6 +136,7 @@ def protocol_details(request, pk, tab_id):
                                                               'tests_warn': tests_warn,
                                                               'tests_fail': tests_fail,
                                                               'build_protocol_form': protocol_form,
+                                                              'build_protocol_form_beta': build_protocol_form,
                                                               'build_protocol_detailed_form': protocol_detailed_form,
                                                               'copy_test_results_form': copy_test_results_form,
                                                               'redmine_url': redmine_url,

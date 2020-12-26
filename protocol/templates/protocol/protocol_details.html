@@ -224,30 +224,13 @@
     </div>
 
     <div class="tabs-panel {% if tab_id == 4 %}is-active{% endif %}" id="docx">
-        <div class="cell">
-            <div class="card">
-                <div class="card-section">
-                    <h5>{% trans "Build protocol" %}</h5>
-                    <form action="{% url 'build_protocol' %}" method="post">
-                        {% csrf_token %}
-                        {{ build_protocol_form }}
-                        <input type="submit" value='{% trans "Build" %}' class="button small success" />
-                    </form>
-                </div>
-            </div>
-        </div>
-        <div class="cell">
-            <div class="card">
-                <div class="card-section">
-                    <h5>{% trans "Build detailed protocol" %}</h5>
-                    <form action="{% url 'build_protocol_detailed' %}" method="post">
-                        {% csrf_token %}
-                        {{ build_protocol_detailed_form }}
-                        <input type="submit" value='{% trans "Build" %}' class="button small success" />
-                    </form>
-                </div>
-            </div>
-        </div>
+        <form action="{% url 'build_protocol_beta' %}" method="post">
+            <input type="submit" value='{% trans "Build protocol" %}' class="button small success" />
+            <table class="unstriped" style="text-align: left; width: 200px;">
+                {% csrf_token %}
+                {{ build_protocol_form_beta.as_table }}
+            </table>
+        </form>
     </div>
 
     <div class="tabs-panel{% if tab_id == 5 %} is-active{% endif %}" id="redmine">
