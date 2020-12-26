@@ -87,7 +87,7 @@ def redmine_result_export(request):
     if request.method == "POST":
         result = get_object_or_404(TestResult, id=request.POST['result_id'])
         back_url = reverse('result_details', kwargs={'pk': result.id, 'tab_id': 5})
-        test_desc = result_configs = result_status = False
+        test_desc = result_configs = result_summary = False
         try:
             if request.POST['test_desc']:
                 test_desc = True
@@ -99,14 +99,15 @@ def redmine_result_export(request):
         except MultiValueDictKeyError:
             pass
         try:
-            if request.POST['result_status']:
-                result_status = True
+            if request.POST['result_summary']:
+                result_summary = True
         except MultiValueDictKeyError:
             pass
         message = RedmineResult.export(result=result, project=request.POST['redmine_project'],
                                        project_wiki=request.POST['redmine_wiki'],
                                        project_parent_wiki=request.POST['redmine_parent_wiki'],
-                                       test_desc=test_desc, result_configs=result_configs, result_status=result_status)
+                                       test_desc=test_desc, result_configs=result_configs,
+                                       result_summary=result_summary)
     else:
         message = [False, _('Page not found')]
         back_url = reverse('protocols')
