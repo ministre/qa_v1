@@ -22,5 +22,4 @@ urlpatterns = [
     path('result/issue/delete/<int:pk>/', views.ResultIssueDelete.as_view(), name='result_issue_delete'),
 
     path('copy_results/', views.protocol_copy_results, name='protocol_copy_results'),
-    path('migrate/', views.migrate, name='migrate'),
 ]
