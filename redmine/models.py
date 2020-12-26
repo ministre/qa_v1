@@ -2,7 +2,7 @@ from redminelib import Redmine
 from qa_v1 import settings
 from redminelib.exceptions import ResourceNotFoundError, ForbiddenError, AuthError, ValidationError
 from device.models import DeviceType, Device
-from protocol.models import Protocol, TestResult, TestResultConfig
+from protocol.models import Protocol, TestResult, TestResultConfig, TestResultIssue
 from django.utils.translation import gettext_lazy as _
 
 
@@ -264,12 +264,14 @@ class RedmineProtocol:
 class RedmineResult:
     @staticmethod
     def build_wiki(result: TestResult, test_desc=False, result_configs=False, result_summary=False):
+        # header
         wiki = '\n' + str(_('Protocol')) + ' ' + str(result.protocol.device.vendor.name) + ' ' + \
                str(result.protocol.device) + u' \u00bb ' + str(result.test.get_num()[0]) + '. ' + \
                str(result.test.cat) + u' \u00bb ' + str(result.test.get_num()[0]) + '.' + \
                str(result.test.get_num()[1]) + '. ' + str(result.test) + '\r\n\r'
+        # test description
+        wiki += '\nh1. ' + str(_('Test description')) + '\r\n\r'
         if test_desc:
-            wiki += '\nh1. ' + str(_('Test description')) + '\r\n\r'
             if result.test.purpose:
                 wiki += '\nh2. ' + str(_('Purpose')) + '\r\n\r'
                 wiki += '\n' + result.test.purpose + '\r\n\r'
@@ -279,9 +281,10 @@ class RedmineResult:
             if result.test.expected:
                 wiki += '\nh2. ' + str(_('Expected result')) + '\r\n\r'
                 wiki += '\n' + result.test.expected + '\r\n\r'
-        wiki += '\nh1. ' + str(_('Test result')) + '\r\n\r'
+        # test details
+        wiki += '\nh1. ' + str(_('Test details')) + '\r\n\r'
         if result_configs:
-            configs = TestResultConfig.objects.filter(result=result)
+            configs = TestResultConfig.objects.filter(result=result).order_by('id')
             if configs:
                 wiki += '\nh2. ' + str(_('Configurations')) + '\r\n\r'
             for config in configs:
@@ -290,7 +293,27 @@ class RedmineResult:
                 wiki += '\n<pre><code class="' + config.lang + '">\r' + \
                         '\n' + config.config + '\r' + \
                         '\n</code></pre>\r\n\r'
+        # summary
+        if result_summary:
+            wiki += '\nh1. ' + str(_('Summary')) + '\r\n\r'
+            res = '%{background:gray} ' + str(_('Not tested')) + ' %'
+            if result.result == 1:
+                res = '%{background:red} ' + str(_('Not passed')) + ' %'
+            elif result.result == 2:
+                res = '%{background:yellow} ' + str(_('Passed with warning')) + ' %'
+            elif result.result == 3:
+                res = '%{background:lightgreen} ' + str(_('Passed')) + ' %'
 
+            wiki += '\nh2. ' + str(_('Result')) + '\r\n\r' + \
+                    '\n' + res + '\r'
+            if result.comment:
+                wiki += '\nh2. ' + str(_('Comment')) + '\r\n\r' + \
+                        '\n' + result.comment + '\r'
+            issues = TestResultIssue.objects.filter(result=result).order_by('id')
+            if issues:
+                wiki += '\nh2. ' + str(_('Issues')) + '\r\n\r'
+                for issue in issues:
+                    wiki += '\n# ' + issue.text + '\r'
         return wiki
 
     @staticmethod
