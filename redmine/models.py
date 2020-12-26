@@ -226,6 +226,8 @@ class RedmineProtocol:
                             wiki += '[[' + str(result['result_redmine_wiki']) + '|' + str(result['test_name']) + ']]'
                         else:
                             wiki += str(result['test_name'])
+                        if result['configs']:
+                            wiki += u'\u2699'
                     else:
                         wiki += str(result['test_name'])
                     wiki += ' |_. '
