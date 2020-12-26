@@ -251,7 +251,7 @@
     </div>
 
     <div class="tabs-panel{% if tab_id == 5 %} is-active{% endif %}" id="redmine">
-        {% if protocol.device.redmine_project %}
+        {% if protocol.device.redmine_project and protocol.redmine_wiki %}
         <div class="grid-x grid-margin-x">
             <div class="cell">
                 <div class="card">
