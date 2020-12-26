@@ -455,6 +455,6 @@ def migrate(request):
     testplans = TestPlan.objects.all().order_by('id')
     i = 0
     for i, testplan in enumerate(testplans):
-        testplan.redmine_parent = 'testplans'
+        testplan.redmine_project_name = 'ПМИ ' + testplan.name + ' (' + str(testplan.version) + ')'
         testplan.save()
     return render(request, 'docx_generator/message.html', {'message': [True, i+1]})
