@@ -32,7 +32,7 @@ class RedmineDeviceExportForm(forms.Form):
 class RedmineProtocolExportForm(forms.Form):
     protocol_id = forms.IntegerField()
     redmine_project = forms.CharField(label=_('Project ID'), max_length=100)
-    redmine_wiki = forms.CharField(label=_('Wiki Page Name'), max_length=100)
+    redmine_wiki = forms.CharField(label='Wiki', max_length=100)
     general = forms.BooleanField(label=_('General Information'), required=False)
     results = forms.BooleanField(label=_('Test Results'), required=False)
 
@@ -44,8 +44,12 @@ class RedmineProtocolExportForm(forms.Form):
 class RedmineResultExportForm(forms.Form):
     result_id = forms.IntegerField()
     redmine_project = forms.CharField(label=_('Project ID'), max_length=100)
-    redmine_wiki = forms.CharField(label=_('Wiki Page Name'), max_length=100)
-    redmine_parent_wiki = forms.CharField(label=_('Project Parent Wiki'), max_length=100)
+    redmine_wiki = forms.CharField(label='Wiki', max_length=100)
+    redmine_parent_wiki = forms.CharField(label=_('Parent Wiki'), max_length=100)
     test_desc = forms.BooleanField(label=_('Test Description'), required=False)
     result_configs = forms.BooleanField(label=_('Result Configs'), required=False)
     result_status = forms.BooleanField(label=_('Result Status'), required=False)
+
+    def __init__(self, *args, **kwargs):
+        super(RedmineResultExportForm, self).__init__(*args, **kwargs)
+        self.fields['result_id'].widget = forms.HiddenInput()

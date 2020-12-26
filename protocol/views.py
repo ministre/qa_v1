@@ -42,6 +42,7 @@ class ProtocolCreate(CreateView):
 
     def get_form(self, form_class=ProtocolForm):
         form = super(ProtocolCreate, self).get_form(form_class)
+        form.fields['redmine_wiki'].widget = forms.HiddenInput()
         form.fields['result'].widget = forms.HiddenInput()
         return form
 
@@ -51,6 +52,8 @@ class ProtocolCreate(CreateView):
         return context
 
     def get_success_url(self):
+        self.object.redmine_wiki = 'protocol_' + str(self.object.id)
+        self.object.save()
         return reverse('protocols')
 
 
@@ -117,7 +120,7 @@ def protocol_details(request, pk, tab_id):
     redmine_url = settings.REDMINE_URL
     export_form = RedmineProtocolExportForm(initial={'protocol_id': protocol.id,
                                                      'redmine_project': protocol.device.redmine_project,
-                                                     'redmine_wiki': 'protocol_' + str(protocol.id),
+                                                     'redmine_wiki': protocol.redmine_wiki,
                                                      'general': True, 'results': True})
     results = protocol.get_results()
     return render(request, 'protocol/protocol_details.html', {'protocol': protocol,
@@ -218,11 +221,13 @@ def result_details(request, pk, tab_id):
                                                        'redmine_project': result.protocol.device.redmine_project,
                                                        'redmine_wiki': result.redmine_wiki,
                                                        'redmine_parent_wiki': result.protocol.redmine_wiki,
-                                                         'general': True, 'results': True})
+                                                       'test_desc': True, 'result_configs': True,
+                                                       'result_status': True})
 
         return render(request, 'protocol/result_details.html', {'result': result, 'procedure': procedure,
                                                                 'expected': expected, 'num': num,
                                                                 'result_form': result_form,
+                                                                'export_form': export_form,
                                                                 'redmine_url': redmine_url, 'tab_id': tab_id})
 
 

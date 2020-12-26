@@ -86,6 +86,12 @@
                                 <td>{% trans "Completed" %}:</td>
                                 <td>{{ protocol.date_of_finish }}</td>
                             </tr>
+                            {% if protocol.redmine_wiki %}
+                            <tr>
+                                <td>Redmine Wiki:</td>
+                                <td>{{ protocol.redmine_wiki }}</td>
+                            </tr>
+                            {% endif %}
                             <tr>
                                 <td>{% trans "Created" %}:</td>
                                 <td>{{ protocol.created_at }} {% if protocol.created_by %}({{ protocol.created_by }}){% endif %}</td>
