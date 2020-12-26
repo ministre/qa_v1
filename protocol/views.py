@@ -52,7 +52,7 @@ class ProtocolCreate(CreateView):
         return context
 
     def get_success_url(self):
-        self.object.redmine_wiki = 'protocol_' + str(self.object.id)
+        self.object.redmine_wiki = 'Protocol_' + str(self.object.id)
         self.object.save()
         return reverse('protocols')
 
@@ -222,7 +222,7 @@ def result_details(request, pk, tab_id):
                                                        'redmine_wiki': result.redmine_wiki,
                                                        'redmine_parent_wiki': result.protocol.redmine_wiki,
                                                        'test_desc': True, 'result_configs': True,
-                                                       'result_status': True})
+                                                       'result_summary': True})
 
         return render(request, 'protocol/result_details.html', {'result': result, 'procedure': procedure,
                                                                 'expected': expected, 'num': num,

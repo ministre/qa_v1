@@ -2,8 +2,7 @@ from redminelib import Redmine
 from qa_v1 import settings
 from redminelib.exceptions import ResourceNotFoundError, ForbiddenError, AuthError, ValidationError
 from device.models import DeviceType, Device
-from protocol.models import Protocol
-
+from protocol.models import Protocol, TestResult, TestResultConfig
 from django.utils.translation import gettext_lazy as _
 
 
@@ -84,13 +83,15 @@ class RedmineProject:
         is_wiki = self.get_wiki(project=project, wiki_title=wiki_title)
         if is_wiki[0] == 200:
             if parent_wiki_title:
-                self.redmine.wiki_page.update(wiki_title, project_id=project, text=wiki_text, parent_title='wiki')
+                self.redmine.wiki_page.update(wiki_title, project_id=project, text=wiki_text,
+                                              parent_title=parent_wiki_title)
             else:
                 self.redmine.wiki_page.update(wiki_title, project_id=project, text=wiki_text)
             return [True, _('Wiki updated')]
         elif is_wiki[0] == 404:
             if parent_wiki_title:
-                self.redmine.wiki_page.create(project_id=project, title=wiki_title, text=wiki_text, parent_title='wiki')
+                self.redmine.wiki_page.create(project_id=project, title=wiki_title, text=wiki_text,
+                                              parent_title=parent_wiki_title)
             else:
                 self.redmine.wiki_page.create(project_id=project, title=wiki_title, text=wiki_text)
             return [True, _('Wiki created')]
@@ -156,7 +157,7 @@ class RedmineDevice:
             wiki += '\nh2. ' + str(_('Protocols')) + '\r\n\r'
             device_protocols = Protocol.objects.filter(device=device).order_by('id')
             for device_protocol in device_protocols:
-                wiki += '\n* [[protocol_' + str(device_protocol.id) + '|' + str(_('SW Ver.')) + ': ' + \
+                wiki += '\n* [[Protocol_' + str(device_protocol.id) + '|' + str(_('SW Ver.')) + ': ' + \
                         str(device_protocol.sw) + ' / ' + str(_('Date of testing')) + ': ' + \
                         str(device_protocol.date_of_start.strftime('%d.%m.%Y'))
                 if device_protocol.date_of_finish:
@@ -257,4 +258,50 @@ class RedmineProtocol:
                                               results=results)
             is_wiki = r.create_or_update_wiki(project=project, wiki_title=project_wiki, wiki_text=wiki,
                                               parent_wiki_title='wiki')
+            return is_wiki
+
+
+class RedmineResult:
+    @staticmethod
+    def build_wiki(result: TestResult, test_desc=False, result_configs=False, result_summary=False):
+        wiki = '\n' + str(_('Protocol')) + ' ' + str(result.protocol.device.vendor.name) + ' ' + \
+               str(result.protocol.device) + u' \u00bb ' + str(result.test.get_num()[0]) + '. ' + \
+               str(result.test.cat) + u' \u00bb ' + str(result.test.get_num()[0]) + '.' + \
+               str(result.test.get_num()[1]) + '. ' + str(result.test) + '\r\n\r'
+        if test_desc:
+            wiki += '\nh1. ' + str(_('Test description')) + '\r\n\r'
+            if result.test.purpose:
+                wiki += '\nh2. ' + str(_('Purpose')) + '\r\n\r'
+                wiki += '\n' + result.test.purpose + '\r\n\r'
+            if result.test.procedure:
+                wiki += '\nh2. ' + str(_('Procedure')) + '\r\n\r'
+                wiki += '\n' + result.test.procedure + '\r\n\r'
+            if result.test.expected:
+                wiki += '\nh2. ' + str(_('Expected result')) + '\r\n\r'
+                wiki += '\n' + result.test.expected + '\r\n\r'
+        wiki += '\nh1. ' + str(_('Test result')) + '\r\n\r'
+        if result_configs:
+            wiki += '\nh2. ' + str(_('Configurations')) + '\r\n\r'
+            configs = TestResultConfig.objects.filter(result=result)
+            for config in configs:
+                if config.lang == 'json':
+                    config.lang = 'javascript'
+                wiki += '\n<pre><code class="' + config.lang + '">\r' + \
+                        '\n' + config.config + '\r' + \
+                        '\n</code></pre>\r\n\r'
+
+        return wiki
+
+    @staticmethod
+    def export(result: TestResult, project: str, project_wiki: str, project_parent_wiki: str, test_desc=False,
+               result_configs=False, result_summary=False):
+        r = RedmineProject()
+        is_project = r.check_project(project=project)
+        if is_project[0] != 200:
+            return [False, is_project[1]]
+        else:
+            wiki = RedmineResult.build_wiki(result=result, test_desc=test_desc, result_configs=result_configs,
+                                            result_summary=result_summary)
+            is_wiki = r.create_or_update_wiki(project=project, wiki_title=project_wiki, wiki_text=wiki,
+                                              parent_wiki_title=project_parent_wiki)
             return is_wiki
