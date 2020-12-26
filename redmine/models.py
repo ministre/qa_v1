@@ -296,19 +296,19 @@ class RedmineResult:
         # summary
         if result_summary:
             wiki += '\nh1. ' + str(_('Summary')) + '\r\n\r'
-            res = '%{background:gray} ' + str(_('Not tested')) + ' %'
+            res = '%{background:gray}' + str(_('Not tested')) + '%'
             if result.result == 1:
-                res = '%{background:red} ' + str(_('Not passed')) + ' %'
+                res = '%{background:red}' + str(_('Not passed')) + '%'
             elif result.result == 2:
-                res = '%{background:yellow} ' + str(_('Passed with warning')) + ' %'
+                res = '%{background:yellow}' + str(_('Passed with warning')) + '%'
             elif result.result == 3:
-                res = '%{background:lightgreen} ' + str(_('Passed')) + ' %'
+                res = '%{background:lightgreen}' + str(_('Passed')) + '%'
 
             wiki += '\nh2. ' + str(_('Result')) + '\r\n\r' + \
-                    '\n' + res + '\r'
+                    '\n' + res + '\r\n\r'
             if result.comment:
                 wiki += '\nh2. ' + str(_('Comment')) + '\r\n\r' + \
-                        '\n' + result.comment + '\r'
+                        '\n' + result.comment + '\r\n\r'
             issues = TestResultIssue.objects.filter(result=result).order_by('id')
             if issues:
                 wiki += '\nh2. ' + str(_('Issues')) + '\r\n\r'
