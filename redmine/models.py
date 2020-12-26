@@ -281,8 +281,9 @@ class RedmineResult:
                 wiki += '\n' + result.test.expected + '\r\n\r'
         wiki += '\nh1. ' + str(_('Test result')) + '\r\n\r'
         if result_configs:
-            wiki += '\nh2. ' + str(_('Configurations')) + '\r\n\r'
             configs = TestResultConfig.objects.filter(result=result)
+            if configs:
+                wiki += '\nh2. ' + str(_('Configurations')) + '\r\n\r'
             for config in configs:
                 if config.lang == 'json':
                     config.lang = 'javascript'
