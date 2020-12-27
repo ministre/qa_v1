@@ -15,3 +15,9 @@ class TechReq(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class TechReqFile(models.Model):
+    tech_req = models.ForeignKey(TechReq, related_name='tech_req_file', on_delete=models.CASCADE)
+    file = models.FileField(upload_to="tech_req/files/")
+    desc = models.CharField(max_length=1000, blank=True, null=True)
