@@ -56,6 +56,7 @@
     </div>
 
     <div class="tabs-panel{% if tab_id == 2 %} is-active{% endif %}" id="files">
+        <a href="{% url 'tech_req_file_create' tech_req_id=tech_req.id %}" class="button small">{% trans "Add" %}</a>
     </div>
 
 </div>

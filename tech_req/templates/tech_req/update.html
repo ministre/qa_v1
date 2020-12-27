@@ -4,7 +4,7 @@
 
 {% block content %}
 
-<form method="post" action="">
+<form method="post" action="" enctype="multipart/form-data">
     <a href="{{ back_url }}" class="button small">&laquo; {% trans "Back" %}</a>
     <input type="submit" value='{% trans "Update" %}' class="button success small" />
     {% csrf_token %}

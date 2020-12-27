@@ -2,11 +2,12 @@ from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
-from .models import TechReq
-from .forms import TechReqForm
+from .models import TechReq, TechReqFile
+from .forms import TechReqForm, TechReqFileForm
 from django.urls import reverse
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
+from device.views import Item
 
 
 @method_decorator(login_required, name='dispatch')
@@ -70,3 +71,58 @@ class TechReqDelete(DeleteView):
 def tech_req_details(request, pk, tab_id):
     tech_req = get_object_or_404(TechReq, id=pk)
     return render(request, 'tech_req/tech_req_details.html', {'tech_req': tech_req, 'tab_id': tab_id})
+
+
+@method_decorator(login_required, name='dispatch')
+class TechReqFileCreate(CreateView):
+    model = TechReqFile
+    form_class = TechReqFileForm
+    template_name = 'tech_req/create.html'
+
+    def get_initial(self):
+        return {'tech_req': self.kwargs.get('tech_req_id'),
+                'created_by': self.request.user, 'updated_by': self.request.user}
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('tech_req_details', kwargs={'pk': self.kwargs.get('teh_req_id'), 'tab_id': 2})
+        return context
+
+    def get_success_url(self):
+        Item.update_timestamp(foo=self.object.tech_req, user=self.request.user)
+        return reverse('tech_req_details', kwargs={'pk': self.object.tech_req.id, 'tab_id': 2})
+
+
+@method_decorator(login_required, name='dispatch')
+class TechReqFileUpdate(UpdateView):
+    model = TechReqFile
+    form_class = TechReqFileForm
+    template_name = 'tech_req/update.html'
+
+    def get_initial(self):
+        return {'tech_req': self.kwargs.get('tech_req_id'),
+                'updated_by': self.request.user, 'updated_at': timezone.now()}
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('tech_req_details', kwargs={'pk': self.object.tech_req.id, 'tab_id': 2})
+        return context
+
+    def get_success_url(self):
+        Item.update_timestamp(foo=self.object.tech_req, user=self.request.user)
+        return reverse('tech_req_details', kwargs={'pk': self.object.tech_req.id, 'tab_id': 2})
+
+
+@method_decorator(login_required, name='dispatch')
+class TechReqFileDelete(DeleteView):
+    model = TechReqFile
+    template_name = 'tech_req/delete.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('tech_req_details', kwargs={'pk': self.object.tech_req.id, 'tab_id': 2})
+        return context
+
+    def get_success_url(self):
+        Item.update_timestamp(foo=self.object.tech_req, user=self.request.user)
+        return reverse('tech_req_details', kwargs={'pk': self.object.tech_req.id, 'tab_id': 2})
