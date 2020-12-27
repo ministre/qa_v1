@@ -33,8 +33,8 @@ class RedmineProtocolExportForm(forms.Form):
     protocol_id = forms.IntegerField()
     redmine_project = forms.CharField(label=_('Project ID'), max_length=100)
     redmine_wiki = forms.CharField(label='Wiki', max_length=100)
-    general = forms.BooleanField(label=_('General Information'), required=False)
-    results = forms.BooleanField(label=_('Test Results'), required=False)
+    general = forms.BooleanField(label=_('Device information'), required=False)
+    results = forms.BooleanField(label=_('Test results'), required=False)
 
     def __init__(self, *args, **kwargs):
         super(RedmineProtocolExportForm, self).__init__(*args, **kwargs)

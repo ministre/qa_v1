@@ -43,7 +43,7 @@ class ResultForm(ModelForm):
             'config': _('Configuration'),
             'info': _('Additional Information'),
             'comment': _('Comment'),
-            'redmine_wiki': _('Redmine Wiki'),
+            'redmine_wiki': 'Redmine Wiki',
         }
         fields = '__all__'
         STATUS = (

@@ -166,7 +166,7 @@
         <thead>
             <tr style="background-color: #E8E8E8">
                 <th>ID</th>
-                <th width="110px">{% trans "Results" %}</th>
+                <th width="130px">{% trans "Results" %}</th>
                 <th  width="35%">{% trans "Tests" %}</th>
                 <th>{% trans "Category" %}</th>
                 <th>{% trans "Issues" %}</th>
@@ -183,19 +183,19 @@
             <td>{{ forloop.counter }}</td>
             <td>
                 {% if result.result == None %}
-                <span class="label" style="width:100px; text-align: center; background-color: gray; color: white">{% trans "Not tested" %}</span>
+                <span class="label" style="width:120px; text-align: center; background-color: gray; color: white">{% trans "Not tested" %}</span>
                 {% endif %}
                 {% if result.result == 0 %}
-                <span class="label" style="width:100px; text-align: center; background-color: gray; color: white">{% trans "Not tested" %}</span>
+                <span class="label" style="width:120px; text-align: center; background-color: gray; color: white">{% trans "Not tested" %}</span>
                 {% endif %}
                 {% if result.result == 1 %}
-                <span class="label alert" style="width:100px; text-align: center">{% trans "Failed" %}</span>
+                <span class="label alert" style="width:120px; text-align: center">{% trans "Failed" %}</span>
                 {% endif %}
                 {% if result.result == 2 %}
-                <span class="label warning" style="width:100px; text-align: center">{% trans "Warning" %}</span>
+                <span class="label warning" style="width:120px; text-align: center">{% trans "Warning" %}</span>
                 {% endif %}
                 {% if result.result == 3 %}
-                <span class="label success" style="width:100px; text-align: center; background-color: green; color: white">{% trans "Success" %}</span>
+                <span class="label success" style="width:120px; text-align: center; background-color: green; color: white">{% trans "Success" %}</span>
                 {% endif %}
             </td>
             <td>
@@ -226,7 +226,7 @@
     <div class="tabs-panel {% if tab_id == 4 %}is-active{% endif %}" id="docx">
         <form action="{% url 'build_protocol_beta' %}" method="post">
             <input type="submit" value='{% trans "Build protocol" %}' class="button small success" />
-            <table class="unstriped" style="text-align: left; width: 200px;">
+            <table class="unstriped" style="text-align: left; width: 350px;">
                 {% csrf_token %}
                 {{ build_protocol_form_beta.as_table }}
             </table>

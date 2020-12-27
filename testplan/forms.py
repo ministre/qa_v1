@@ -48,7 +48,7 @@ class TestForm(ModelForm):
             'purpose': _('Purpose'),
             'procedure': _('Procedure'),
             'expected': _('Expected result'),
-            'redmine_wiki': _('Redmine Wiki'),
+            'redmine_wiki': 'Redmine Wiki',
         }
         fields = '__all__'
         widgets = {'cat': HiddenInput(), 'category': HiddenInput(),
