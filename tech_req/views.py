@@ -100,7 +100,7 @@ class TechReqFileUpdate(UpdateView):
     template_name = 'tech_req/update.html'
 
     def get_initial(self):
-        return {'tech_req': self.kwargs.get('tech_req_id'),
+        return {'tech_req': self.object.tech_req.id,
                 'updated_by': self.request.user, 'updated_at': timezone.now()}
 
     def get_context_data(self, **kwargs):

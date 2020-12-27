@@ -57,6 +57,23 @@
 
     <div class="tabs-panel{% if tab_id == 2 %} is-active{% endif %}" id="files">
         <a href="{% url 'tech_req_file_create' tech_req_id=tech_req.id %}" class="button small">{% trans "Add" %}</a>
+        <div class="grid-x grid-margin-x">
+            <div class="cell">
+                <div class="card">
+                    <div class="card-section">
+                        <ul>
+                            {% for tech_req_file in tech_req.tech_req_file.all|dictsort:"id" %}
+                            <li>
+                                <a href="{% url 'tech_req_file_update' pk=tech_req_file.id %}">{{ tech_req_file.filename }}</a>
+                                <a href="{% url 'tech_req_file_delete' pk=tech_req_file.id %}"><i class="step fi-minus" style="color: red"></i></a>
+                                <br><i>{{ tech_req_file.desc }}</i>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
 </div>

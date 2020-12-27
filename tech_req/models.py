@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
 from device.models import DeviceType
+import os
 
 
 class TechReq(models.Model):
@@ -25,3 +26,6 @@ class TechReqFile(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
     updated_by = models.ForeignKey(User, models.SET_NULL, related_name='tech_req_file_u', blank=True, null=True)
     updated_at = models.DateTimeField(default=timezone.now)
+
+    def filename(self):
+        return os.path.basename(self.file.name)
