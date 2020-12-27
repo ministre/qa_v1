@@ -37,15 +37,16 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'device',
-    'testplan',
-    'protocol',
     'docx_builder',
     'docx_generator',
+    'protocol',
     'redmine',
-    'store',
     'shipment',
-    'tcp_udp_check',
     'sip_invite',
+    'store',
+    'tcp_udp_check',
+    'tech_req',
+    'testplan',
 ]
 
 MIDDLEWARE = [

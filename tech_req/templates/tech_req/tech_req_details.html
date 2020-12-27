@@ -1,0 +1,58 @@
+{% extends "device/wrapper.html" %}
+
+{% load i18n static %}
+
+{% block content %}
+
+<p><a href="{% url 'tech_reqs' %}">{% trans "Technical requirements" %}</a> &raquo; {{ tech_req }}</p>
+
+<ul class="tabs" data-tabs id="tech_req-tabs">
+    <li class="tabs-title {% if tab_id == 1 %} is-active{% endif %}">
+        <a data-tabs-target="general" href="#general">{% trans "General" %}</a>
+    </li>
+    <li class="tabs-title {% if tab_id == 2 %} is-active{% endif %}">
+        <a data-tabs-target="files" href="#files">Files</a>
+    </li>
+</ul>
+
+<div class="tabs-content" data-tabs-content="tech_req-tabs">
+    <div class="tabs-panel{% if tab_id == 1 %} is-active{% endif %}" id="general">
+        <a href="{% url 'tech_req_update' pk=tech_req.id %}" class="button small">{% trans "Update" %}</a>
+        <a href="{% url 'tech_req_delete' pk=tech_req.id %}" class="button alert small">{% trans "Delete" %}</a>
+        <div class="grid-x grid-margin-x">
+            <div class="cell">
+                <div class="card">
+                    <div class="card-section">
+                        <table class="unstriped">
+                            <tr>
+                                <td>ID:</td>
+                                <td>{{ tech_req.id }}</td>
+                            </tr>
+                            <tr>
+                                <td>{% trans "Name" %}:</td>
+                                <td>{{ tech_req.name }}</td>
+                            </tr>
+                            <tr>
+                                <td>{% trans "Description" %}:</td>
+                                <td>{% if tech_req.desc %}{{ tech_req.desc }}{% endif %}</td>
+                            </tr>
+                            <tr>
+                                <td>{% trans "Created" %}:</td>
+                                <td>{{ tech_req.created_at }} {% if tech_req.created_by %}({{ tech_req.created_by }}){% endif %}</td>
+                            </tr>
+                            <tr>
+                                <td>{% trans "Last Update" %}:</td>
+                                <td>{{ tech_req.updated_at }} {% if tech_req.updated_by %}({{ tech_req.updated_by }}){% endif %}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tabs-panel{% if tab_id == 2 %} is-active{% endif %}" id="files">
+
+    </div>
+
+</div>
