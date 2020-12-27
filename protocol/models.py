@@ -45,11 +45,11 @@ class Protocol(models.Model):
                 try:
                     result = TestResult.objects.get(protocol=self, test=test)
                     comment = result.comment
-                    test_issues = TestResultIssue.objects.filter(result=result)
+                    test_issues = TestResultIssue.objects.filter(result=result).order_by('id')
                     issues = []
                     for issue in test_issues:
                         issues.append(issue.text)
-                    test_configs = TestResultConfig.objects.filter(result=result)
+                    test_configs = TestResultConfig.objects.filter(result=result).order_by('id')
                     configs = []
                     for config in test_configs:
                         configs.append(config.id)
@@ -74,6 +74,22 @@ class Protocol(models.Model):
                                 'issues': issues,
                                 'configs': configs})
         return results
+
+    def get_issues(self):
+        issues = []
+        categories = Category.objects.filter(testplan=self.testplan).order_by('priority')
+        for category in categories:
+            tests = Test.objects.filter(cat=category).order_by('priority')
+            for test in tests:
+                try:
+                    result = TestResult.objects.get(protocol=self, test=test)
+                    test_issues = TestResultIssue.objects.filter(result=result).order_by('id')
+                    for issue in test_issues:
+                        issues.append({'issue_id': issue.id, 'result_id': result.id, 'test_id': test.id,
+                                       'text': issue.text})
+                except TestResult.DoesNotExist:
+                    pass
+        return issues
 
 
 class TestResult(models.Model):

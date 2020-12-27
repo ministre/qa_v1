@@ -36,9 +36,9 @@ def build_protocol_beta(request):
         section[0].right_margin = Cm(1)
         section[0].top_margin = Cm(1)
         section[0].bottom_margin = Cm(1)
-
         ###
         if results_table:
+            results = protocol.get_results(headers=True)
             document.add_paragraph('Test results', style='Heading 1')
             document.add_paragraph(str(_('Testing was carried out in accordance with testplan of ')) +
                                    protocol.testplan.name + ' (' + str(_('document version')) + ': ' +
@@ -70,7 +70,6 @@ def build_protocol_beta(request):
             for hdr_cell in hdr_cells:
                 hdr_cell.paragraphs[0].runs[0].font.bold = True
 
-            results = protocol.get_results(headers=True)
             for result in results:
                 row_cells = table.add_row().cells
                 if result['header']:
@@ -115,6 +114,7 @@ def build_protocol_beta(request):
             run.add_break(WD_BREAK.PAGE)
 
         if summary:
+            issues = protocol.get_issues()
             document.add_paragraph('Summary', style='Heading 1')
             p = document.add_paragraph(str(_('During testing of device ')), style='Normal')
             run = p.add_run(protocol.device.model)
@@ -128,7 +128,15 @@ def build_protocol_beta(request):
             p.add_run(str(_(' and hardware version ')))
             run = p.add_run(protocol.device.hw)
             run.bold = True
-            p.add_run(str(_(', the following issues were found:')))
+
+            if issues:
+                p.add_run(str(_(', the following issues were found:')))
+
+                for issue in issues:
+                    document.add_paragraph(issue['text'], style='List Number')
+
+            else:
+                p.add_run(str(_(', issues not found.')))
 
         ###
         file = os.path.join(settings.MEDIA_ROOT + '/docx_builder/protocols/', 'Protocol_' + str(protocol.id) + '.docx')
