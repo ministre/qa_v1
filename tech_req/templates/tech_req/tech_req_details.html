@@ -11,7 +11,9 @@
         <a data-tabs-target="general" href="#general">{% trans "General" %}</a>
     </li>
     <li class="tabs-title {% if tab_id == 2 %} is-active{% endif %}">
-        <a data-tabs-target="files" href="#files">Files</a>
+        <a data-tabs-target="files" href="#files">{% trans "Files" %}
+            {% if tech_req.tech_req_file.all|length %}({{ tech_req.tech_req_file.all|length }}){% endif %}
+        </a>
     </li>
 </ul>
 
