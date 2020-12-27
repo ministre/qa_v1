@@ -85,7 +85,7 @@ class TechReqFileCreate(CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['back_url'] = reverse('tech_req_details', kwargs={'pk': self.kwargs.get('teh_req_id'), 'tab_id': 2})
+        context['back_url'] = reverse('tech_req_details', kwargs={'pk': self.kwargs.get('tech_req_id'), 'tab_id': 2})
         return context
 
     def get_success_url(self):
