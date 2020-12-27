@@ -7,7 +7,7 @@ class TechReqForm(ModelForm):
     class Meta:
         model = TechReq
         labels = {
-            'type': _('Device Type'),
+            'device_type': _('Device Type'),
             'name': _('Document Name'),
             'desc': _('Description'),
         }
