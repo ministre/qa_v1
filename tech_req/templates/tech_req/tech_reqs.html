@@ -17,7 +17,7 @@
     </thead>
     <tbody>
     {% for tech_req in tech_reqs %}
-    <tr data-href="{% url 'tech_req_details' pk=tech_req.id %}">
+    <tr data-href="{% url 'tech_req_details' pk=tech_req.id tab_id=1 %}">
         <td>{{ tech_req.id }}</td>
         <td>{{ tech_req.name }}</td>
     </tr>
