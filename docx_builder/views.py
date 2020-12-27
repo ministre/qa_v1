@@ -17,7 +17,17 @@ from docx.enum.text import WD_BREAK
 def build_protocol_beta(request):
     if request.method == 'POST':
         protocol = get_object_or_404(Protocol, id=request.POST['protocol_id'])
-        results_table = summary = False
+        general = performance = results_table = summary = team = False
+        try:
+            if request.POST['general']:
+                general = True
+        except MultiValueDictKeyError:
+            pass
+        try:
+            if request.POST['performance']:
+                performance = True
+        except MultiValueDictKeyError:
+            pass
         try:
             if request.POST['results_table']:
                 results_table = True
@@ -26,6 +36,11 @@ def build_protocol_beta(request):
         try:
             if request.POST['summary']:
                 summary = True
+        except MultiValueDictKeyError:
+            pass
+        try:
+            if request.POST['team']:
+                team = True
         except MultiValueDictKeyError:
             pass
 
@@ -37,9 +52,84 @@ def build_protocol_beta(request):
         section[0].top_margin = Cm(1)
         section[0].bottom_margin = Cm(1)
         ###
+        if general:
+            document.add_paragraph(str(_('General Information about DUT')), style='Heading 1')
+            table = document.add_table(rows=0, cols=2)
+            table.style = 'TableGrid'
+            row_cells = table.add_row().cells
+            row_cells[0].text = str(_('Device Type')) + ': '
+            row_cells[1].text = protocol.device.type.name
+            row_cells = table.add_row().cells
+            row_cells[0].text = str(_('Vendor')) + ': '
+            row_cells[1].text = protocol.device.vendor.name
+            row_cells = table.add_row().cells
+            row_cells[0].text = str(_('Model')) + ': '
+            row_cells[1].text = protocol.device.model
+            if protocol.device.hw:
+                row_cells = table.add_row().cells
+                row_cells[0].text = str(_('Hardware Version')) + ': '
+                row_cells[1].text = protocol.device.hw
+            row_cells = table.add_row().cells
+            row_cells[0].text = str(_('Software Version')) + ': '
+            row_cells[1].text = protocol.sw
+            if protocol.sw_checksum:
+                row_cells = table.add_row().cells
+                row_cells[0].text = str(_('Software Checksum')) + ': '
+                row_cells[1].text = protocol.sw_checksum
+            row_cells = table.add_row().cells
+            row_cells[0].merge(row_cells[1])
+            row_cells[0].text = str(_('Hardware Specifications')) + ': '
+            row_cells[0].paragraphs[0].runs[0].font.bold = True
+            row_cells[0].paragraphs[0].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+            if protocol.device.interfaces:
+                row_cells = table.add_row().cells
+                row_cells[0].text = str(_('Interfaces')) + ': '
+                row_cells[1].text = protocol.device.interfaces
+            if protocol.device.leds:
+                row_cells = table.add_row().cells
+                row_cells[0].text = str(_('Leds')) + ': '
+                row_cells[1].text = protocol.device.leds
+            if protocol.device.buttons:
+                row_cells = table.add_row().cells
+                row_cells[0].text = str(_('Buttons')) + ': '
+                row_cells[1].text = protocol.device.buttons
+            if protocol.device.chipsets:
+                row_cells = table.add_row().cells
+                row_cells[0].text = str(_('Chipsets')) + ': '
+                row_cells[1].text = protocol.device.chipsets
+            if protocol.device.memory:
+                row_cells = table.add_row().cells
+                row_cells[0].text = str(_('Memory')) + ': '
+                row_cells[1].text = protocol.device.memory
+            # cells width
+            for cell in table.columns[0].cells:
+                cell.width = Cm(4)
+            for cell in table.columns[1].cells:
+                cell.width = Cm(14.5)
+            p = document.add_paragraph(str(_('Date of testing')) + ': ' +
+                                       str(protocol.date_of_start.strftime("%d.%m.%Y")), style='Heading 2')
+            if protocol.date_of_finish:
+                p.add_run(' - ' + str(protocol.date_of_finish.strftime("%d.%m.%Y")))
+            document.add_paragraph(str(_('Photo')), style='Heading 1')
+            table = document.add_table(rows=0, cols=1)
+            table.style = 'TableGrid'
+            row_cells = table.add_row().cells
+            row_cells[0].text = str('')
+
+            p = document.add_paragraph()
+            run = p.add_run()
+            run.add_break(WD_BREAK.PAGE)
+
+        if performance:
+            document.add_paragraph(str(_('Performance results')), style='Heading 1')
+
+            p = document.add_paragraph()
+            run = p.add_run()
+            run.add_break(WD_BREAK.PAGE)
+
         if results_table:
             results = protocol.get_results(headers=True)
-            document.add_paragraph('Test results', style='Heading 1')
+            document.add_paragraph(str(_('Test results')), style='Heading 1')
             document.add_paragraph(str(_('Testing was carried out in accordance with testplan of ')) +
                                    protocol.testplan.name + ' (' + str(_('document version')) + ': ' +
                                    protocol.testplan.version + ').', style='Normal')
@@ -64,9 +154,9 @@ def build_protocol_beta(request):
             table.style = 'TableGrid'
             hdr_cells = table.rows[0].cells
             hdr_cells[0].text = '№'
-            hdr_cells[1].text = str(_('Names'))
+            hdr_cells[1].text = str(_('Test name'))
             hdr_cells[2].text = str(_('Res.'))
-            hdr_cells[3].text = str(_('Comments'))
+            hdr_cells[3].text = str(_('Comment'))
             for hdr_cell in hdr_cells:
                 hdr_cell.paragraphs[0].runs[0].font.bold = True
 
@@ -115,7 +205,7 @@ def build_protocol_beta(request):
 
         if summary:
             issues = protocol.get_issues()
-            document.add_paragraph('Summary', style='Heading 1')
+            document.add_paragraph(str(_('Protocol summary')), style='Heading 1')
             p = document.add_paragraph(str(_('During testing of device ')), style='Normal')
             run = p.add_run(protocol.device.model)
             run.bold = True
@@ -128,15 +218,15 @@ def build_protocol_beta(request):
             p.add_run(str(_(' and hardware version ')))
             run = p.add_run(protocol.device.hw)
             run.bold = True
-
             if issues:
                 p.add_run(str(_(', the following issues were found:')))
-
                 for issue in issues:
                     document.add_paragraph(issue['text'], style='List Number')
-
             else:
                 p.add_run(str(_(', issues not found.')))
+
+        if team:
+            document.add_paragraph(str(_('Worked on testing')), style='Heading 1')
 
         ###
         file = os.path.join(settings.MEDIA_ROOT + '/docx_builder/protocols/', 'Protocol_' + str(protocol.id) + '.docx')
@@ -164,4 +254,12 @@ def build_document():
     document.styles['Heading 1'].paragraph_format.space_before = Pt(5)
     document.styles['Heading 1'].paragraph_format.space_after = Pt(5)
 
+    document.styles['Heading 2'].font.name = 'Calibri'
+    document.styles['Heading 2'].font.color.rgb = RGBColor(0x00, 0x00, 0x00)
+    document.styles['Heading 2'].font.size = Pt(12)
+    document.styles['Heading 2'].font.bold = False
+    document.styles['Heading 2'].font.italic = False
+    document.styles['Heading 2'].font.underline = False
+    document.styles['Heading 2'].paragraph_format.space_before = Pt(5)
+    document.styles['Heading 2'].paragraph_format.space_after = Pt(5)
     return document
