@@ -67,7 +67,7 @@ class TestplanPatternDelete(DeleteView):
 
 
 @login_required
-def testplan_details(request, pk, tab_id):
+def testplan_pattern_details(request, pk, tab_id):
     testplan_pattern = get_object_or_404(TestplanPattern, id=pk)
     return render(request, 'testplan_pattern/testplan_pattern_details.html', {'testplan_pattern': testplan_pattern,
                                                                               'tab_id': tab_id})

@@ -34,4 +34,5 @@ urlpatterns = [
     path('tech_req/', include('tech_req.urls')),
     path('tcp_udp_check/', include('tcp_udp_check.urls')),
     path('testplan/', include('testplan.urls')),
+    path('testplan_pattern/', include('testplan_pattern.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
