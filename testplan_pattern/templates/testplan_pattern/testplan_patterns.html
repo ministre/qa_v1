@@ -4,11 +4,11 @@
 
 {% block content %}
 
-<h4>{% trans "Testplans" %}</h4>
+<h4>{% trans "Testplan Patterns" %}</h4>
 
-<a href="{% url 'testplan_create' %}" class="button small">{% trans "Create" %}</a>
+<a href="{% url 'testplan_pattern_create' %}" class="button small">{% trans "Create" %}</a>
 
-<table id="testplans" class="hover unstriped" style="width:100%">
+<table id="testplan_patterns" class="hover unstriped" style="width:100%">
     <thead>
     <tr>
         <th>ID</th>
@@ -17,11 +17,11 @@
     </tr>
     </thead>
     <tbody>
-    {% for testplan in testplans %}
-    <tr data-href="{% url 'testplan_details' pk=testplan.id tab_id=2 %}">
-        <td>{{ testplan.id }}</td>
-        <td>{% trans "Testplan" %} {{ testplan.name }}</td>
-        <td>{{ testplan.version }}</td>
+    {% for testplan_pattern in testplan_patterns %}
+    <tr data-href="{% url 'testplan_pattern_details' pk=testplan_pattern.id tab_id=2 %}">
+        <td>{{ testplan_pattern.id }}</td>
+        <td>{{ testplan_pattern.name }}</td>
+        <td>{{ testplan_pattern.version }}</td>
     </tr>
     {% endfor %}
     </tbody>
@@ -29,7 +29,7 @@
 
 <script>
     $(document).ready(function() {
-        var table = $('#testplans').DataTable({
+        var table = $('#testplan_patterns').DataTable({
         {% if LANGUAGE_CODE == 'ru' %}
             "language": { "url": "{% static '/DataTables/i18n/Russian.json' %}" },
         {% endif %}

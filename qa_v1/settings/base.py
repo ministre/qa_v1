@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'tcp_udp_check',
     'tech_req',
     'testplan',
+    'testplan_pattern',
 ]
 
 MIDDLEWARE = [
