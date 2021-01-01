@@ -192,8 +192,8 @@ class TestPatternCreate(CreateView):
         priority = test_pattern.priority + 1
         Item.set_priority(foo=self.object, priority=priority)
         Item.update_timestamp(foo=self.object, user=self.request.user)
-        Item.update_timestamp(foo=self.object.cat, user=self.request.user)
-        Item.update_timestamp(foo=self.object.cat.testplan_pattern, user=self.request.user)
+        Item.update_timestamp(foo=self.object.category_pattern, user=self.request.user)
+        Item.update_timestamp(foo=self.object.category_pattern.testplan_pattern, user=self.request.user)
         return reverse('testplan_pattern_details', kwargs={'pk': self.object.category_pattern.testplan_pattern.id,
                                                            'tab_id': 2})
 
