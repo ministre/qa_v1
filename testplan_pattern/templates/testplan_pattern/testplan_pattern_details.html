@@ -102,10 +102,10 @@
                                             {{ forloop.parentloop.counter}}.{{ forloop.counter }}. {{ test_pattern.name }}
                                         </a>
                                         {% if forloop.counter != 1 %}
-                                        <a href="{# url 'test_pattern_up' pk=test_pattern.id #}"><i class="step fi-arrow-up" style="color: #ff4f12"></i></a>
+                                        <a href="{% url 'test_pattern_up' pk=test_pattern.id %}"><i class="step fi-arrow-up" style="color: #ff4f12"></i></a>
                                         {% endif %}
-                                        {% if forloop.counter != category.cat_test.all.count %}
-                                        <a href="{# url 'test_pattern_down' pk=test_pattern.id #}"><i class="step fi-arrow-down" style="color: #ff4f12"></i></a>
+                                        {% if forloop.counter != category_pattern.category_pattern_test.all.count %}
+                                        <a href="{% url 'test_pattern_down' pk=test_pattern.id %}"><i class="step fi-arrow-down" style="color: #ff4f12"></i></a>
                                         {% endif %}
                                     </li>
                                 </ul>

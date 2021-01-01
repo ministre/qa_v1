@@ -245,3 +245,29 @@ def test_pattern_details(request, pk, tab_id: int):
     return render(request, 'testplan_pattern/test_pattern_details.html', {'test_pattern': test_pattern, 'num': num,
                                                                           'procedure': procedure, 'expected': expected,
                                                                           'tab_id': tab_id})
+
+
+@login_required
+def test_pattern_up(request, pk):
+    test = get_object_or_404(TestPattern, id=pk)
+    pre_tests = TestPattern.objects.filter(category_pattern=test.category_pattern,
+                                           priority__lt=test.priority).aggregate(Max('priority'))
+    pre_test = get_object_or_404(TestPattern, category_pattern=test.category_pattern,
+                                 priority=pre_tests['priority__max'])
+    Item.set_priority(foo=pre_test, priority=test.priority)
+    Item.set_priority(foo=test, priority=pre_tests['priority__max'])
+    return HttpResponseRedirect(reverse('testplan_pattern_details',
+                                        kwargs={'pk': test.category_pattern.testplan_pattern.id, 'tab_id': 2}))
+
+
+@login_required
+def test_pattern_down(request, pk):
+    test = get_object_or_404(TestPattern, id=pk)
+    next_tests = TestPattern.objects.filter(category_pattern=test.category_pattern,
+                                            priority__gt=test.priority).aggregate(Min('priority'))
+    next_test = get_object_or_404(TestPattern, category_pattern=test.category_pattern,
+                                  priority=next_tests['priority__min'])
+    Item.set_priority(foo=next_test, priority=test.priority)
+    Item.set_priority(foo=test, priority=next_tests['priority__min'])
+    return HttpResponseRedirect(reverse('testplan_pattern_details',
+                                        kwargs={'pk': test.category_pattern.testplan_pattern.id, 'tab_id': 2}))

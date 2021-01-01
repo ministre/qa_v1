@@ -18,4 +18,6 @@ urlpatterns = [
     path('test/update/<int:pk>/', views.TestPatternUpdate.as_view(), name='test_pattern_update'),
     path('test/delete/<int:pk>/', views.TestPatternDelete.as_view(), name='test_pattern_delete'),
     path('test/<int:pk>/<int:tab_id>/', views.test_pattern_details, name='test_pattern_details'),
+    path('test/up/<int:pk>/', views.test_pattern_up, name='test_pattern_up'),
+    path('test/down/<int:pk>/', views.test_pattern_down, name='test_pattern_down'),
 ]
