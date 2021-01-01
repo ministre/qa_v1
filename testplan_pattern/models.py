@@ -27,9 +27,9 @@ class CategoryPattern(models.Model):
                                          on_delete=models.CASCADE)
     name = models.CharField(max_length=1000)
     priority = models.IntegerField(default=0)
-    created_by = models.ForeignKey(User, models.SET_NULL, related_name='pattern_category_c', blank=True, null=True)
+    created_by = models.ForeignKey(User, models.SET_NULL, related_name='category_pattern_c', blank=True, null=True)
     created_at = models.DateTimeField(default=timezone.now)
-    updated_by = models.ForeignKey(User, models.SET_NULL, related_name='pattern_category_u', blank=True, null=True)
+    updated_by = models.ForeignKey(User, models.SET_NULL, related_name='category_pattern_u', blank=True, null=True)
     updated_at = models.DateTimeField(default=timezone.now)
 
     class Meta:
