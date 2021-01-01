@@ -68,7 +68,7 @@ class TestplanPatternDelete(DeleteView):
 
 
 @login_required
-def testplan_pattern_details(request, pk, tab_id):
+def testplan_pattern_details(request, pk, tab_id: int):
     testplan_pattern = get_object_or_404(TestplanPattern, id=pk)
     return render(request, 'testplan_pattern/testplan_pattern_details.html', {'testplan_pattern': testplan_pattern,
                                                                               'tab_id': tab_id})
@@ -97,3 +97,44 @@ class CategoryPatternCreate(CreateView):
         Item.update_timestamp(foo=self.object, user=self.request.user)
         Item.update_timestamp(foo=self.object.testplan_pattern, user=self.request.user)
         return reverse('testplan_pattern_details', kwargs={'pk': self.object.testplan_pattern.id, 'tab_id': 2})
+
+
+@method_decorator(login_required, name='dispatch')
+class CategoryPatternUpdate(UpdateView):
+    model = CategoryPattern
+    form_class = CategoryPatternForm
+    template_name = 'device/update.html'
+
+    def get_initial(self):
+        return {'updated_by': self.request.user, 'updated_at': timezone.now}
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('category_pattern_details', kwargs={'pk': self.object.id, 'tab_id': 1})
+        return context
+
+    def get_success_url(self):
+        Item.update_timestamp(foo=self.object, user=self.request.user)
+        Item.update_timestamp(foo=self.object.testplan_pattern, user=self.request.user)
+        return reverse('category_pattern_details', kwargs={'pk': self.object.id, 'tab_id': 1})
+
+
+@method_decorator(login_required, name='dispatch')
+class CategoryPatternDelete(DeleteView):
+    model = CategoryPattern
+    template_name = 'device/delete.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('category_pattern_details', kwargs={'pk': self.object.id, 'tab_id': 1})
+        return context
+
+    def get_success_url(self):
+        Item.update_timestamp(foo=self.object.testplan_pattern, user=self.request.user)
+        return reverse('testplan_pattern_details', kwargs={'pk': self.object.testplan_pattern.id, 'tab_id': 2})
+
+
+@login_required
+def category_pattern_details(request, pk, tab_id: int):
+    category = get_object_or_404(CategoryPattern, id=pk)
+    return render(request, 'testplan_pattern/category_details.html', {'category': category, 'tab_id': tab_id})

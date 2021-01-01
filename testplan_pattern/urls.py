@@ -9,7 +9,7 @@ urlpatterns = [
     path('<int:pk>/<int:tab_id>/', views.testplan_pattern_details, name='testplan_pattern_details'),
     # categories
     path('category/create/<int:testplan_id>/', views.CategoryPatternCreate.as_view(), name='category_pattern_create'),
-    # path('category/update/<int:pk>/', views.CategoryPatternUpdate.as_view(), name='category_pattern_update'),
-    # path('category/delete/<int:pk>/', views.CategoryPatternDelete.as_view(), name='category_pattern_delete'),
-    # path('category/<int:pk>/<int:tab_id>/', views.category_pattern_details, name='category_pattern_details'),
+    path('category/update/<int:pk>/', views.CategoryPatternUpdate.as_view(), name='category_pattern_update'),
+    path('category/delete/<int:pk>/', views.CategoryPatternDelete.as_view(), name='category_pattern_delete'),
+    path('category/<int:pk>/<int:tab_id>/', views.category_pattern_details, name='category_pattern_details'),
 ]
