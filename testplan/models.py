@@ -17,6 +17,7 @@ class TestPlan(models.Model):
 
     class Meta:
         ordering = ["name"]
+        verbose_name_plural = "Testplans"
 
     def __str__(self):
         return str(self.name) + ' (' + str(self.version) + ')'
@@ -36,11 +37,11 @@ class Category(models.Model):
     updated_by = models.ForeignKey(User, models.SET_NULL, related_name='category_u', blank=True, null=True)
     updated_at = models.DateTimeField(default=timezone.now)
 
-    def __str__(self):
-        return self.name
-
     class Meta:
         verbose_name_plural = "Categories"
+
+    def __str__(self):
+        return self.name
 
 
 class Test(models.Model):
@@ -54,8 +55,8 @@ class Test(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
     updated_by = models.ForeignKey(User, models.SET_NULL, related_name='test_u', blank=True, null=True)
     updated_at = models.DateTimeField(default=timezone.now)
-    #
     redmine_wiki = models.CharField(max_length=300, null=True, blank=True)
+    #
     testplan = models.ForeignKey(TestPlan, on_delete=models.CASCADE, null=True, blank=True)
     category = models.CharField(max_length=300, null=True, blank=True)
 
