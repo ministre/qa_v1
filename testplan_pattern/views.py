@@ -136,5 +136,6 @@ class CategoryPatternDelete(DeleteView):
 
 @login_required
 def category_pattern_details(request, pk, tab_id: int):
-    category = get_object_or_404(CategoryPattern, id=pk)
-    return render(request, 'testplan_pattern/category_details.html', {'category': category, 'tab_id': tab_id})
+    category_pattern = get_object_or_404(CategoryPattern, id=pk)
+    return render(request, 'testplan_pattern/category_pattern_details.html', {'category_pattern': category_pattern,
+                                                                              'tab_id': tab_id})

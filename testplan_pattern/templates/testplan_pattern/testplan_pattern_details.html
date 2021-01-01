@@ -73,45 +73,45 @@
     </div>
 
     <div class="tabs-panel {% if tab_id == 2 %}is-active{% endif %}" id="tests">
-        <a href="{# url 'category_create' testplan_id=testplan.id #}" class="button small">{% trans "Add" %}</a>
+        <a href="{% url 'category_pattern_create' testplan_pattern_id=testplan_pattern.id %}" class="button small">{% trans "Add" %}</a>
         <a href="{# url 'clear_tests' pk=testplan.id #}" class="button small alert">{% trans "Clear" %}</a>
         <div class="grid-x grid-margin-x">
             <div class="cell">
                 <div class="card">
                     <div class="card-section">
-                        {% for category in testplan_pattern.testplan_pattern_category.all|dictsort:"priority" %}
+                        {% for category_pattern in testplan_pattern.testplan_pattern_category.all|dictsort:"priority" %}
                         <ul style="list-style: none">
                             <li>
-                                <a href="{% url 'category_details' pk=category.id tab_id=1 %}"
+                                <a href="{% url 'category_pattern_details' pk=category_pattern.id tab_id=1 %}"
                                    style="font-weight: bold; color: black; padding: 10px;"
                                    onmouseover="this.style.color='red';"
                                    onmouseout="this.style.color='black';">
-                                    {{ forloop.counter }}. {{ category.name }}
+                                    {{ forloop.counter }}. {{ category_pattern.name }}
                                 </a>
                                 {% if forloop.counter != 1 %}
-                                <a href="{% url 'category_up' pk=category.id %}"><i class="step fi-arrow-up" style="color: #ff4f12"></i></a>
+                                <a href="{# url 'category_pattern_up' pk=category_pattern.id #}"><i class="step fi-arrow-up" style="color: #ff4f12"></i></a>
                                 {% endif %}
                                 {% if forloop.counter != testplan.testplan_category.all.count %}
-                                <a href="{% url 'category_down' pk=category.id %}"><i class="step fi-arrow-down" style="color: #ff4f12"></i></a>
+                                <a href="{# url 'category_pattern_down' pk=category_pattern.id #}"><i class="step fi-arrow-down" style="color: #ff4f12"></i></a>
                                 {% endif %}
 
-                                {% for test in category.cat_test.all|dictsort:"priority" %}
+                                {% for test_pattern in category_pattern.cat_test.all|dictsort:"priority" %}
                                 <ul style="list-style: none">
                                     <li>
-                                        <a href="{% url 'test_details' pk=test.id tab_id=2 %}">
-                                            {{ forloop.parentloop.counter}}.{{ forloop.counter }}. {{ test.name }}
+                                        <a href="{# url 'test_pattern_details' pk=test_pattern.id tab_id=2 #}">
+                                            {{ forloop.parentloop.counter}}.{{ forloop.counter }}. {{ test_pattern.name }}
                                         </a>
                                         {% if forloop.counter != 1 %}
-                                        <a href="{% url 'test_up' pk=test.id %}"><i class="step fi-arrow-up" style="color: #ff4f12"></i></a>
+                                        <a href="{# url 'test_pattern_up' pk=test_pattern.id #}"><i class="step fi-arrow-up" style="color: #ff4f12"></i></a>
                                         {% endif %}
                                         {% if forloop.counter != category.cat_test.all.count %}
-                                        <a href="{% url 'test_down' pk=test.id %}"><i class="step fi-arrow-down" style="color: #ff4f12"></i></a>
+                                        <a href="{# url 'test_pattern_down' pk=test_pattern.id #}"><i class="step fi-arrow-down" style="color: #ff4f12"></i></a>
                                         {% endif %}
                                     </li>
                                 </ul>
                                 {% endfor %}
                                 <blockquote>
-                                    <a href="{% url 'test_create' category_id=category.id %}"><i class="step fi-plus"></i></a>
+                                    <a href="{# url 'test_pattern_create' category_pattern_id=category_pattern.id #}"><i class="step fi-plus"></i></a>
                                 </blockquote>
                             </li>
                         </ul>

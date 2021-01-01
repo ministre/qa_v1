@@ -1,0 +1,43 @@
+{% extends "device/wrapper.html" %}
+
+{% load i18n %}
+
+{% block content %}
+
+<p><a href="{% url 'testplan_patterns' %}">{% trans "Testplan Patterns" %}</a> &raquo;
+    <a href="{% url 'testplan_pattern_details' pk=category_pattern.testplan_pattern.id tab_id=2 %}">{{ category_pattern.testplan_pattern.name }}</a> &raquo;
+    {{ category_pattern.name }}
+</p>
+
+<ul class="tabs" data-tabs id="testplan-tabs">
+    <li class="tabs-title {% if tab_id == 1 %} is-active{% endif %}">
+        <a data-tabs-target="general" href="#general">{% trans "General" %}</a>
+    </li>
+</ul>
+
+<div class="tabs-content" data-tabs-content="testplan-tabs">
+    <div class="tabs-panel {% if tab_id == 1 %}is-active{% endif %}" id="general">
+        <a href="{% url 'category_pattern_update' pk=category_pattern.id %}" class="button small">{% trans "Update" %}</a>
+        <a href="{% url 'category_pattern_delete' pk=category_pattern.id %}" class="button alert small">{% trans "Delete" %}</a>
+
+        <table class="hover unstriped">
+            <tbody>
+            <tr>
+                <td>{% trans "Category name" %}:</td>
+                <td>{{ category_pattern.name }}</td>
+            </tr>
+            <tr>
+                <td>{% trans "Created" %}:</td>
+                <td>{{ category_pattern.created_at }} ({{ category_pattern.created_by }})</td>
+            </tr>
+            <tr>
+                <td>{% trans "Last Update" %}:</td>
+                <td>{{ category_pattern.updated_at }} ({{ category_pattern.updated_by }})</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+{% endblock %}
