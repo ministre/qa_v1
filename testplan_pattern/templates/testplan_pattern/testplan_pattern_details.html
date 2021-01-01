@@ -1,0 +1,130 @@
+{% extends "device/wrapper.html" %}
+
+{% load i18n static %}
+
+{% block content %}
+
+<p>{% trans "Testplan pattern of" %} {{ testplan_pattern.name }} ({{ testplan_pattern.version }})</p>
+
+<ul class="tabs" data-tabs id="testplan_pattern-tabs">
+    <li class="tabs-title {% if tab_id == 1 %} is-active{% endif %}">
+        <a data-tabs-target="general" href="#general">{% trans "General" %}</a>
+    </li>
+    <li class="tabs-title {% if tab_id == 2 %} is-active{% endif %}">
+        <a data-tabs-target="tests" href="#tests">{% trans "Tests" %}
+        {% if tests_count > 0 %}({{ tests_count }}){% endif %}</a>
+    </li>
+    <li class="tabs-title {% if tab_id == 3 %} is-active{% endif %}">
+        <a data-tabs-target="redmine" href="#redmine">Redmine</a>
+    </li>
+</ul>
+
+<div class="tabs-content" data-tabs-content="testplan_pattern-tabs">
+
+    <div class="tabs-panel {% if tab_id == 1 %}is-active{% endif %}" id="general">
+        <a href="{% url 'testplan_pattern_update' pk=testplan_pattern.id %}" class="button small">{% trans "Update" %}</a>
+        <a href="{% url 'testplan_pattern_delete' pk=testplan_pattern.id %}" class="button alert small">{% trans "Delete" %}</a>
+        <div class="grid-x grid-margin-x">
+            <div class="cell">
+                <div class="card">
+                    <div class="card-section">
+                        <table class="unstriped">
+                            <tr>
+                                <td>ID:</td>
+                                <td>{{ testplan_pattern.id }}</td>
+                            </tr>
+                            <tr>
+                                <td>{% trans "Name" %}:</td>
+                                <td>{{ testplan_pattern.name }}</td>
+                            </tr>
+                            <tr>
+                                <td>{% trans "Version" %}:</td>
+                                <td>{{ testplan_pattern.version }}</td>
+                            </tr>
+                            <tr>
+                                <td>{% trans "Redmine Project" %}:</td>
+                                <td>{% if testplan_pattern.redmine_project %}{{ testplan_pattern.redmine_project }}{% endif %}</td>
+                            </tr>
+                            <tr>
+                                <td>{% trans "Redmine Project Name" %}:</td>
+                                <td>{% if testplan_pattern.redmine_project_name %}{{ testplan_pattern.redmine_project_name }}{% endif %}</td>
+                            </tr>
+                            <tr>
+                                <td>{% trans "Redmine Project Description" %}:</td>
+                                <td>{% if testplan_pattern.redmine_project_desc %}{{ testplan_pattern.redmine_project_desc }}{% endif %}</td>
+                            </tr>
+                            <tr>
+                                <td>{% trans "Redmine Parent Project" %}:</td>
+                                <td>{% if testplan_pattern.redmine_parent %}{{ testplan_pattern.redmine_parent }}{% endif %}</td>
+                            </tr>
+                            <tr>
+                                <td>{% trans "Created" %}:</td>
+                                <td>{{ testplan_pattern.created_at }} {% if testplan_pattern.created_by %}({{ testplan_pattern.created_by }}){% endif %}</td>
+                            </tr>
+                            <tr>
+                                <td>{% trans "Last Update" %}:</td>
+                                <td>{{ testplan_pattern.updated_at }} {% if testplan_pattern.updated_by %}({{ testplan_pattern.updated_by }}){% endif %}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tabs-panel {% if tab_id == 2 %}is-active{% endif %}" id="tests">
+        <a href="{# url 'category_create' testplan_id=testplan.id #}" class="button small">{% trans "Add" %}</a>
+        <a href="{# url 'clear_tests' pk=testplan.id #}" class="button small alert">{% trans "Clear" %}</a>
+        <div class="grid-x grid-margin-x">
+            <div class="cell">
+                <div class="card">
+                    <div class="card-section">
+                        {% for category in testplan_pattern.testplan_pattern_category.all|dictsort:"priority" %}
+                        <ul style="list-style: none">
+                            <li>
+                                <a href="{% url 'category_details' pk=category.id tab_id=1 %}"
+                                   style="font-weight: bold; color: black; padding: 10px;"
+                                   onmouseover="this.style.color='red';"
+                                   onmouseout="this.style.color='black';">
+                                    {{ forloop.counter }}. {{ category.name }}
+                                </a>
+                                {% if forloop.counter != 1 %}
+                                <a href="{% url 'category_up' pk=category.id %}"><i class="step fi-arrow-up" style="color: #ff4f12"></i></a>
+                                {% endif %}
+                                {% if forloop.counter != testplan.testplan_category.all.count %}
+                                <a href="{% url 'category_down' pk=category.id %}"><i class="step fi-arrow-down" style="color: #ff4f12"></i></a>
+                                {% endif %}
+
+                                {% for test in category.cat_test.all|dictsort:"priority" %}
+                                <ul style="list-style: none">
+                                    <li>
+                                        <a href="{% url 'test_details' pk=test.id tab_id=2 %}">
+                                            {{ forloop.parentloop.counter}}.{{ forloop.counter }}. {{ test.name }}
+                                        </a>
+                                        {% if forloop.counter != 1 %}
+                                        <a href="{% url 'test_up' pk=test.id %}"><i class="step fi-arrow-up" style="color: #ff4f12"></i></a>
+                                        {% endif %}
+                                        {% if forloop.counter != category.cat_test.all.count %}
+                                        <a href="{% url 'test_down' pk=test.id %}"><i class="step fi-arrow-down" style="color: #ff4f12"></i></a>
+                                        {% endif %}
+                                    </li>
+                                </ul>
+                                {% endfor %}
+                                <blockquote>
+                                    <a href="{% url 'test_create' category_id=category.id %}"><i class="step fi-plus"></i></a>
+                                </blockquote>
+                            </li>
+                        </ul>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tabs-panel {% if tab_id == 3 %}is-active{% endif %}" id="redmine">
+    </div>
+
+</div>
+
+{% endblock %}
