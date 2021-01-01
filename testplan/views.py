@@ -82,17 +82,11 @@ class TestplanDelete(DeleteView):
 @login_required
 def testplan_details(request, pk, tab_id):
     testplan = get_object_or_404(TestPlan, id=pk)
-    tests = Test.objects.filter(testplan=testplan).order_by("id")
-    tests_count = tests.count()
+    tests_count = testplan.tests_count()
     protocols_count = testplan.protocols_count()
-    numbers_of_tests = get_numbers_of_tests(tests)
-    zipped_results = zip(tests, numbers_of_tests)
-
     testplan_form = BuildTestplanForm(initial={'testplan_id': testplan.id})
     testplan_form.fields['testplan_id'].widget = forms.HiddenInput()
-
-    return render(request, 'testplan/testplan_details.html', {'testplan': testplan, 'tests': zipped_results,
-                                                              'tests_count': tests_count,
+    return render(request, 'testplan/testplan_details.html', {'testplan': testplan, 'tests_count': tests_count,
                                                               'protocols_count': protocols_count,
                                                               'build_testplan_form': testplan_form, 'tab_id': tab_id})
 

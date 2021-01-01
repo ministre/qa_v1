@@ -21,6 +21,15 @@ class TestplanPattern(models.Model):
     def __str__(self):
         return str(self.name) + ' (' + str(self.version) + ')'
 
+    def tests_count(self):
+        i = 0
+        categories = CategoryPattern.objects.filter(testplan_pattern=self)
+        for category in categories:
+            tests = TestPattern.objects.filter(category_pattern=category)
+            for _ in tests:
+                i += 1
+        return i
+
 
 class CategoryPattern(models.Model):
     testplan_pattern = models.ForeignKey(TestplanPattern, related_name='testplan_pattern_category',

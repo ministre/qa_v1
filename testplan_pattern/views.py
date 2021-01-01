@@ -73,7 +73,9 @@ class TestplanPatternDelete(DeleteView):
 @login_required
 def testplan_pattern_details(request, pk, tab_id: int):
     testplan_pattern = get_object_or_404(TestplanPattern, id=pk)
+    tests_count = testplan_pattern.tests_count()
     return render(request, 'testplan_pattern/testplan_pattern_details.html', {'testplan_pattern': testplan_pattern,
+                                                                              'tests_count': tests_count,
                                                                               'tab_id': tab_id})
 
 

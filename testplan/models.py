@@ -22,6 +22,15 @@ class TestPlan(models.Model):
     def __str__(self):
         return str(self.name) + ' (' + str(self.version) + ')'
 
+    def tests_count(self):
+        i = 0
+        categories = Category.objects.filter(testplan=self)
+        for category in categories:
+            tests = Test.objects.filter(cat=category)
+            for _ in tests:
+                i += 1
+        return i
+
     def protocols_count(self):
         from protocol.models import Protocol
         count = Protocol.objects.filter(testplan=self).count()
