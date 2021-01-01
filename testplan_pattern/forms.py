@@ -1,5 +1,5 @@
 from django.forms import ModelForm, HiddenInput
-from .models import TestplanPattern, CategoryPattern
+from .models import TestplanPattern, CategoryPattern, TestPattern
 from django import forms
 from django.utils.translation import gettext_lazy as _
 
@@ -36,5 +36,22 @@ class CategoryPatternForm(ModelForm):
         }
         fields = '__all__'
         widgets = {'testplan_pattern': HiddenInput(), 'priority': HiddenInput(),
+                   'created_by': HiddenInput(), 'created_at': HiddenInput(),
+                   'updated_by': HiddenInput(), 'updated_at': HiddenInput()}
+
+
+class TestPatternForm(ModelForm):
+    class Meta:
+        model = TestPattern
+        labels = {
+            'name': _('Name'),
+            'purpose': _('Purpose'),
+            'procedure': _('Procedure'),
+            'expected': _('Expected result'),
+            'redmine_wiki': 'Redmine Wiki',
+        }
+        fields = '__all__'
+        widgets = {'category_pattern': HiddenInput(),
+                   'priority': HiddenInput(),
                    'created_by': HiddenInput(), 'created_at': HiddenInput(),
                    'updated_by': HiddenInput(), 'updated_at': HiddenInput()}

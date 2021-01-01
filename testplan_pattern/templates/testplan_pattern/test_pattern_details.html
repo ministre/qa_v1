@@ -1,0 +1,100 @@
+{% extends "device/wrapper.html" %}
+
+{% load i18n static %}
+
+{% block content %}
+
+<p>
+    <a href="{% url 'testplan_pattern_details' pk=test_pattern.category_pattern.testplan_pattern.id tab_id=2 %}">{% trans "Testplan Patterns" %}
+        {{ test_pattern.category_pattern.testplan_pattern.name }} ({{ test_pattern.category_pattern.testplan_pattern.version }})</a>
+    <br>
+    {{ test_pattern.category_pattern }} &raquo; {{ num.0 }}.{{ num.1 }} {{ test_pattern.name }}
+</p>
+
+<ul class="tabs" data-tabs id="test_pattern-tabs">
+    <li class="tabs-title {% if tab_id == 1 %} is-active{% endif %}">
+        <a data-tabs-target="general" href="#general">{% trans "General" %}</a>
+    </li>
+    <li class="tabs-title {% if tab_id == 2 %} is-active{% endif %}">
+        <a data-tabs-target="desc" href="#desc">{% trans "Description" %}</a>
+    </li>
+    <li class="tabs-title {% if tab_id == 3 %} is-active{% endif %}">
+        <a data-tabs-target="redmine" href="#redmine">Redmine</a>
+    </li>
+</ul>
+
+<div class="tabs-content" data-tabs-content="test_pattern-tabs">
+    <div class="tabs-panel {% if tab_id == 1 %}is-active{% endif %}" id="general">
+        <a href="{% url 'test_pattern_update' pk=test_pattern.id %}" class="button small">{% trans "Update" %}</a>
+        <a href="{% url 'test_pattern_delete' pk=test_pattern.id %}" class="button alert small">{% trans "Delete" %}</a>
+        <div class="grid-x grid-margin-x">
+            <div class="cell">
+                <div class="card">
+                    <div class="card-section">
+                        <table class="unstriped">
+                            <tr>
+                                <td>ID:</td>
+                                <td>{{ test_pattern.id }}</td>
+                            </tr>
+                            <tr>
+                                <td>{% trans "Name" %}:</td>
+                                <td>{{ test_pattern }}</td>
+                            </tr>
+                            <tr>
+                                <td>{% trans "Category" %}:</td>
+                                <td>{{ test_pattern.category_pattern }}</td>
+                            </tr>
+                            <tr>
+                                <td>{% trans "Redmine Wiki" %}:</td>
+                                <td>{% if test_pattern.redmine_wiki %}{{ test_pattern.redmine_wiki }}{% endif %}</td>
+                            </tr>
+                            <tr>
+                                <td>{% trans "Created" %}:</td>
+                                <td>{{ test_pattern.created_at }} {% if test_pattern.created_by %}({{ test_pattern.created_by }}){% endif %}</td>
+                            </tr>
+                            <tr>
+                                <td>{% trans "Last Update" %}:</td>
+                                <td>{{ test_pattern.updated_at }} {% if test_pattern.updated_by %}({{ test_pattern.updated_by }}){% endif %}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tabs-panel {% if tab_id == 2 %}is-active{% endif %}" id="desc">
+        {% if test_pattern.purpose %}
+        <div class="cell">
+            <div class="card">
+                <div class="card-section">
+                    <h4>{% trans "Purpose" %}</h4>
+                    <p>{{ test_pattern.purpose }}</p>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        <div class="cell">
+            <div class="card">
+                <div class="card-section">
+                    <h4>{% trans "Procedure" %}</h4>
+                    <p>{{ procedure|safe }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="cell">
+            <div class="card">
+                <div class="card-section">
+                    <h4>{% trans "Expected result" %}</h4>
+                    <p>{{ expected|safe }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tabs-panel {% if tab_id == 3 %}is-active{% endif %}" id="redmine">
+    </div>
+
+</div>
+
+{% endblock %}

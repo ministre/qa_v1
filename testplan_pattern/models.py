@@ -44,8 +44,8 @@ class TestPattern(models.Model):
                                          on_delete=models.CASCADE)
     name = models.CharField(max_length=300)
     purpose = models.CharField(max_length=1000, null=True, blank=True)
-    procedure = models.TextField()
-    expected = models.TextField()
+    procedure = models.TextField(blank=True)
+    expected = models.TextField(blank=True)
     created_by = models.ForeignKey(User, models.SET_NULL, related_name='test_pattern_c', blank=True, null=True)
     created_at = models.DateTimeField(default=timezone.now)
     updated_by = models.ForeignKey(User, models.SET_NULL, related_name='test_pattern_u', blank=True, null=True)
@@ -55,3 +55,13 @@ class TestPattern(models.Model):
 
     def __str__(self):
         return self.name
+
+    def get_num(self):
+        categories = \
+            CategoryPattern.objects.filter(testplan_pattern=self.category_pattern.testplan_pattern).order_by('priority')
+        for i, category in enumerate(categories):
+            tests = TestPattern.objects.filter(category_pattern=category).order_by('priority')
+            for j, test in enumerate(tests):
+                if test == self:
+                    return [i+1, j+1]
+        return []

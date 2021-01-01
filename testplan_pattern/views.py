@@ -2,14 +2,15 @@ from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
-from .models import TestplanPattern, CategoryPattern
-from .forms import TestplanPatternForm, CategoryPatternForm
+from .models import TestplanPattern, CategoryPattern, TestPattern
+from .forms import TestplanPatternForm, CategoryPatternForm, TestPatternForm
 from django.urls import reverse
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
 from device.views import Item
 from django.http import HttpResponseRedirect
 from django.db.models import Max, Min
+import textile
 
 
 @method_decorator(login_required, name='dispatch')
@@ -108,7 +109,7 @@ class CategoryPatternUpdate(UpdateView):
     template_name = 'device/update.html'
 
     def get_initial(self):
-        return {'updated_by': self.request.user, 'updated_at': timezone.now}
+        return {'updated_by': self.request.user, 'updated_at': timezone.now()}
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -167,3 +168,80 @@ def category_pattern_down(request, pk):
     Item.set_priority(foo=cat, priority=next_cat6s['priority__min'])
     return HttpResponseRedirect(reverse('testplan_pattern_details', kwargs={'pk': cat.testplan_pattern.id,
                                                                             'tab_id': 2}))
+
+
+@method_decorator(login_required, name='dispatch')
+class TestPatternCreate(CreateView):
+    model = TestPattern
+    form_class = TestPatternForm
+    template_name = 'device/create.html'
+
+    def get_initial(self):
+        return {'category_pattern': self.kwargs.get('category_pattern_id'),
+                'created_by': self.request.user, 'updated_by': self.request.user}
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        category_pattern = get_object_or_404(CategoryPattern, id=self.kwargs.get('category_pattern_id'))
+        context['back_url'] = reverse('testplan_pattern_details', kwargs={'pk': category_pattern.testplan_pattern.id,
+                                                                          'tab_id': 2})
+        return context
+
+    def get_success_url(self):
+        test_pattern = TestPattern.objects.filter(category_pattern=self.object.category_pattern).latest('priority')
+        priority = test_pattern.priority + 1
+        Item.set_priority(foo=self.object, priority=priority)
+        Item.update_timestamp(foo=self.object, user=self.request.user)
+        Item.update_timestamp(foo=self.object.cat, user=self.request.user)
+        Item.update_timestamp(foo=self.object.cat.testplan_pattern, user=self.request.user)
+        return reverse('testplan_pattern_details', kwargs={'pk': self.object.category_pattern.testplan_pattern.id,
+                                                           'tab_id': 2})
+
+
+@method_decorator(login_required, name='dispatch')
+class TestPatternUpdate(UpdateView):
+    model = TestPattern
+    form_class = TestPatternForm
+    template_name = 'device/update.html'
+
+    def get_initial(self):
+        return {'updated_by': self.request.user, 'updated_at': timezone.now()}
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('test_pattern_details', kwargs={'pk': self.object.id, 'tab_id': 1})
+        return context
+
+    def get_success_url(self):
+        Item.update_timestamp(foo=self.object, user=self.request.user)
+        Item.update_timestamp(foo=self.object.category_pattern, user=self.request.user)
+        Item.update_timestamp(foo=self.object.category_pattern.testplan_pattern, user=self.request.user)
+        return reverse('test_pattern_details', kwargs={'pk': self.object.id, 'tab_id': 1})
+
+
+@method_decorator(login_required, name='dispatch')
+class TestPatternDelete(DeleteView):
+    model = TestPattern
+    template_name = 'device/delete.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('test_pattern_details', kwargs={'pk': self.object.id, 'tab_id': 1})
+        return context
+
+    def get_success_url(self):
+        Item.update_timestamp(foo=self.object.category_pattern, user=self.request.user)
+        Item.update_timestamp(foo=self.object.category_pattern.testplan_pattern, user=self.request.user)
+        return reverse('testplan_pattern_details', kwargs={'pk': self.object.category_pattern.testplan_pattern.id,
+                                                           'tab_id': 2})
+
+
+@login_required
+def test_pattern_details(request, pk, tab_id: int):
+    test_pattern = get_object_or_404(TestPattern, id=pk)
+    num = test_pattern.get_num()
+    procedure = textile.textile(test_pattern.procedure)
+    expected = textile.textile(test_pattern.expected)
+    return render(request, 'testplan_pattern/test_pattern_details.html', {'test_pattern': test_pattern, 'num': num,
+                                                                          'procedure': procedure, 'expected': expected,
+                                                                          'tab_id': tab_id})

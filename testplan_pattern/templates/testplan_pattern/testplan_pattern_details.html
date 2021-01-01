@@ -95,10 +95,10 @@
                                 <a href="{% url 'category_pattern_down' pk=category_pattern.id %}"><i class="step fi-arrow-down" style="color: #ff4f12"></i></a>
                                 {% endif %}
 
-                                {% for test_pattern in category_pattern.cat_test.all|dictsort:"priority" %}
+                                {% for test_pattern in category_pattern.category_pattern_test.all|dictsort:"priority" %}
                                 <ul style="list-style: none">
                                     <li>
-                                        <a href="{# url 'test_pattern_details' pk=test_pattern.id tab_id=2 #}">
+                                        <a href="{% url 'test_pattern_details' pk=test_pattern.id tab_id=2 %}">
                                             {{ forloop.parentloop.counter}}.{{ forloop.counter }}. {{ test_pattern.name }}
                                         </a>
                                         {% if forloop.counter != 1 %}
@@ -111,7 +111,7 @@
                                 </ul>
                                 {% endfor %}
                                 <blockquote>
-                                    <a href="{# url 'test_pattern_create' category_pattern_id=category_pattern.id #}"><i class="step fi-plus"></i></a>
+                                    <a href="{% url 'test_pattern_create' category_pattern_id=category_pattern.id %}"><i class="step fi-plus"></i></a>
                                 </blockquote>
                             </li>
                         </ul>

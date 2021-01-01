@@ -7,7 +7,6 @@ urlpatterns = [
     path('update/<int:pk>/', views.TestplanPatternUpdate.as_view(), name='testplan_pattern_update'),
     path('delete/<int:pk>/', views.TestplanPatternDelete.as_view(), name='testplan_pattern_delete'),
     path('<int:pk>/<int:tab_id>/', views.testplan_pattern_details, name='testplan_pattern_details'),
-    # categories
     path('category/create/<int:testplan_pattern_id>/', views.CategoryPatternCreate.as_view(),
          name='category_pattern_create'),
     path('category/update/<int:pk>/', views.CategoryPatternUpdate.as_view(), name='category_pattern_update'),
@@ -15,4 +14,8 @@ urlpatterns = [
     path('category/<int:pk>/<int:tab_id>/', views.category_pattern_details, name='category_pattern_details'),
     path('category/up/<int:pk>/', views.category_pattern_up, name='category_pattern_up'),
     path('category/down/<int:pk>/', views.category_pattern_down, name='category_pattern_down'),
+    path('test/create/<int:category_pattern_id>/', views.TestPatternCreate.as_view(), name='test_pattern_create'),
+    path('test/update/<int:pk>/', views.TestPatternUpdate.as_view(), name='test_pattern_update'),
+    path('test/delete/<int:pk>/', views.TestPatternDelete.as_view(), name='test_pattern_delete'),
+    path('test/<int:pk>/<int:tab_id>/', views.test_pattern_details, name='test_pattern_details'),
 ]
