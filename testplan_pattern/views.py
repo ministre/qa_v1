@@ -8,6 +8,8 @@ from django.urls import reverse
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
 from device.views import Item
+from django.http import HttpResponseRedirect
+from django.db.models import Max, Min
 
 
 @method_decorator(login_required, name='dispatch')
@@ -139,3 +141,29 @@ def category_pattern_details(request, pk, tab_id: int):
     category_pattern = get_object_or_404(CategoryPattern, id=pk)
     return render(request, 'testplan_pattern/category_pattern_details.html', {'category_pattern': category_pattern,
                                                                               'tab_id': tab_id})
+
+
+@login_required
+def category_pattern_up(request, pk):
+    cat = get_object_or_404(CategoryPattern, id=pk)
+    pre_cat6s = CategoryPattern.objects.filter(testplan_pattern=cat.testplan_pattern,
+                                               priority__lt=cat.priority).aggregate(Max('priority'))
+    pre_cat = get_object_or_404(CategoryPattern, testplan_pattern=cat.testplan_pattern,
+                                priority=pre_cat6s['priority__max'])
+    Item.set_priority(foo=pre_cat, priority=cat.priority)
+    Item.set_priority(foo=cat, priority=pre_cat6s['priority__max'])
+    return HttpResponseRedirect(reverse('testplan_pattern_details', kwargs={'pk': cat.testplan_pattern.id,
+                                                                            'tab_id': 2}))
+
+
+@login_required
+def category_pattern_down(request, pk):
+    cat = get_object_or_404(CategoryPattern, id=pk)
+    next_cat6s = CategoryPattern.objects.filter(testplan_pattern=cat.testplan_pattern,
+                                                priority__gt=cat.priority).aggregate(Min('priority'))
+    next_cat = get_object_or_404(CategoryPattern, testplan_pattern=cat.testplan_pattern,
+                                 priority=next_cat6s['priority__min'])
+    Item.set_priority(foo=next_cat, priority=cat.priority)
+    Item.set_priority(foo=cat, priority=next_cat6s['priority__min'])
+    return HttpResponseRedirect(reverse('testplan_pattern_details', kwargs={'pk': cat.testplan_pattern.id,
+                                                                            'tab_id': 2}))

@@ -89,10 +89,10 @@
                                     {{ forloop.counter }}. {{ category_pattern.name }}
                                 </a>
                                 {% if forloop.counter != 1 %}
-                                <a href="{# url 'category_pattern_up' pk=category_pattern.id #}"><i class="step fi-arrow-up" style="color: #ff4f12"></i></a>
+                                <a href="{% url 'category_pattern_up' pk=category_pattern.id %}"><i class="step fi-arrow-up" style="color: #ff4f12"></i></a>
                                 {% endif %}
-                                {% if forloop.counter != testplan.testplan_category.all.count %}
-                                <a href="{# url 'category_pattern_down' pk=category_pattern.id #}"><i class="step fi-arrow-down" style="color: #ff4f12"></i></a>
+                                {% if forloop.counter != testplan_pattern.testplan_pattern_category.all.count %}
+                                <a href="{% url 'category_pattern_down' pk=category_pattern.id %}"><i class="step fi-arrow-down" style="color: #ff4f12"></i></a>
                                 {% endif %}
 
                                 {% for test_pattern in category_pattern.cat_test.all|dictsort:"priority" %}

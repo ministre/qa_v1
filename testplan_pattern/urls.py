@@ -13,4 +13,6 @@ urlpatterns = [
     path('category/update/<int:pk>/', views.CategoryPatternUpdate.as_view(), name='category_pattern_update'),
     path('category/delete/<int:pk>/', views.CategoryPatternDelete.as_view(), name='category_pattern_delete'),
     path('category/<int:pk>/<int:tab_id>/', views.category_pattern_details, name='category_pattern_details'),
+    path('category/up/<int:pk>/', views.category_pattern_up, name='category_pattern_up'),
+    path('category/down/<int:pk>/', views.category_pattern_down, name='category_pattern_down'),
 ]
