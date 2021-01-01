@@ -20,3 +20,20 @@ class TestplanPattern(models.Model):
 
     def __str__(self):
         return str(self.name) + ' (' + str(self.version) + ')'
+
+
+class CategoryPattern(models.Model):
+    testplan_pattern = models.ForeignKey(TestplanPattern, related_name='testplan_pattern_category',
+                                         on_delete=models.CASCADE)
+    name = models.CharField(max_length=1000)
+    priority = models.IntegerField(default=0)
+    created_by = models.ForeignKey(User, models.SET_NULL, related_name='pattern_category_c', blank=True, null=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_by = models.ForeignKey(User, models.SET_NULL, related_name='pattern_category_u', blank=True, null=True)
+    updated_at = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        verbose_name_plural = "Pattern Categories"
+
+    def __str__(self):
+        return self.name
