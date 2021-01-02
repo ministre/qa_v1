@@ -162,7 +162,7 @@ class CategoryUpdate(UpdateView):
     def get_form(self, form_class=CategoryForm):
         form = super(CategoryUpdate, self).get_form(form_class)
         if self.object.testplan.parent:
-            form.fields['parent'].queryset = CategoryPattern.objects.filter(testplan_pattern=self.object.testplan.parent).order_by('id')
+            form.fields['parent'].queryset = CategoryPattern.objects.filter(testplan_pattern=self.object.testplan.parent).order_by('priority')
         return form
 
     def get_context_data(self, **kwargs):
@@ -255,7 +255,7 @@ class TestUpdate(UpdateView):
     def get_form(self, form_class=CategoryForm):
         form = super(TestUpdate, self).get_form(form_class)
         if self.object.testplan.parent:
-            form.fields['parent'].queryset = TestPattern.objects.filter(category_pattern=self.object.cat.parent).order_by('id')
+            form.fields['parent'].queryset = TestPattern.objects.filter(category_pattern=self.object.cat.parent).order_by('priority')
         return form
 
     def get_context_data(self, **kwargs):
