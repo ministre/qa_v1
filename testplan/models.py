@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
+from testplan_pattern.models import TestPattern
 
 
 class TestPlan(models.Model):
@@ -60,6 +61,7 @@ class Test(models.Model):
     procedure = models.TextField()
     expected = models.TextField()
     priority = models.IntegerField(default=0)
+    parent = models.ForeignKey(TestPattern, models.SET_NULL, related_name='parent_test', blank=True, null=True)
     created_by = models.ForeignKey(User, models.SET_NULL, related_name='test_c', blank=True, null=True)
     created_at = models.DateTimeField(default=timezone.now)
     updated_by = models.ForeignKey(User, models.SET_NULL, related_name='test_u', blank=True, null=True)
