@@ -43,6 +43,10 @@
                                 <td>{{ testplan.name }}</td>
                             </tr>
                             <tr>
+                                <td>{% trans "Testplan parent" %}:</td>
+                                <td>{% if testplan.parent %}{{ testplan.parent }}{% endif %}</td>
+                            </tr>
+                            <tr>
                                 <td>{% trans "Version" %}:</td>
                                 <td>{{ testplan.version }}</td>
                             </tr>

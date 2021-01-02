@@ -27,6 +27,10 @@
                 <td>{{ category.name }}</td>
             </tr>
             <tr>
+                <td>{% trans "Category parent" %}:</td>
+                <td>{% if category.parent %}{{ category.parent }}{% endif %}</td>
+            </tr>
+            <tr>
                 <td>{% trans "Created" %}:</td>
                 <td>{{ category.created_at }} ({{ category.created_by }})</td>
             </tr>
