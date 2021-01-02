@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
-from testplan_pattern.models import TestPattern
+from testplan_pattern.models import TestplanPattern, CategoryPattern, TestPattern
 
 
 class TestPlan(models.Model):
@@ -11,6 +11,7 @@ class TestPlan(models.Model):
     redmine_project_name = models.CharField(max_length=1000, blank=True, null=True)
     redmine_project_desc = models.CharField(max_length=1000, blank=True, null=True)
     redmine_parent = models.CharField(max_length=100, blank=True, null=True)
+    parent = models.ForeignKey(TestplanPattern, models.SET_NULL, related_name='parent_testplan', blank=True, null=True)
     created_by = models.ForeignKey(User, models.SET_NULL, related_name='testplan_c', blank=True, null=True)
     created_at = models.DateTimeField(default=timezone.now)
     updated_by = models.ForeignKey(User, models.SET_NULL, related_name='testplan_u', blank=True, null=True)
@@ -42,6 +43,7 @@ class Category(models.Model):
     testplan = models.ForeignKey(TestPlan, related_name='testplan_category', on_delete=models.CASCADE)
     name = models.CharField(max_length=1000)
     priority = models.IntegerField(default=0)
+    parent = models.ForeignKey(CategoryPattern, models.SET_NULL, related_name='parent_category', blank=True, null=True)
     created_by = models.ForeignKey(User, models.SET_NULL, related_name='category_c', blank=True, null=True)
     created_at = models.DateTimeField(default=timezone.now)
     updated_by = models.ForeignKey(User, models.SET_NULL, related_name='category_u', blank=True, null=True)
