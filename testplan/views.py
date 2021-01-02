@@ -20,7 +20,7 @@ from django.utils import timezone
 from django.http import HttpResponseRedirect
 from device.views import Item
 from django.db.models import Max, Min
-from testplan_pattern.models import CategoryPattern
+from testplan_pattern.models import CategoryPattern, TestPattern
 
 
 @method_decorator(login_required, name='dispatch')
@@ -251,6 +251,12 @@ class TestUpdate(UpdateView):
 
     def get_initial(self):
         return {'updated_by': self.request.user, 'updated_at': timezone.now}
+
+    def get_form(self, form_class=CategoryForm):
+        form = super(TestUpdate, self).get_form(form_class)
+        if self.object.testplan.parent:
+            form.fields['parent'].queryset = TestPattern.objects.filter(category_pattern=self.object.cat.parent).order_by('id')
+        return form
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
