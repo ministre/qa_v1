@@ -40,6 +40,10 @@
                                 <td>{{ test }}</td>
                             </tr>
                             <tr>
+                                <td>{% trans "Test parent" %}:</td>
+                                <td>{% if test.parent %}{{ test.parent }}{% endif %}</td>
+                            </tr>
+                            <tr>
                                 <td>{% trans "Category" %}:</td>
                                 <td>{{ test.cat }}</td>
                             </tr>
