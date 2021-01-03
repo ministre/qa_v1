@@ -138,17 +138,17 @@ def build_protocol_beta(request):
             run = p.add_run(u'\u2713')
             run.bold = True
             run.font.color.rgb = RGBColor(0x00, 0x80, 0x00)
-            p.add_run(' - ' + str(_('successful')) + ', ')
+            p.add_run(' - ' + str(_('Successful')) + ', ')
             run = p.add_run(u'\u274C')
             run.bold = True
             run.font.color.rgb = RGBColor(0xFF, 0x00, 0x00)
-            p.add_run(' - ' + str(_('failed')) + ', ')
+            p.add_run(' - ' + str(_('Failed')) + ', ')
             run = p.add_run('?')
             run.bold = True
-            p.add_run(' - ' + str(_('skipped')) + ', ')
+            p.add_run(' - ' + str(_('Skipped')) + ', ')
             run = p.add_run(u'\u00b1')
             run.bold = True
-            p.add_run(' - ' + str(_('passed with warning')) + '.')
+            p.add_run(' - ' + str(_('Passed with warning')) + '.')
 
             table = document.add_table(rows=1, cols=4)
             table.style = 'TableGrid'

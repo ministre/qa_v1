@@ -40,23 +40,21 @@ class ResultForm(ModelForm):
         model = TestResult
         labels = {
             'result': _('Result'),
-            'config': _('Configuration'),
-            'info': _('Additional Information'),
             'comment': _('Comment'),
             'redmine_wiki': 'Redmine Wiki',
         }
         fields = '__all__'
         STATUS = (
-            ('0', 'Не тестировался'),
-            ('1', 'Не пройден'),
-            ('2', 'Пройден с замечаниями'),
-            ('3', 'Пройден'),
+            ('0', _('Skipped')),
+            ('1', _('Failed')),
+            ('2', _('Passed with warning')),
+            ('3', _('Successful')),
         )
 
         widgets = {
             'result': forms.Select(choices=STATUS, attrs={'class': 'form-control'}),
             'test': HiddenInput(), 'protocol': HiddenInput(),
-            'comment': forms.Textarea(attrs={'rows': '3'}),
+            'comment': forms.Textarea(attrs={'rows': '4'}),
             'created_by': HiddenInput(), 'created_at': HiddenInput(),
             'updated_by': HiddenInput(), 'updated_at': HiddenInput(),
         }

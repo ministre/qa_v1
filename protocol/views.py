@@ -121,7 +121,6 @@ def protocol_details(request, pk, tab_id):
     protocol_detailed_form.fields['protocol_id'].widget = forms.HiddenInput()
     copy_test_results_form = ProtocolCopyResultsForm(device_id=protocol.device.id, dst_protocol=protocol.id)
 
-    redmine_url = settings.REDMINE_URL
     export_form = RedmineProtocolExportForm(initial={'protocol_id': protocol.id,
                                                      'redmine_project': protocol.device.redmine_project,
                                                      'redmine_wiki': protocol.redmine_wiki,
@@ -140,7 +139,7 @@ def protocol_details(request, pk, tab_id):
                                                               'build_protocol_form_beta': build_protocol_form,
                                                               'build_protocol_detailed_form': protocol_detailed_form,
                                                               'copy_test_results_form': copy_test_results_form,
-                                                              'redmine_url': redmine_url,
+                                                              'redmine_url': settings.REDMINE_URL,
                                                               'export_form': export_form,
                                                               'tab_id': tab_id})
 
@@ -173,8 +172,6 @@ class ResultUpdate(UpdateView):
         form = super(ResultUpdate, self).get_form(form_class)
         form.fields['result'].widget = forms.HiddenInput()
         form.fields['comment'].widget = forms.HiddenInput()
-        # form.fields['info'].widget = forms.HiddenInput()
-        # form.fields['config'].widget = forms.HiddenInput()
         return form
 
     def get_context_data(self, **kwargs):
@@ -218,10 +215,6 @@ def result_details(request, pk, tab_id):
         num = result.test.get_num()
         result_form = ResultForm(instance=result)
         result_form.fields['redmine_wiki'].widget = forms.HiddenInput()
-        result_form.fields['info'].widget = forms.HiddenInput()
-        result_form.fields['config'].widget = forms.HiddenInput()
-
-        redmine_url = settings.REDMINE_URL
         export_form = RedmineResultExportForm(initial={'result_id': result.id,
                                                        'redmine_project': result.protocol.device.redmine_project,
                                                        'redmine_wiki': result.redmine_wiki,
@@ -233,7 +226,7 @@ def result_details(request, pk, tab_id):
                                                                 'expected': expected, 'num': num,
                                                                 'result_form': result_form,
                                                                 'export_form': export_form,
-                                                                'redmine_url': redmine_url, 'tab_id': tab_id})
+                                                                'redmine_url': settings.REDMINE_URL, 'tab_id': tab_id})
 
 
 @method_decorator(login_required, name='dispatch')

@@ -119,8 +119,6 @@ class TestResult(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
     updated_by = models.ForeignKey(User, models.SET_NULL, related_name='result_u', blank=True, null=True)
     updated_at = models.DateTimeField(default=timezone.now)
-    info = models.TextField(blank=True)
-    config = models.TextField(blank=True)
 
 
 class TestResultNote(models.Model):
