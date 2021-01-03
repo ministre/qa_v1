@@ -252,7 +252,7 @@ class TestUpdate(UpdateView):
     def get_initial(self):
         return {'updated_by': self.request.user, 'updated_at': timezone.now}
 
-    def get_form(self, form_class=CategoryForm):
+    def get_form(self, form_class=TestForm):
         form = super(TestUpdate, self).get_form(form_class)
         if self.object.cat.parent:
             form.fields['parent'].queryset = TestPattern.objects.filter(category_pattern=self.object.cat.parent).order_by('priority')
