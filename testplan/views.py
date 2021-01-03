@@ -136,6 +136,13 @@ class CategoryCreate(CreateView):
         return {'testplan': self.kwargs.get('testplan_id'),
                 'created_by': self.request.user, 'updated_by': self.request.user}
 
+    def get_form(self, form_class=CategoryForm):
+        form = super(CategoryCreate, self).get_form(form_class)
+        testplan = get_object_or_404(TestPlan, id=self.kwargs.get('testplan_id'))
+        if testplan.parent:
+            form.fields['parent'].queryset = CategoryPattern.objects.filter(testplan_pattern=testplan.parent).order_by('priority')
+        return form
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['back_url'] = reverse('testplan_details', kwargs={'pk': self.kwargs.get('testplan_id'), 'tab_id': 2})
