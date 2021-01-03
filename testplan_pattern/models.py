@@ -30,6 +30,14 @@ class TestplanPattern(models.Model):
                 i += 1
         return i
 
+    def get_subs(self):
+        from testplan.models import TestPlan
+        subs = []
+        testplans = TestPlan.objects.filter(parent=self).order_by('id')
+        for testplan in testplans:
+            subs.append({'id': testplan.id, 'name': testplan.name})
+        return subs
+
 
 class CategoryPattern(models.Model):
     testplan_pattern = models.ForeignKey(TestplanPattern, related_name='testplan_pattern_category',
