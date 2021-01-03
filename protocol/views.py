@@ -159,7 +159,7 @@ def result_create(request, protocol_id: int, test_id: int):
     redmine_wiki += str(result.id)
     result.redmine_wiki = redmine_wiki
     result.save()
-    return HttpResponseRedirect(reverse('result_details', kwargs={'pk': result.id, 'tab_id': 7}))
+    return HttpResponseRedirect(reverse('result_details', kwargs={'pk': result.id, 'tab_id': 6}))
 
 
 @method_decorator(login_required, name='dispatch')
