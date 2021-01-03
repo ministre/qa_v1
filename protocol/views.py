@@ -581,3 +581,14 @@ def protocol_copy_results(request):
     else:
         message = [False, _('Page not found')]
         return render(request, 'docx_generator/message.html', {'message': message})
+
+
+@login_required
+def migrate(request):
+    i = 0
+    results = TestResult.objects.all()
+    for result in results:
+        if result.info and result.info != '' and result.info != ' ':
+            TestResultNote.objects.create(result=result, text=result.info)
+            i += 1
+    return render(request, 'device/message.html', {'message': [True, i]})
