@@ -254,7 +254,7 @@ class TestUpdate(UpdateView):
 
     def get_form(self, form_class=CategoryForm):
         form = super(TestUpdate, self).get_form(form_class)
-        if self.object.testplan.parent:
+        if self.object.cat.parent:
             form.fields['parent'].queryset = TestPattern.objects.filter(category_pattern=self.object.cat.parent).order_by('priority')
         return form
 
