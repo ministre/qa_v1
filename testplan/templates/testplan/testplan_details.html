@@ -107,6 +107,7 @@
                                 {% if forloop.counter != testplan.testplan_category.all.count %}
                                 <a href="{% url 'category_down' pk=category.id %}"><i class="step fi-arrow-down" style="color: #ff4f12"></i></a>
                                 {% endif %}
+                                {% if category.parent %}<i class="step fi-share"></i>{% endif %}
 
                                 {% for test in category.cat_test.all|dictsort:"priority" %}
                                 <ul style="list-style: none">
@@ -120,6 +121,7 @@
                                         {% if forloop.counter != category.cat_test.all.count %}
                                         <a href="{% url 'test_down' pk=test.id %}"><i class="step fi-arrow-down" style="color: #ff4f12"></i></a>
                                         {% endif %}
+                                        {% if test.parent %}<i class="step fi-share"></i>{% endif %}
                                     </li>
                                 </ul>
                                 {% endfor %}
