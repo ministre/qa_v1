@@ -4,6 +4,7 @@ from django.utils import timezone
 from datetime import datetime
 from device.models import Device
 from testplan.models import TestPlan, Category, Test
+from django.core.validators import MinValueValidator
 
 
 class Protocol(models.Model):
@@ -106,6 +107,16 @@ class TestResult(models.Model):
     config = models.TextField(blank=True)
 
 
+class TestResultNote(models.Model):
+    result = models.ForeignKey(TestResult, on_delete=models.CASCADE, related_name='result_note')
+    desc = models.CharField(max_length=1000, blank=True, null=True)
+    text = models.TextField()
+    created_by = models.ForeignKey(User, models.SET_NULL, related_name='result_note_c', blank=True, null=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_by = models.ForeignKey(User, models.SET_NULL, related_name='result_note_u', blank=True, null=True)
+    updated_at = models.DateTimeField(default=timezone.now)
+
+
 class TestResultConfig(models.Model):
     result = models.ForeignKey(TestResult, on_delete=models.CASCADE, related_name='result_config')
     desc = models.CharField(max_length=1000, blank=True, null=True)
@@ -114,6 +125,18 @@ class TestResultConfig(models.Model):
     created_by = models.ForeignKey(User, models.SET_NULL, related_name='result_config_c', blank=True, null=True)
     created_at = models.DateTimeField(default=timezone.now)
     updated_by = models.ForeignKey(User, models.SET_NULL, related_name='result_config_u', blank=True, null=True)
+    updated_at = models.DateTimeField(default=timezone.now)
+
+
+class TestResultImage(models.Model):
+    result = models.ForeignKey(TestResult, on_delete=models.CASCADE, related_name='result_image')
+    desc = models.CharField(max_length=1000, blank=True, null=True)
+    image = models.ImageField(upload_to="protocol/results/images/")
+    width = models.IntegerField(validators=[MinValueValidator(0)], blank=True, null=True)
+    height = models.IntegerField(validators=[MinValueValidator(0)], blank=True, null=True)
+    created_by = models.ForeignKey(User, models.SET_NULL, related_name='result_image_c', blank=True, null=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_by = models.ForeignKey(User, models.SET_NULL, related_name='result_image_u', blank=True, null=True)
     updated_at = models.DateTimeField(default=timezone.now)
 
 
