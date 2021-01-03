@@ -227,6 +227,12 @@ class TestCreate(CreateView):
         return {'cat': self.kwargs.get('category_id'),
                 'created_by': self.request.user, 'updated_by': self.request.user}
 
+    def get_form(self, form_class=TestForm):
+        form = super(TestCreate, self).get_form(form_class)
+        if self.object.cat.parent:
+            form.fields['parent'].queryset = TestPattern.objects.filter(category_pattern=self.object.cat.parent).order_by('priority')
+        return form
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         category = get_object_or_404(Category, id=self.kwargs.get('category_id'))
