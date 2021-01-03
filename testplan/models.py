@@ -60,8 +60,8 @@ class Test(models.Model):
     cat = models.ForeignKey(Category, related_name='cat_test', on_delete=models.CASCADE)
     name = models.CharField(max_length=300)
     purpose = models.CharField(max_length=1000, null=True, blank=True)
-    procedure = models.TextField()
-    expected = models.TextField()
+    procedure = models.TextField(blank=True)
+    expected = models.TextField(blank=True)
     priority = models.IntegerField(default=0)
     parent = models.ForeignKey(TestPattern, models.SET_NULL, related_name='parent_test', blank=True, null=True)
     created_by = models.ForeignKey(User, models.SET_NULL, related_name='test_c', blank=True, null=True)
@@ -69,9 +69,6 @@ class Test(models.Model):
     updated_by = models.ForeignKey(User, models.SET_NULL, related_name='test_u', blank=True, null=True)
     updated_at = models.DateTimeField(default=timezone.now)
     redmine_wiki = models.CharField(max_length=300, null=True, blank=True)
-    #
-    testplan = models.ForeignKey(TestPlan, on_delete=models.CASCADE, null=True, blank=True)
-    category = models.CharField(max_length=300, null=True, blank=True)
 
     def __str__(self):
         return self.name
