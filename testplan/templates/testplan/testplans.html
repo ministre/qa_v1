@@ -20,7 +20,7 @@
     {% for testplan in testplans %}
     <tr data-href="{% url 'testplan_details' pk=testplan.id tab_id=2 %}">
         <td>{{ testplan.id }}</td>
-        <td>{% trans "Testplan" %} {{ testplan.name }}</td>
+        <td>{% trans "Testplan" %} {{ testplan.name }} {% if testplan.parent %}<i class="step fi-share" style="color: #7700ff"></i>{% endif %}</td>
         <td>{{ testplan.version }}</td>
     </tr>
     {% endfor %}
