@@ -141,6 +141,8 @@ class CategoryCreate(CreateView):
         testplan = get_object_or_404(TestPlan, id=self.kwargs.get('testplan_id'))
         if testplan.parent:
             form.fields['parent'].queryset = CategoryPattern.objects.filter(testplan_pattern=testplan.parent).order_by('priority')
+        else:
+            form.fields['parent'].widget = forms.HiddenInput()
         return form
 
     def get_context_data(self, **kwargs):
@@ -170,6 +172,8 @@ class CategoryUpdate(UpdateView):
         form = super(CategoryUpdate, self).get_form(form_class)
         if self.object.testplan.parent:
             form.fields['parent'].queryset = CategoryPattern.objects.filter(testplan_pattern=self.object.testplan.parent).order_by('priority')
+        else:
+            form.fields['parent'].widget = forms.HiddenInput()
         return form
 
     def get_context_data(self, **kwargs):
@@ -239,6 +243,8 @@ class TestCreate(CreateView):
         category = get_object_or_404(Category, id=self.kwargs.get('category_id'))
         if category.parent:
             form.fields['parent'].queryset = TestPattern.objects.filter(category_pattern=category.parent).order_by('priority')
+        else:
+            form.fields['parent'].widget = forms.HiddenInput()
         return form
 
     def get_context_data(self, **kwargs):
@@ -270,6 +276,8 @@ class TestUpdate(UpdateView):
         form = super(TestUpdate, self).get_form(form_class)
         if self.object.cat.parent:
             form.fields['parent'].queryset = TestPattern.objects.filter(category_pattern=self.object.cat.parent).order_by('priority')
+        else:
+            form.fields['parent'].widget = forms.HiddenInput()
         return form
 
     def get_context_data(self, **kwargs):
