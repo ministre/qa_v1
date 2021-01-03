@@ -86,7 +86,7 @@ def redmine_protocol_export(request):
 def redmine_result_export(request):
     if request.method == "POST":
         result = get_object_or_404(TestResult, id=request.POST['result_id'])
-        back_url = reverse('result_details', kwargs={'pk': result.id, 'tab_id': 5})
+        back_url = reverse('result_details', kwargs={'pk': result.id, 'tab_id': 7})
         test_desc = result_configs = result_summary = False
         try:
             if request.POST['test_desc']:

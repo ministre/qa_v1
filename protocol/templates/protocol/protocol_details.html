@@ -178,7 +178,7 @@
         <tr {% if result.result == None %}
                 data-href="{% url 'result_create' protocol_id=protocol.id test_id=result.test_id %}"
                 {% else %}
-                data-href="{% url 'result_details' pk=result.result_id tab_id=4 %}"
+                data-href="{% url 'result_details' pk=result.result_id tab_id=6 %}"
                 {% endif %}>
             <td>{{ forloop.counter }}</td>
             <td>

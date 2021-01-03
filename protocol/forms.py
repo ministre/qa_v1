@@ -1,5 +1,5 @@
 from django.forms import ModelForm, HiddenInput
-from protocol.models import Protocol, TestResult, TestResultConfig, TestResultIssue
+from protocol.models import Protocol, TestResult, TestResultNote, TestResultConfig, TestResultImage, TestResultIssue
 from django.utils.translation import gettext_lazy as _
 from django import forms
 from django.db.models import Q
@@ -59,23 +59,22 @@ class ResultForm(ModelForm):
             'comment': forms.Textarea(attrs={'rows': '3'}),
             'created_by': HiddenInput(), 'created_at': HiddenInput(),
             'updated_by': HiddenInput(), 'updated_at': HiddenInput(),
-            # 'info': HiddenInput(), 'config': HiddenInput(), 'redmine_wiki': HiddenInput()
         }
 
 
-class ProtocolCopyResultsForm(forms.Form):
-    src_protocol = forms.ModelChoiceField(queryset=Protocol.objects.all(), label=_('Source Protocol'))
-    dst_protocol = forms.IntegerField()
-
-    def __init__(self, *args, **kwargs):
-        device_id = kwargs.pop('device_id', None)
-        dst_protocol = kwargs.pop('dst_protocol', None)
-        super(ProtocolCopyResultsForm, self).__init__(*args, **kwargs)
-
-        self.fields['dst_protocol'].initial = dst_protocol
-        self.fields['dst_protocol'].widget = forms.HiddenInput()
-        if device_id:
-            self.fields['src_protocol'].queryset = Protocol.objects.filter(Q(device=device_id) & ~Q(id=dst_protocol))
+class ResultNoteForm(ModelForm):
+    class Meta:
+        model = TestResultNote
+        labels = {
+            'text': _('Text'),
+        }
+        fields = '__all__'
+        widgets = {
+            'result': HiddenInput(),
+            'text': forms.Textarea(attrs={'rows': '10'}),
+            'created_by': HiddenInput(), 'created_at': HiddenInput(),
+            'updated_by': HiddenInput(), 'updated_at': HiddenInput()
+        }
 
 
 class ResultConfigForm(ModelForm):
@@ -114,6 +113,22 @@ class ResultConfigForm(ModelForm):
         }
 
 
+class ResultImageForm(ModelForm):
+    class Meta:
+        model = TestResultImage
+        labels = {
+            'image': _('Image'),
+            'width': _('Width'),
+            'height': _('Height'),
+        }
+        fields = '__all__'
+        widgets = {
+            'result': HiddenInput(),
+            'created_by': HiddenInput(), 'created_at': HiddenInput(),
+            'updated_by': HiddenInput(), 'updated_at': HiddenInput()
+        }
+
+
 class ResultIssueForm(ModelForm):
     class Meta:
         model = TestResultIssue
@@ -128,3 +143,18 @@ class ResultIssueForm(ModelForm):
             'created_by': HiddenInput(), 'created_at': HiddenInput(),
             'updated_by': HiddenInput(), 'updated_at': HiddenInput()
         }
+
+
+class ProtocolCopyResultsForm(forms.Form):
+    src_protocol = forms.ModelChoiceField(queryset=Protocol.objects.all(), label=_('Source Protocol'))
+    dst_protocol = forms.IntegerField()
+
+    def __init__(self, *args, **kwargs):
+        device_id = kwargs.pop('device_id', None)
+        dst_protocol = kwargs.pop('dst_protocol', None)
+        super(ProtocolCopyResultsForm, self).__init__(*args, **kwargs)
+
+        self.fields['dst_protocol'].initial = dst_protocol
+        self.fields['dst_protocol'].widget = forms.HiddenInput()
+        if device_id:
+            self.fields['src_protocol'].queryset = Protocol.objects.filter(Q(device=device_id) & ~Q(id=dst_protocol))

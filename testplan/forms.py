@@ -1,6 +1,5 @@
 from django.forms import ModelForm, HiddenInput
 from .models import TestPlan, Category, Test
-from django import forms
 from django.utils.translation import gettext_lazy as _
 
 
@@ -51,8 +50,6 @@ class TestForm(ModelForm):
             'redmine_wiki': 'Redmine Wiki',
         }
         fields = '__all__'
-        widgets = {'cat': HiddenInput(), 'category': HiddenInput(),
-                   'priority': HiddenInput(),
+        widgets = {'cat': HiddenInput(), 'priority': HiddenInput(),
                    'created_by': HiddenInput(), 'created_at': HiddenInput(),
-                   'updated_by': HiddenInput(), 'updated_at': HiddenInput(),
-                   'testplan': forms.HiddenInput()}
+                   'updated_by': HiddenInput(), 'updated_at': HiddenInput()}
