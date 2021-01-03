@@ -173,8 +173,8 @@ class ResultUpdate(UpdateView):
         form = super(ResultUpdate, self).get_form(form_class)
         form.fields['result'].widget = forms.HiddenInput()
         form.fields['comment'].widget = forms.HiddenInput()
-        form.fields['info'].widget = forms.HiddenInput()
-        form.fields['config'].widget = forms.HiddenInput()
+        # form.fields['info'].widget = forms.HiddenInput()
+        # form.fields['config'].widget = forms.HiddenInput()
         return form
 
     def get_context_data(self, **kwargs):
