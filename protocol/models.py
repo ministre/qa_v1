@@ -46,14 +46,28 @@ class Protocol(models.Model):
                 try:
                     result = TestResult.objects.get(protocol=self, test=test)
                     comment = result.comment
-                    test_issues = TestResultIssue.objects.filter(result=result).order_by('id')
-                    issues = []
-                    for issue in test_issues:
-                        issues.append(issue.text)
+
+                    # notes
+                    test_notes = TestResultNote.objects.filter(result=result).order_by('id')
+                    notes = []
+                    for note in test_notes:
+                        notes.append({'id': note.id, 'text': note.text})
+                    # configs
                     test_configs = TestResultConfig.objects.filter(result=result).order_by('id')
                     configs = []
                     for config in test_configs:
                         configs.append(config.id)
+                    # images
+                    test_images = TestResultImage.objects.filter(result=result).order_by('id')
+                    images = []
+                    for image in test_images:
+                        images.append({'id': image.id})
+                    # issues
+                    test_issues = TestResultIssue.objects.filter(result=result).order_by('id')
+                    issues = []
+                    for issue in test_issues:
+                        issues.append(issue.text)
+
                     result_id = result.id
                     if result.redmine_wiki:
                         result_redmine_wiki = result.redmine_wiki
@@ -62,7 +76,7 @@ class Protocol(models.Model):
                     result = result.result
                 except TestResult.DoesNotExist:
                     result_id = result = comment = result_redmine_wiki = None
-                    issues = configs = []
+                    notes = configs = images = issues = []
                 results.append({'header': False,
                                 'num': [i+1, j+1],
                                 'category_name': test.cat,
@@ -72,8 +86,10 @@ class Protocol(models.Model):
                                 'result_redmine_wiki': result_redmine_wiki,
                                 'result': result,
                                 'comment': comment,
-                                'issues': issues,
-                                'configs': configs})
+                                'notes': notes,
+                                'configs': configs,
+                                'images': images,
+                                'issues': issues})
         return results
 
     def get_issues(self):
