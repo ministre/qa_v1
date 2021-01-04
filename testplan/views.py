@@ -485,7 +485,7 @@ def migrate(request):
     tests = Test.objects.all()
     for test in tests:
         if test.parent:
-            test.redmine_wiki = test.parent.redmine_wiki
+            test.name = test.parent.name
             test.save()
             i += 1
     return render(request, 'device/message.html', {'message': [True, i]})
