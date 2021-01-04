@@ -477,3 +477,15 @@ def collapse_filter(ctx, tag):
                 blocks[i] = blocks[i] + '}}'
     ctx = ''.join(blocks)
     return ctx
+
+
+@login_required
+def migrate(request):
+    i = 0
+    tests = Test.objects.all()
+    for test in tests:
+        if test.parent:
+            test.redmine_wiki = test.parent.redmine_wiki
+            test.save()
+            i += 1
+    return render(request, 'device/message.html', {'message': [True, i]})
