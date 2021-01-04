@@ -491,11 +491,12 @@ def collapse_filter(ctx, tag):
 #    return render(request, 'device/message.html', {'message': [True, i]})
 
 
-from protocol.models import TestResult
+from protocol.models import TestResult, Protocol
 @login_required
-def migrate(request):
+def migrate(request, pk):
     i = 0
-    results = TestResult.objects.all()
+    protocol = get_object_or_404(Protocol, id=pk)
+    results = TestResult.objects.filter(protocol=protocol)
     for result in results:
         result_pre = result.test.get_num()
         if result.test.redmine_wiki:
