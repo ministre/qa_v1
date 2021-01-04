@@ -46,9 +46,11 @@ class RedmineResultExportForm(forms.Form):
     redmine_project = forms.CharField(label=_('Project ID'), max_length=100)
     redmine_wiki = forms.CharField(label='Wiki', max_length=100)
     redmine_parent_wiki = forms.CharField(label=_('Parent Wiki'), max_length=100)
-    test_desc = forms.BooleanField(label=_('Test Description'), required=False)
-    result_configs = forms.BooleanField(label=_('Result Configs'), required=False)
-    result_summary = forms.BooleanField(label=_('Result Summary'), required=False)
+    test_desc = forms.BooleanField(label=_('Test Description'), required=False, initial=True)
+    result_notes = forms.BooleanField(label=_('Notes'), required=False, initial=True)
+    result_configs = forms.BooleanField(label=_('Configurations'), required=False, initial=True)
+    result_images = forms.BooleanField(label=_('Images'), required=False, initial=True)
+    result_summary = forms.BooleanField(label=_('Result'), required=False, initial=True)
 
     def __init__(self, *args, **kwargs):
         super(RedmineResultExportForm, self).__init__(*args, **kwargs)

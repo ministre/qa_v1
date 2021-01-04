@@ -218,9 +218,7 @@ def result_details(request, pk, tab_id):
         export_form = RedmineResultExportForm(initial={'result_id': result.id,
                                                        'redmine_project': result.protocol.device.redmine_project,
                                                        'redmine_wiki': result.redmine_wiki,
-                                                       'redmine_parent_wiki': result.protocol.redmine_wiki,
-                                                       'test_desc': True, 'result_configs': True,
-                                                       'result_summary': True})
+                                                       'redmine_parent_wiki': result.protocol.redmine_wiki})
 
         return render(request, 'protocol/result_details.html', {'result': result, 'procedure': procedure,
                                                                 'expected': expected, 'num': num,

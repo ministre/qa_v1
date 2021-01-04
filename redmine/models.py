@@ -2,7 +2,7 @@ from redminelib import Redmine
 from qa_v1 import settings
 from redminelib.exceptions import ResourceNotFoundError, ForbiddenError, AuthError, ValidationError
 from device.models import DeviceType, Device
-from protocol.models import Protocol, TestResult, TestResultConfig, TestResultIssue
+from protocol.models import Protocol, TestResult, TestResultNote, TestResultConfig, TestResultImage, TestResultIssue
 from django.utils.translation import gettext_lazy as _
 
 
@@ -265,7 +265,8 @@ class RedmineProtocol:
 
 class RedmineResult:
     @staticmethod
-    def build_wiki(result: TestResult, test_desc=False, result_configs=False, result_summary=False):
+    def build_wiki(result: TestResult, test_desc=False, result_notes=False, result_configs=False,
+                   result_images=False, result_summary=False):
         # header
         wiki = '\n' + str(_('Protocol')) + ' ' + str(result.protocol.device.vendor.name) + ' ' + \
                str(result.protocol.device) + u' \u00bb ' + str(result.test.get_num()[0]) + '. ' + \
@@ -283,8 +284,19 @@ class RedmineResult:
             if result.test.expected:
                 wiki += '\nh2. ' + str(_('Expected result')) + '\r\n\r'
                 wiki += '\n' + result.test.expected + '\r\n\r'
+        wiki += '\n---\r\n\r'
         # test details
-        wiki += '\nh1. ' + str(_('Test details')) + '\r\n\r'
+        wiki += '\nh1. ' + str(_('Result details')) + '\r\n\r'
+        # notes
+        if result_notes:
+            notes = TestResultNote.objects.filter(result=result).order_by('id')
+            if notes:
+                wiki += '\nh2. ' + str(_('Notes')) + '\r\n\r'
+            for note in notes:
+                if note.desc:
+                    wiki += '\nh3. ' + note.desc + '\r\n\r'
+                wiki += '\n<pre>' + note.text + '</pre>\r\n\r'
+        # configs
         if result_configs:
             configs = TestResultConfig.objects.filter(result=result).order_by('id')
             if configs:
@@ -295,9 +307,26 @@ class RedmineResult:
                 wiki += '\n<pre><code class="' + config.lang + '">\r' + \
                         '\n' + config.config + '\r' + \
                         '\n</code></pre>\r\n\r'
+        # images
+        if result_images:
+            images = TestResultImage.objects.filter(result=result).order_by('id')
+            if images:
+                wiki += '\nh2. ' + str(_('Images')) + '\r\n\r'
+            for image in images:
+                if image.desc:
+                    wiki += '\nh3. ' + image.desc + '\r\n\r'
+                wiki += '\n!'
+                if image.width or image.height:
+                    wiki += '{'
+                    if image.width:
+                        wiki += 'width:' + str(image.width) + 'px;'
+                    if image.height:
+                        wiki += 'height:' + str(image.height) + 'px;'
+                    wiki += '}'
+                wiki += settings.REDMINE_MEDIA_ROOT + str(image.image) + '!\r\n\r'
         # summary
         if result_summary:
-            wiki += '\nh1. ' + str(_('Summary')) + '\r\n\r'
+            wiki += '\nh1. ' + str(_('Result')) + '\r\n\r'
             res = '%{background:gray}' + str(_('Not tested')) + '%'
             if result.result == 1:
                 res = '%{background:red}' + str(_('Not passed')) + '%'
@@ -306,8 +335,7 @@ class RedmineResult:
             elif result.result == 3:
                 res = '%{background:lightgreen}' + str(_('Passed')) + '%'
 
-            wiki += '\nh2. ' + str(_('Result')) + '\r\n\r' + \
-                    '\n' + res + '\r\n\r'
+            wiki += '\n' + res + '\r\n\r'
             if result.comment:
                 wiki += '\nh2. ' + str(_('Comment')) + '\r\n\r' + \
                         '\n' + result.comment + '\r\n\r'
@@ -320,13 +348,14 @@ class RedmineResult:
 
     @staticmethod
     def export(result: TestResult, project: str, project_wiki: str, project_parent_wiki: str, test_desc=False,
-               result_configs=False, result_summary=False):
+               result_notes=False, result_configs=False, result_images=False, result_summary=False):
         r = RedmineProject()
         is_project = r.check_project(project=project)
         if is_project[0] != 200:
             return [False, is_project[1]]
         else:
-            wiki = RedmineResult.build_wiki(result=result, test_desc=test_desc, result_configs=result_configs,
+            wiki = RedmineResult.build_wiki(result=result, test_desc=test_desc, result_notes=result_notes,
+                                            result_configs=result_configs, result_images=result_images,
                                             result_summary=result_summary)
             is_wiki = r.create_or_update_wiki(project=project, wiki_title=project_wiki, wiki_text=wiki,
                                               parent_wiki_title=project_parent_wiki)
