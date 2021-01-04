@@ -479,13 +479,31 @@ def collapse_filter(ctx, tag):
     return ctx
 
 
+#@login_required
+#def migrate(request):
+#    i = 0
+#    tests = Test.objects.all()
+#    for test in tests:
+#        if test.parent:
+#            test.name = test.parent.name
+#            test.save()
+#            i += 1
+#    return render(request, 'device/message.html', {'message': [True, i]})
+
+
+from protocol.models import TestResult
 @login_required
 def migrate(request):
     i = 0
-    tests = Test.objects.all()
-    for test in tests:
-        if test.parent:
-            test.name = test.parent.name
-            test.save()
-            i += 1
+    results = TestResult.objects.all()
+    for result in results:
+        result_pre = result.test.get_num()
+        if result.test.redmine_wiki:
+            result_name = result.test.redmine_wiki
+        else:
+            result_name = ''
+        result_id = result.id
+        result.redmine_wiki = str(result_pre[0]) + '_' + str(result_pre[1]) + '_' + result_name + '_' + str(result_id)
+        result.save()
+        i += 1
     return render(request, 'device/message.html', {'message': [True, i]})
