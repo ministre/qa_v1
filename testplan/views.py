@@ -517,8 +517,8 @@ def migrate(request, pk):
     for category in categories:
         tests = Test.objects.filter(cat=category)
         for test in tests:
-            new_redmine_wiki = test.redmine_wiki.replace("http://lab.server.group/projects/basic_pmi_swiches/wiki/", "")
-            test.redmine_wiki =  new_redmine_wiki[0:-1]
+            new_redmine_wiki = test.redmine_wiki.replace("http://lab.server.group/projects/wireless_cpe/wiki/", "")
+            test.redmine_wiki = new_redmine_wiki[0:-1]
             test.save()
             i +=1
     return render(request, 'device/message.html', {'message': [True, i]})
