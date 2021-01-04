@@ -29,5 +29,4 @@ urlpatterns = [
     # Testplans Redmine
     path('import/<int:testplan_id>/', views.testplan_import, name='testplan_import'),
     path('test/import/', views.test_import_details, name='test_import_details'),
-    path('migrate/<int:pk>/', views.migrate, name='migrate'),
 ]
