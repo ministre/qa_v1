@@ -11,6 +11,17 @@
         <a data-tabs-target="general" href="#general">{% trans "General" %}</a>
     </li>
     <li class="tabs-title {% if tab_id == 2 %} is-active{% endif %}">
+        <a data-tabs-target="specs" href="#specs">{% trans "Specifications" %}</a>
+    </li>
+    <li class="tabs-title {% if tab_id == 3 %} is-active{% endif %}">
+        <a data-tabs-target="photos" href="#photos">{% trans "Photos" %}</a>
+    </li>
+    <li class="tabs-title {% if tab_id == 4 %} is-active{% endif %}">
+        <a data-tabs-target="samples" href="#samples">
+            {% trans "Samples" %}{% if device.device_sample.all|length > 0 %} ({{ device.device_sample.all|length }}){% endif %}
+        </a>
+    </li>
+    <li class="tabs-title {% if tab_id == 5 %} is-active{% endif %}">
         <a data-tabs-target="redmine" href="#redmine">Redmine</a>
     </li>
 </ul>
@@ -19,7 +30,6 @@
     <div class="tabs-panel {% if tab_id == 1 %}is-active{% endif %}" id="general">
         <a href="{% url 'device_update' pk=device.id %}" class="button small">{% trans "Update" %}</a>
         <a href="{% url 'device_delete' pk=device.id %}" class="button alert small">{% trans "Delete" %}</a>
-
         <div class="grid-x grid-margin-x">
             <div class="cell">
                 <div class="card">
@@ -78,12 +88,13 @@
                 </div>
             </div>
         </div>
+    </div>
 
+    <div class="tabs-panel {% if tab_id == 2 %}is-active{% endif %}" id="specs">
         <div class="grid-x grid-margin-x">
             <div class="cell">
                 <div class="card">
                     <div class="card-section">
-                        <h5>{% trans "Additional Information" %}</h5>
                         <table class="unstriped">
                             <tr>
                                 <td>{% trans "Interfaces" %}:</td>
@@ -110,10 +121,116 @@
                 </div>
             </div>
         </div>
-
     </div>
 
-    <div class="tabs-panel{% if tab_id == 2 %} is-active{% endif %}" id="redmine">
+    <div class="tabs-panel {% if tab_id == 3 %}is-active{% endif %}" id="photos">
+        <a href="{# url 'photo_create' device_id=device.id #}" class="button small">{% trans "Add" %}</a>
+    </div>
+
+    <div class="tabs-panel {% if tab_id == 4 %}is-active{% endif %}" id="samples">
+        <a href="{% url 'sample_create' device_id=device.id %}" class="button small">{% trans "Add" %}</a>
+        {% for sample in device.device_sample.all|dictsort:"id" %}
+        <div class="grid-x grid-margin-x">
+            <div class="cell">
+                <div class="card">
+                    <div class="card-section">
+                        <a href="{% url 'sample_update' pk=sample.id %}" class="button small">{% trans "Update" %}</a>
+                        <a href="{% url 'sample_delete' pk=sample.id %}" class="button small alert">{% trans "Delete" %}</a>
+
+                        <div class="grid-x grid-margin-x small-up-2 medium-up-2">
+                            <div class="cell">
+                                <div class="card">
+                                    <div class="card-section">
+                                        <table class="unstriped">
+                                            <tr>
+                                                <td width="200px">{% trans "Sample ID" %}:</td>
+                                                <td>{{ sample.id }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>{% trans "Description" %}:</td>
+                                                <td>{% if sample.desc %}{{ sample.desc }}{% endif %}</td>
+                                            </tr>
+                                        </table>
+                                        <div class="input-group">
+                                            <span class="input-group-label">{% trans "Serial Number" %}:</span>
+                                            <input class="input-group-field" type="text" value="{{ sample.sn }}" id="myInputSN_{{ sample.id }}">
+                                            <div class="input-group-button">
+                                                <button type="submit" class="button success" onclick="myFunctionSN_{{ sample.id }}()">
+                                                    {% trans "Copy" %}
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="cell">
+                                <div class="card">
+                                    <div class="card-section">
+                                        <h5>{% trans "Accounts" %}</h5>
+                                        <a href="{% url 'sample_acc_create' sample_id=sample.id %}" class="button small">{% trans "Add" %}</a>
+                                        {% for account in sample.sample_account.all|dictsort:"id" %}
+                                        <div class="cell">
+                                            <div class="card">
+                                                <div class="card-section">
+                                                    <a href="{% url 'sample_acc_update' pk=account.id %}" class="button small">{% trans "Update" %}</a>
+                                                    <a href="{% url 'sample_acc_delete' pk=account.id %}" class="button small alert">{% trans "Delete" %}</a>
+                                                    <div class="input-group">
+                                                        <span class="input-group-label" style="width:120px">{% trans "Username" %}:</span>
+                                                        <input class="input-group-field" type="text" value="{{ account.username }}" id="myInputUsername_{{ account.id }}">
+                                                        <div class="input-group-button">
+                                                            <button type="submit" class="button success" onclick="myFunctionUsername_{{ account.id }}()">
+                                                                {% trans "Copy" %}
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                    <div class="input-group">
+                                                        <span class="input-group-label" style="width:120px">{% trans "Password" %}:</span>
+                                                        <input class="input-group-field" type="text" value="{{ account.password }}" id="myInputPassword_{{ account.id }}">
+                                                        <div class="input-group-button">
+                                                            <button type="submit" class="button success" onclick="myFunctionPassword_{{ account.id }}()">
+                                                                {% trans "Copy" %}
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <script>
+                                        function myFunctionUsername_{{ account.id }}() {
+                                          var copyText = document.getElementById("myInputUsername_{{ account.id }}");
+                                          copyText.select();
+                                          copyText.setSelectionRange(0, 99999);
+                                          document.execCommand("copy");
+                                        }
+                                        function myFunctionPassword_{{ account.id }}() {
+                                          var copyText = document.getElementById("myInputPassword_{{ account.id }}");
+                                          copyText.select();
+                                          copyText.setSelectionRange(0, 99999);
+                                          document.execCommand("copy");
+                                        }
+                                        </script>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+        function myFunctionSN_{{ sample.id }}() {
+          var copyText = document.getElementById("myInputSN_{{ sample.id }}");
+          copyText.select();
+          copyText.setSelectionRange(0, 99999);
+          document.execCommand("copy");
+        }
+        </script>
+        {% endfor %}
+    </div>
+
+    <div class="tabs-panel{% if tab_id == 5 %} is-active{% endif %}" id="redmine">
         {% if device.redmine_project %}
         <div class="grid-x grid-margin-x">
             <div class="cell">

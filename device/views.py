@@ -4,9 +4,9 @@ from qa_v1 import settings
 from redminelib import Redmine
 from redminelib.exceptions import ResourceNotFoundError
 import re
-from device.models import Vendor, Device, DeviceType
+from device.models import Vendor, Device, DeviceType, DeviceSample, DeviceSampleAccount
 from django.http import HttpResponseRedirect
-from .forms import VendorForm, DeviceTypeForm, DeviceForm
+from .forms import VendorForm, DeviceTypeForm, DeviceForm, DeviceSampleForm, DeviceSampleAccountForm
 from redmine.forms import RedmineDeviceTypeExportForm, RedmineDeviceExportForm
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
@@ -253,6 +253,109 @@ def device_details(request, pk, tab_id):
     return render(request, 'device/device_details.html', {'device': device, 'protocols_count': protocols_count,
                                                           'redmine_url': redmine_url, 'export_form': export_form,
                                                           'tab_id': tab_id})
+
+
+@method_decorator(login_required, name='dispatch')
+class DeviceSampleCreate(CreateView):
+    model = DeviceSample
+    form_class = DeviceSampleForm
+    template_name = 'device/create.html'
+
+    def get_initial(self):
+        return {'device': self.kwargs.get('device_id'),
+                'created_by': self.request.user, 'updated_by': self.request.user}
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('device_details', kwargs={'pk': self.kwargs.get('device_id'), 'tab_id': 4})
+        return context
+
+    def get_success_url(self):
+        return reverse('device_details', kwargs={'pk': self.object.device.id, 'tab_id': 4})
+
+
+@method_decorator(login_required, name='dispatch')
+class DeviceSampleUpdate(UpdateView):
+    model = DeviceSample
+    form_class = DeviceSampleForm
+    template_name = 'device/update.html'
+
+    def get_initial(self):
+        return {'updated_by': self.request.user, 'updated_at': timezone.now()}
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('device_details', kwargs={'pk': self.object.device.id, 'tab_id': 4})
+        return context
+
+    def get_success_url(self):
+        return reverse('device_details', kwargs={'pk': self.object.device.id, 'tab_id': 4})
+
+
+@method_decorator(login_required, name='dispatch')
+class DeviceSampleDelete(DeleteView):
+    model = DeviceSample
+    template_name = 'device/delete.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('device_details', kwargs={'pk': self.object.device.id, 'tab_id': 4})
+        return context
+
+    def get_success_url(self):
+        return reverse('device_details', kwargs={'pk': self.object.device.id, 'tab_id': 4})
+
+
+@method_decorator(login_required, name='dispatch')
+class DeviceSampleAccountCreate(CreateView):
+    model = DeviceSampleAccount
+    form_class = DeviceSampleAccountForm
+    template_name = 'device/create.html'
+
+    def get_initial(self):
+        return {'sample': self.kwargs.get('sample_id'),
+                'created_by': self.request.user, 'updated_by': self.request.user}
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        sample = get_object_or_404(DeviceSample, id=self.kwargs.get('sample_id'))
+        context['back_url'] = reverse('device_details', kwargs={'pk': sample.device.id, 'tab_id': 4})
+        return context
+
+    def get_success_url(self):
+        return reverse('device_details', kwargs={'pk': self.object.sample.device.id, 'tab_id': 4})
+
+
+@method_decorator(login_required, name='dispatch')
+class DeviceSampleAccountUpdate(UpdateView):
+    model = DeviceSampleAccount
+    form_class = DeviceSampleAccountForm
+    template_name = 'device/update.html'
+
+    def get_initial(self):
+        return {'updated_by': self.request.user, 'updated_at': timezone.now()}
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('device_details', kwargs={'pk': self.object.sample.device.id, 'tab_id': 4})
+        return context
+
+    def get_success_url(self):
+        return reverse('device_details', kwargs={'pk': self.object.sample.device.id, 'tab_id': 4})
+
+
+@method_decorator(login_required, name='dispatch')
+class DeviceSampleAccountDelete(DeleteView):
+    model = DeviceSampleAccount
+    template_name = 'device/delete.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('device_details', kwargs={'pk': self.object.sample.device.id, 'tab_id': 4})
+        return context
+
+    def get_success_url(self):
+        return reverse('device_details', kwargs={'pk': self.object.sample.device.id, 'tab_id': 4})
 
 
 @login_required
