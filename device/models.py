@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
 from django.core.validators import MinValueValidator
+import os
 
 
 class Vendor(models.Model):
@@ -92,6 +93,9 @@ class DevicePhoto(models.Model):
 
     def __str__(self):
         return self.desc
+
+    def filename(self):
+        return os.path.basename(self.photo.name)
 
 
 class DeviceSample(models.Model):

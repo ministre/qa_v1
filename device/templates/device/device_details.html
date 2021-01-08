@@ -137,7 +137,19 @@
                 </li>
                 {% endfor %}
             </ul>
+            <p align="center">
+                <img class="pdp-product-image" id="main-product-image" src="{{ device.device_photo.all.0.photo.url }}" alt="" style="max-width: 800px">
+            </p>
         </div>
+
+        {% for photo in device.device_photo.all|dictsort:"id" %}
+        {{ photo.desc }}
+        <p>
+            <a href="{% url 'photo_update' pk=photo.id %}">{{ photo.filename }}</a>
+            <a href="{% url 'photo_delete' pk=photo.id %}"><i class="step fi-minus" style="color: #bc104b"></i></a>
+        </p>
+        {% endfor %}
+
     </div>
 
     <div class="tabs-panel {% if tab_id == 4 %}is-active{% endif %}" id="samples">
@@ -275,5 +287,11 @@
     </div>
 
 </div>
+
+<script>
+$('.sim-thumb').on('click', function() {
+  $('#main-product-image').attr('src', $(this).data('image'));
+})
+</script>
 
 {% endblock %}
