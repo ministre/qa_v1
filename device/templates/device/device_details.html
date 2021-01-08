@@ -14,11 +14,13 @@
         <a data-tabs-target="specs" href="#specs">{% trans "Specifications" %}</a>
     </li>
     <li class="tabs-title {% if tab_id == 3 %} is-active{% endif %}">
-        <a data-tabs-target="photos" href="#photos">{% trans "Photos" %}</a>
+        <a data-tabs-target="photos" href="#photos">{% trans "Photos" %}
+            {% if device.device_photo.all|length > 0 %} ({{ device.device_photo.all|length }}){% endif %}
+        </a>
     </li>
     <li class="tabs-title {% if tab_id == 4 %} is-active{% endif %}">
-        <a data-tabs-target="samples" href="#samples">
-            {% trans "Samples" %}{% if device.device_sample.all|length > 0 %} ({{ device.device_sample.all|length }}){% endif %}
+        <a data-tabs-target="samples" href="#samples">{% trans "Samples" %}
+            {% if device.device_sample.all|length > 0 %} ({{ device.device_sample.all|length }}){% endif %}
         </a>
     </li>
     <li class="tabs-title {% if tab_id == 5 %} is-active{% endif %}">
@@ -125,6 +127,17 @@
 
     <div class="tabs-panel {% if tab_id == 3 %}is-active{% endif %}" id="photos">
         <a href="{# url 'photo_create' device_id=device.id #}" class="button small">{% trans "Add" %}</a>
+        <div class="product-image-gallery">
+            <ul class="menu product-thumbs align-center">
+                {% for photo in device.device_photo.all|dictsort:"id" %}
+                <li>
+                    <a class="sim-thumb" data-image="{{ photo.photo.url }}">
+                        <img src="{{ photo.photo.url }}" height="100" width="100" alt="{{ photo.desc }}">
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
     </div>
 
     <div class="tabs-panel {% if tab_id == 4 %}is-active{% endif %}" id="samples">

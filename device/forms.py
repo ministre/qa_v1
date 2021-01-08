@@ -1,5 +1,5 @@
 from django.forms import ModelForm, HiddenInput
-from device.models import Vendor, DeviceType, Device, DeviceSample, DeviceSampleAccount
+from device.models import Vendor, DeviceType, Device, DevicePhoto, DeviceSample, DeviceSampleAccount
 from django.utils.translation import gettext_lazy as _
 
 
@@ -50,6 +50,19 @@ class DeviceForm(ModelForm):
         }
         fields = '__all__'
         widgets = {'created_by': HiddenInput(), 'created_at': HiddenInput(),
+                   'updated_by': HiddenInput(), 'updated_at': HiddenInput()}
+
+
+class DevicePhotoForm(ModelForm):
+    class Meta:
+        model = DevicePhoto
+        labels = {
+            'photo': _('Photo'),
+            'desc': _('Description'),
+        }
+        fields = '__all__'
+        widgets = {'device': HiddenInput(),
+                   'created_by': HiddenInput(), 'created_at': HiddenInput(),
                    'updated_by': HiddenInput(), 'updated_at': HiddenInput()}
 
 

@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
+from django.core.validators import MinValueValidator
 
 
 class Vendor(models.Model):
@@ -82,6 +83,8 @@ class DevicePhoto(models.Model):
     device = models.ForeignKey(Device, related_name='device_photo', on_delete=models.CASCADE)
     photo = models.ImageField(upload_to="device/photos/")
     desc = models.CharField(max_length=1000)
+    width = models.IntegerField(validators=[MinValueValidator(0)], blank=True, null=True)
+    height = models.IntegerField(validators=[MinValueValidator(0)], blank=True, null=True)
     created_by = models.ForeignKey(User, models.SET_NULL, related_name='photo_c', blank=True, null=True)
     created_at = models.DateTimeField(default=timezone.now)
     updated_by = models.ForeignKey(User, models.SET_NULL, related_name='photo_u', blank=True, null=True)
