@@ -126,7 +126,7 @@
     </div>
 
     <div class="tabs-panel {% if tab_id == 3 %}is-active{% endif %}" id="photos">
-        <a href="{# url 'photo_create' device_id=device.id #}" class="button small">{% trans "Add" %}</a>
+        <a href="{% url 'photo_create' device_id=device.id %}" class="button small">{% trans "Add" %}</a>
         <div class="product-image-gallery">
             <ul class="menu product-thumbs align-center">
                 {% for photo in device.device_photo.all|dictsort:"id" %}
