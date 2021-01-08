@@ -277,8 +277,8 @@
                         <h5>{% trans "Export to" %} Redmine</h5>
                         <form action="{% url 'redmine_device_export' %}" method="post">
                             {% csrf_token %}
-                            {{ export_form.as_p }}
                             <input type="submit" value='{% trans "Export" %}' class="button small success" />
+                            {{ export_form.as_p }}
                         </form>
                     </div>
                 </div>

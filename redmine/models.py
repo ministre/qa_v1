@@ -1,7 +1,7 @@
 from redminelib import Redmine
 from qa_v1 import settings
 from redminelib.exceptions import ResourceNotFoundError, ForbiddenError, AuthError, ValidationError
-from device.models import DeviceType, Device
+from device.models import DeviceType, Device, DevicePhoto, DeviceSample, DeviceSampleAccount
 from protocol.models import Protocol, TestResult, TestResultNote, TestResultConfig, TestResultImage, TestResultIssue
 from django.utils.translation import gettext_lazy as _
 
@@ -130,9 +130,9 @@ class RedmineDeviceType:
 
 class RedmineDevice:
     @staticmethod
-    def build_wiki(device: Device, project_name: str, general_info: bool, protocols: bool):
+    def build_wiki(device: Device, project_name: str, general=False, photos=False, samples=False, protocols=False):
         wiki = 'h1. ' + project_name + '\r\n\r'
-        if general_info:
+        if general:
             wiki += '\nh2. ' + str(_('General')) + '\r' \
                     '\n\r' \
                     '\n| ' + str(_('Device Type')) + ': | ' + device.type.name + ' |\r' \
@@ -152,7 +152,36 @@ class RedmineDevice:
             if device.memory:
                 wiki += '\n| ' + str(_('Memory')) + ': | ' + device.memory + ' |\r'
 
-            wiki += '\n\r\nh2. Внешний вид\r\n\r'
+        if photos:
+            wiki += '\n\r\nh2. ' + str(_('Photos')) + '\r\n\r'
+            photos = DevicePhoto.objects.filter(device=device).order_by('id')
+            for photo in photos:
+                wiki += '\n{{collapse(' + photo.desc + ')\r'
+                wiki += '\n!'
+                if photo.width or photo.height:
+                    wiki += '{'
+                    if photo.width:
+                        wiki += 'width:' + str(photo.width) + 'px;'
+                    if photo.height:
+                        wiki += 'height:' + str(photo.height) + 'px;'
+                    wiki += '}'
+                wiki += settings.REDMINE_MEDIA_ROOT + str(photo.photo) + '!\r\n}}\r\n\r'
+
+        if samples:
+            wiki += '\n\r\nh2. ' + str(_('Samples')) + '\r\n\r'
+            samples = DeviceSample.objects.filter(device=device).order_by('id')
+            for sample in samples:
+                wiki += '\n\r'
+                if sample.sn:
+                    wiki += '\n| ' + str(_('Serial Number')) + ': | ' + sample.sn + ' |\r'
+                if sample.sn:
+                    wiki += '\n| ' + str(_('Description')) + ': | ' + sample.desc + ' |\r'
+                accounts = DeviceSampleAccount.objects.filter(sample=sample)
+                for account in accounts:
+                    wiki += '\n| ' + str(_('Username')) + ': | ' + account.username + ' |\r'
+                    wiki += '\n| ' + str(_('Password')) + ': | ' + account.password + ' |\r'
+                wiki += '\n\r'
+
         if protocols:
             wiki += '\nh2. ' + str(_('Protocols')) + '\r\n\r'
             device_protocols = Protocol.objects.filter(device=device).order_by('id')
@@ -168,7 +197,7 @@ class RedmineDevice:
 
     @staticmethod
     def export(device: Device, project: str, project_name: str, project_desc: str, project_parent: str,
-               general_info: bool, protocols: bool):
+               general=False, photos=False, samples=False, protocols=False):
         r = RedmineProject()
         redmine_project = r.create_or_update_project(project=project, project_name=project_name,
                                                      project_desc=project_desc, project_parent=project_parent)
@@ -176,8 +205,8 @@ class RedmineDevice:
             return redmine_project
         else:
             message = redmine_project[1]
-            wiki = RedmineDevice.build_wiki(device=device, project_name=project_name, general_info=general_info,
-                                            protocols=protocols)
+            wiki = RedmineDevice.build_wiki(device=device, project_name=project_name, general=general,
+                                            photos=photos, samples=samples, protocols=protocols)
             is_wiki = r.create_or_update_wiki(project=project, wiki_title='Wiki', wiki_text=wiki)
             if not is_wiki[0]:
                 return is_wiki

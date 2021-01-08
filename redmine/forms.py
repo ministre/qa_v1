@@ -21,8 +21,10 @@ class RedmineDeviceExportForm(forms.Form):
     redmine_project_name = forms.CharField(label=_('Project Name'), max_length=1000)
     redmine_project_desc = forms.CharField(label=_('Project Description'), max_length=100, required=False)
     redmine_parent = forms.CharField(label=_('Parent Project'), max_length=100, required=False)
-    general_info = forms.BooleanField(label=_('General Information'), required=False)
-    protocols = forms.BooleanField(label=_('Protocol List'), required=False)
+    general = forms.BooleanField(label=_('General Information'), required=False, initial=True)
+    photos = forms.BooleanField(label=_('Photos'), required=False, initial=True)
+    samples = forms.BooleanField(label=_('Samples'), required=False, initial=True)
+    protocols = forms.BooleanField(label=_('Protocols'), required=False, initial=True)
 
     def __init__(self, *args, **kwargs):
         super(RedmineDeviceExportForm, self).__init__(*args, **kwargs)

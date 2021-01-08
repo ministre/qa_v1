@@ -248,8 +248,7 @@ def device_details(request, pk, tab_id):
                                                    'redmine_project': device.redmine_project,
                                                    'redmine_project_name': device.redmine_project_name,
                                                    'redmine_project_desc': device.redmine_project_desc,
-                                                   'redmine_parent': device.redmine_parent,
-                                                   'general_info': True, 'protocols': True})
+                                                   'redmine_parent': device.redmine_parent})
     return render(request, 'device/device_details.html', {'device': device, 'protocols_count': protocols_count,
                                                           'redmine_url': redmine_url, 'export_form': export_form,
                                                           'tab_id': tab_id})
