@@ -84,11 +84,11 @@ class TestplanDelete(DeleteView):
 def testplan_details(request, pk, tab_id):
     testplan = get_object_or_404(TestPlan, id=pk)
     tests_count = testplan.tests_count()
-    protocols_count = testplan.protocols_count()
+    protocols = testplan.get_protocols()
     testplan_form = BuildTestplanForm(initial={'testplan_id': testplan.id})
     testplan_form.fields['testplan_id'].widget = forms.HiddenInput()
     return render(request, 'testplan/testplan_details.html', {'testplan': testplan, 'tests_count': tests_count,
-                                                              'protocols_count': protocols_count,
+                                                              'protocols': protocols,
                                                               'build_testplan_form': testplan_form, 'tab_id': tab_id})
 
 

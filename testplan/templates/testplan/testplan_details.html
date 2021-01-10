@@ -74,15 +74,28 @@
                                 <td>{% trans "Last Update" %}:</td>
                                 <td>{{ testplan.updated_at }} {% if testplan.updated_by %}({{ testplan.updated_by }}){% endif %}</td>
                             </tr>
-                            <tr>
-                                <td>{% trans "Protocols amount" %}:</td>
-                                <td>{{ protocols_count }}</td>
-                            </tr>
                         </table>
                     </div>
                 </div>
             </div>
         </div>
+
+         <div class="cell">
+             <div class="card">
+                 <div class="card-section">
+                     <h5>{% trans "Protocols" %}</h5>
+                     <table class="unstriped">
+                         {% for protocol in protocols %}
+                         <tr>
+                             <td>ID:</td>
+                             <td>{{ protocol.id }}</td>
+                         </tr>
+                         {% endfor %}
+                     </table>
+                 </div>
+             </div>
+         </div>
+
     </div>
 
     <div class="tabs-panel {% if tab_id == 2 %}is-active{% endif %}" id="tests">

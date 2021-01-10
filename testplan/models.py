@@ -33,10 +33,13 @@ class TestPlan(models.Model):
                 i += 1
         return i
 
-    def protocols_count(self):
+    def get_protocols(self):
         from protocol.models import Protocol
-        count = Protocol.objects.filter(testplan=self).count()
-        return count
+        testplan_protocols = []
+        protocols = Protocol.objects.filter(testplan=self).order_by('id')
+        for protocol in protocols:
+            testplan_protocols.append({'id': protocol.id, 'device': protocol.device, 'firmware': protocol.sw})
+        return testplan_protocols
 
 
 class Category(models.Model):
