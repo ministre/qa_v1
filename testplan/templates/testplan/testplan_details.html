@@ -84,14 +84,11 @@
              <div class="card">
                  <div class="card-section">
                      <h5>{% trans "Protocols" %}</h5>
-                     <table class="unstriped">
+                     <ul>
                          {% for protocol in protocols %}
-                         <tr>
-                             <td>ID:</td>
-                             <td>{{ protocol.id }}</td>
-                         </tr>
+                         <li><a href="{% url 'protocol_details' pk=protocol.id tab_id=2 %}">{{ protocol.id }} / {{ protocol.device }} / {{ protocol.firmware }}</a></li>
                          {% endfor %}
-                     </table>
+                     </ul>
                  </div>
              </div>
          </div>
