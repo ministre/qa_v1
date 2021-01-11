@@ -154,6 +154,16 @@ class TestResultImage(models.Model):
     updated_at = models.DateTimeField(default=timezone.now)
 
 
+class TestResultFile(models.Model):
+    result = models.ForeignKey(TestResult, on_delete=models.CASCADE, related_name='result_file')
+    desc = models.CharField(max_length=1000, blank=True, null=True)
+    file = models.FileField(upload_to="protocol/results/files/")
+    created_by = models.ForeignKey(User, models.SET_NULL, related_name='result_file_c', blank=True, null=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_by = models.ForeignKey(User, models.SET_NULL, related_name='result_file_u', blank=True, null=True)
+    updated_at = models.DateTimeField(default=timezone.now)
+
+
 class TestResultIssue(models.Model):
     result = models.ForeignKey(TestResult, on_delete=models.CASCADE, related_name='result_issue')
     text = models.TextField()
@@ -162,3 +172,4 @@ class TestResultIssue(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
     updated_by = models.ForeignKey(User, models.SET_NULL, related_name='result_issue_u', blank=True, null=True)
     updated_at = models.DateTimeField(default=timezone.now)
+
