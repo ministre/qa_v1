@@ -35,9 +35,14 @@
         </a>
     </li>
     <li class="tabs-title {% if tab_id == 6 %} is-active{% endif %}">
-        <a data-tabs-target="result" href="#result">{% trans "Result" %}</a>
+        <a data-tabs-target="files" href="#files">{% trans "Files" %}
+            {% if result.result_file.all.count > 0 %}({{ result.result_file.all.count }}){% endif %}
+        </a>
     </li>
     <li class="tabs-title {% if tab_id == 7 %} is-active{% endif %}">
+        <a data-tabs-target="result" href="#result">{% trans "Result" %}</a>
+    </li>
+    <li class="tabs-title {% if tab_id == 8 %} is-active{% endif %}">
         <a data-tabs-target="redmine" href="#redmine">Redmine</a>
     </li>
 </ul>
@@ -164,7 +169,27 @@
         </div>
     </div>
 
-    <div class="tabs-panel{% if tab_id == 6 %} is-active{% endif %}" id="result">
+    <div class="tabs-panel{% if tab_id == 6 %} is-active{% endif %}" id="files">
+        <div class="grid-x grid-margin-x">
+            <div class="cell">
+                <div class="card">
+                    <div class="card-section">
+                        <a href="{% url 'result_file_create' result=result.id %}" class="button small">{% trans "Add" %}</a>
+                        <ul>
+                        {% for file in result.result_file.all|dictsort:"id" %}
+                            <li>{% if file.desc %}{{ file.desc }}<br>{% endif %}
+                                <a href="{% url 'result_file_update' pk=file.id %}">{{ file.filename }}</a>
+                                <a href="{% url 'result_file_delete' pk=file.id %}"><i class="step fi-minus" style="color: red"></i></a>
+                            </li>
+                        {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tabs-panel{% if tab_id == 7 %} is-active{% endif %}" id="result">
         <div class="grid-x grid-margin-x">
             <div class="cell">
                 <div class="card">
@@ -202,7 +227,7 @@
         </div>
     </div>
 
-    <div class="tabs-panel{% if tab_id == 7 %} is-active{% endif %}" id="redmine">
+    <div class="tabs-panel{% if tab_id == 8 %} is-active{% endif %}" id="redmine">
         {% if result.redmine_wiki %}
         <div class="grid-x grid-margin-x">
             <div class="cell">

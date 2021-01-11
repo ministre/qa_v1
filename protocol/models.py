@@ -5,6 +5,7 @@ from datetime import datetime
 from device.models import Device
 from testplan.models import TestPlan, Category, Test
 from django.core.validators import MinValueValidator
+import os
 
 
 class Protocol(models.Model):
@@ -62,6 +63,11 @@ class Protocol(models.Model):
                     images = []
                     for image in test_images:
                         images.append({'id': image.id})
+                    # files
+                    test_files = TestResultFile.objects.filter(result=result).order_by('id')
+                    files = []
+                    for file in test_files:
+                        files.append({'id': file.id})
                     # issues
                     test_issues = TestResultIssue.objects.filter(result=result).order_by('id')
                     issues = []
@@ -89,6 +95,7 @@ class Protocol(models.Model):
                                 'notes': notes,
                                 'configs': configs,
                                 'images': images,
+                                'files': files,
                                 'issues': issues})
         return results
 
@@ -162,6 +169,9 @@ class TestResultFile(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
     updated_by = models.ForeignKey(User, models.SET_NULL, related_name='result_file_u', blank=True, null=True)
     updated_at = models.DateTimeField(default=timezone.now)
+
+    def filename(self):
+        return os.path.basename(self.file.name)
 
 
 class TestResultIssue(models.Model):

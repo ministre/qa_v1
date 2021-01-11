@@ -24,6 +24,10 @@ urlpatterns = [
     path('result/image/create/<int:result>/', views.ResultImageCreate.as_view(), name='result_image_create'),
     path('result/image/update/<int:pk>/', views.ResultImageUpdate.as_view(), name='result_image_update'),
     path('result/image/delete/<int:pk>/', views.ResultImageDelete.as_view(), name='result_image_delete'),
+    # files
+    path('result/file/create/<int:result>/', views.ResultFileCreate.as_view(), name='result_file_create'),
+    path('result/file/update/<int:pk>/', views.ResultFileUpdate.as_view(), name='result_file_update'),
+    path('result/file/delete/<int:pk>/', views.ResultFileDelete.as_view(), name='result_file_delete'),
     # issues
     path('result/issue/create/<int:result>/', views.ResultIssueCreate.as_view(), name='result_issue_create'),
     path('result/issue/update/<int:pk>/', views.ResultIssueUpdate.as_view(), name='result_issue_update'),

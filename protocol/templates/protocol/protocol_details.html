@@ -178,7 +178,7 @@
         <tr {% if result.result == None %}
                 data-href="{% url 'result_create' protocol_id=protocol.id test_id=result.test_id %}"
                 {% else %}
-                data-href="{% url 'result_details' pk=result.result_id tab_id=6 %}"
+                data-href="{% url 'result_details' pk=result.result_id tab_id=7 %}"
                 {% endif %}>
             <td>{{ forloop.counter }}</td>
             <td>
@@ -203,6 +203,7 @@
                 {% if result.notes %}<i class="step fi-clipboard-notes" style="color: #7700ff"></i>{% endif %}
                 {% if result.configs %}<i class="step fi-widget" style="color: #7700ff"></i>{% endif %}
                 {% if result.images %}<i class="step fi-photo" style="color: #7700ff"></i>{% endif %}
+                {% if result.files %}<i class="step fi-page" style="color: #7700ff"></i>{% endif %}
             </td>
             <td>{{ result.category_name }}</td>
             <td>

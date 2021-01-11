@@ -1,5 +1,6 @@
 from django.forms import ModelForm, HiddenInput
-from protocol.models import Protocol, TestResult, TestResultNote, TestResultConfig, TestResultImage, TestResultIssue
+from protocol.models import Protocol, TestResult, TestResultNote, TestResultConfig, TestResultImage, TestResultFile,\
+    TestResultIssue
 from django.utils.translation import gettext_lazy as _
 from django import forms
 from django.db.models import Q
@@ -118,6 +119,21 @@ class ResultImageForm(ModelForm):
             'image': _('Image'),
             'width': _('Width'),
             'height': _('Height'),
+        }
+        fields = '__all__'
+        widgets = {
+            'result': HiddenInput(),
+            'created_by': HiddenInput(), 'created_at': HiddenInput(),
+            'updated_by': HiddenInput(), 'updated_at': HiddenInput()
+        }
+
+
+class ResultFileForm(ModelForm):
+    class Meta:
+        model = TestResultFile
+        labels = {
+            'file': _('File'),
+            'desc': _('Description'),
         }
         fields = '__all__'
         widgets = {

@@ -2,10 +2,11 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from device.models import Device
 from testplan.models import TestPlan, Test
-from .models import Protocol, TestResult, TestResultNote, TestResultConfig, TestResultImage, TestResultIssue
+from .models import Protocol, TestResult, TestResultNote, TestResultConfig, TestResultImage, TestResultFile, \
+    TestResultIssue
 from django.http import HttpResponseRedirect
 from .forms import ProtocolForm, ResultForm, ResultNoteForm, ResultConfigForm, ResultImageForm, ResultIssueForm, \
-    ProtocolCopyResultsForm
+    ResultFileForm, ProtocolCopyResultsForm
 from redmine.forms import RedmineProtocolExportForm, RedmineResultExportForm
 from docx_builder.forms import BuildDocxProtocolForm
 from docx_generator.forms import BuildProtocolForm, BuildProtocolDetailedForm
@@ -159,7 +160,7 @@ def result_create(request, protocol_id: int, test_id: int):
     redmine_wiki += str(result.id)
     result.redmine_wiki = redmine_wiki
     result.save()
-    return HttpResponseRedirect(reverse('result_details', kwargs={'pk': result.id, 'tab_id': 6}))
+    return HttpResponseRedirect(reverse('result_details', kwargs={'pk': result.id, 'tab_id': 7}))
 
 
 @method_decorator(login_required, name='dispatch')
@@ -387,10 +388,10 @@ class ResultImageDelete(DeleteView):
 
 
 @method_decorator(login_required, name='dispatch')
-class ResultIssueCreate(CreateView):
-    model = TestResultIssue
-    form_class = ResultIssueForm
-    template_name = 'protocol/create.html'
+class ResultFileCreate(CreateView):
+    model = TestResultFile
+    form_class = ResultFileForm
+    template_name = 'device/create.html'
 
     def get_initial(self):
         return {'result': self.kwargs.get('result'), 'created_by': self.request.user, 'updated_by': self.request.user}
@@ -406,13 +407,13 @@ class ResultIssueCreate(CreateView):
 
 
 @method_decorator(login_required, name='dispatch')
-class ResultIssueUpdate(UpdateView):
-    model = TestResultIssue
-    form_class = ResultIssueForm
-    template_name = 'protocol/update.html'
+class ResultFileUpdate(UpdateView):
+    model = TestResultFile
+    form_class = ResultFileForm
+    template_name = 'device/update.html'
 
     def get_initial(self):
-        return {'updated_by': self.request.user, 'updated_at': timezone.now}
+        return {'updated_by': self.request.user, 'updated_at': timezone.now()}
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -425,9 +426,9 @@ class ResultIssueUpdate(UpdateView):
 
 
 @method_decorator(login_required, name='dispatch')
-class ResultIssueDelete(DeleteView):
-    model = TestResultIssue
-    template_name = 'protocol/delete.html'
+class ResultFileDelete(DeleteView):
+    model = TestResultFile
+    template_name = 'device/delete.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -437,6 +438,59 @@ class ResultIssueDelete(DeleteView):
     def get_success_url(self):
         Item.update_timestamp(foo=self.object.result, user=self.request.user)
         return reverse('result_details', kwargs={'pk': self.object.result.id, 'tab_id': 6})
+
+
+@method_decorator(login_required, name='dispatch')
+class ResultIssueCreate(CreateView):
+    model = TestResultIssue
+    form_class = ResultIssueForm
+    template_name = 'protocol/create.html'
+
+    def get_initial(self):
+        return {'result': self.kwargs.get('result'), 'created_by': self.request.user, 'updated_by': self.request.user}
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('result_details', kwargs={'pk': self.kwargs.get('result'), 'tab_id': 7})
+        return context
+
+    def get_success_url(self):
+        Item.update_timestamp(foo=self.object.result, user=self.request.user)
+        return reverse('result_details', kwargs={'pk': self.object.result.id, 'tab_id': 7})
+
+
+@method_decorator(login_required, name='dispatch')
+class ResultIssueUpdate(UpdateView):
+    model = TestResultIssue
+    form_class = ResultIssueForm
+    template_name = 'protocol/update.html'
+
+    def get_initial(self):
+        return {'updated_by': self.request.user, 'updated_at': timezone.now}
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('result_details', kwargs={'pk': self.object.result.id, 'tab_id': 7})
+        return context
+
+    def get_success_url(self):
+        Item.update_timestamp(foo=self.object.result, user=self.request.user)
+        return reverse('result_details', kwargs={'pk': self.object.result.id, 'tab_id': 7})
+
+
+@method_decorator(login_required, name='dispatch')
+class ResultIssueDelete(DeleteView):
+    model = TestResultIssue
+    template_name = 'protocol/delete.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('result_details', kwargs={'pk': self.object.result.id, 'tab_id': 7})
+        return context
+
+    def get_success_url(self):
+        Item.update_timestamp(foo=self.object.result, user=self.request.user)
+        return reverse('result_details', kwargs={'pk': self.object.result.id, 'tab_id': 7})
 
 
 @login_required
