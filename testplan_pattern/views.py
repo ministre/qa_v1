@@ -244,9 +244,11 @@ class TestPatternDelete(DeleteView):
 def test_pattern_details(request, pk, tab_id: int):
     test_pattern = get_object_or_404(TestPattern, id=pk)
     num = test_pattern.get_num()
+    subs = test_pattern.get_subs()
     procedure = textile.textile(test_pattern.procedure)
     expected = textile.textile(test_pattern.expected)
     return render(request, 'testplan_pattern/test_pattern_details.html', {'test_pattern': test_pattern, 'num': num,
+                                                                          'subs': subs,
                                                                           'procedure': procedure, 'expected': expected,
                                                                           'tab_id': tab_id})
 

@@ -83,6 +83,14 @@ class TestPattern(models.Model):
                     return [i+1, j+1]
         return []
 
+    def get_subs(self):
+        from testplan.models import Test
+        subs = []
+        tests = Test.objects.filter(parent=self).order_by('id')
+        for test in tests:
+            subs.append({'id': test.id, 'name': test.name, 'category': test.cat.name, 'testplan': test.cat.testplan})
+        return subs
+
 
 class TestImagePattern(models.Model):
     test_pattern = models.ForeignKey(TestPattern, related_name='test_pattern_image', on_delete=models.CASCADE)
