@@ -82,3 +82,45 @@ class TestPattern(models.Model):
                 if test == self:
                     return [i+1, j+1]
         return []
+
+
+class TestImagePattern(models.Model):
+    test_pattern = models.ForeignKey(TestPattern, related_name='test_pattern_image', on_delete=models.CASCADE)
+    desc = models.CharField(max_length=1000, blank=True, null=True)
+    image = models.ImageField(upload_to="testplan_pattern/images/")
+    width = models.IntegerField(blank=True, null=True)
+    height = models.IntegerField(blank=True, null=True)
+    created_by = models.ForeignKey(User, models.SET_NULL, related_name='test_pattern_image_c', blank=True, null=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_by = models.ForeignKey(User, models.SET_NULL, related_name='test_pattern_image_u', blank=True, null=True)
+    updated_at = models.DateTimeField(default=timezone.now)
+
+
+class TestConfigPattern(models.Model):
+    test_pattern = models.ForeignKey(TestPattern, related_name='test_pattern_config', on_delete=models.CASCADE)
+    desc = models.CharField(max_length=1000, blank=True, null=True)
+    lang = models.CharField(max_length=40, blank=True, null=True)
+    config = models.TextField()
+    created_by = models.ForeignKey(User, models.SET_NULL, related_name='test_pattern_config_c', blank=True, null=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_by = models.ForeignKey(User, models.SET_NULL, related_name='test_pattern_config_u', blank=True, null=True)
+    updated_at = models.DateTimeField(default=timezone.now)
+
+
+class TestLinkPattern(models.Model):
+    test_pattern = models.ForeignKey(TestPattern, related_name='test_pattern_link', on_delete=models.CASCADE)
+    desc = models.CharField(max_length=1000, blank=True, null=True)
+    url = models.CharField(max_length=1000)
+    created_by = models.ForeignKey(User, models.SET_NULL, related_name='test_pattern_link_c', blank=True, null=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_by = models.ForeignKey(User, models.SET_NULL, related_name='test_pattern_link_u', blank=True, null=True)
+    updated_at = models.DateTimeField(default=timezone.now)
+
+
+class TestCommentPattern(models.Model):
+    test_pattern = models.ForeignKey(TestPattern, related_name='test_pattern_comment', on_delete=models.CASCADE)
+    text = models.TextField()
+    created_by = models.ForeignKey(User, models.SET_NULL, related_name='test_pattern_comment_c', blank=True, null=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_by = models.ForeignKey(User, models.SET_NULL, related_name='test_pattern_comment_u', blank=True, null=True)
+    updated_at = models.DateTimeField(default=timezone.now)
