@@ -82,7 +82,7 @@ class Protocol(models.Model):
                     result = result.result
                 except TestResult.DoesNotExist:
                     result_id = result = comment = result_redmine_wiki = None
-                    notes = configs = images = issues = []
+                    notes = configs = images = files = issues = []
                 results.append({'header': False,
                                 'num': [i+1, j+1],
                                 'category_name': test.cat,
