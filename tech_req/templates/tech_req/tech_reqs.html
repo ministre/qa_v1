@@ -21,7 +21,7 @@
     <tr data-href="{% url 'tech_req_details' pk=tech_req.id tab_id=1 %}">
         <td>{{ tech_req.id }}</td>
         <td>{{ tech_req.name }}</td>
-        <td>{{ tech_req.device_type }}</td>
+        <td>{% if tech_req.device_type %}{{ tech_req.device_type }}{% endif %}</td>
     </tr>
     {% endfor %}
     </tbody>

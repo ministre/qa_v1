@@ -68,7 +68,7 @@
                             <li>
                                 <a href="{% url 'tech_req_file_update' pk=tech_req_file.id %}">{{ tech_req_file.filename }}</a>
                                 <a href="{% url 'tech_req_file_delete' pk=tech_req_file.id %}"><i class="step fi-minus" style="color: red"></i></a>
-                                <br><i>{{ tech_req_file.desc }}</i>
+                                {% if tech_req_file.desc %}<br><i>{{ tech_req_file.desc }}</i>{% endif %}
                             </li>
                             {% endfor %}
                         </ul>
