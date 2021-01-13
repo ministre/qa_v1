@@ -3,7 +3,7 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from .models import TestplanPattern, CategoryPattern, TestPattern
-from .forms import TestplanPatternForm, CategoryPatternForm, TestPatternForm
+from .forms import TestplanPatternForm, CategoryPatternForm, TestPatternForm, TestsUpdateForm
 from django.urls import reverse
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
@@ -247,8 +247,9 @@ def test_pattern_details(request, pk, tab_id: int):
     subs = test_pattern.get_subs()
     procedure = textile.textile(test_pattern.procedure)
     expected = textile.textile(test_pattern.expected)
+    form = TestsUpdateForm()
     return render(request, 'testplan_pattern/test_pattern_details.html', {'test_pattern': test_pattern, 'num': num,
-                                                                          'subs': subs,
+                                                                          'subs': subs, 'form': form,
                                                                           'procedure': procedure, 'expected': expected,
                                                                           'tab_id': tab_id})
 

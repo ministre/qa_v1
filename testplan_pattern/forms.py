@@ -55,3 +55,12 @@ class TestPatternForm(ModelForm):
                    'priority': HiddenInput(),
                    'created_by': HiddenInput(), 'created_at': HiddenInput(),
                    'updated_by': HiddenInput(), 'updated_at': HiddenInput()}
+
+
+class TestsUpdateForm(forms.Form):
+    CHOICES = [
+        ("a", "A"),
+        ("b", "B"),
+    ]
+    name = forms.CharField(label=_('Name'), max_length=100)
+    picked_tests = forms.MultipleChoiceField(choices=CHOICES, widget=forms.CheckboxSelectMultiple(), initial=('b'))
