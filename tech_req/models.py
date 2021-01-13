@@ -6,7 +6,7 @@ import os
 
 
 class TechReq(models.Model):
-    device_type = models.ForeignKey(DeviceType, on_delete=models.CASCADE)
+    device_type = models.ForeignKey(DeviceType, on_delete=models.CASCADE, blank=True, null=True)
     name = models.CharField(max_length=500)
     desc = models.CharField(max_length=3000, blank=True, null=True)
     created_by = models.ForeignKey(User, models.SET_NULL, related_name='tech_req_c', blank=True, null=True)
