@@ -331,6 +331,8 @@ class RedmineResult:
             if configs:
                 wiki += '\nh2. ' + str(_('Configurations')) + '\r\n\r'
             for config in configs:
+                if config.desc:
+                    wiki += '\nh3. ' + config.desc + '\r\n\r'
                 if config.lang == 'json':
                     config.lang = 'javascript'
                 wiki += '\n<pre><code class="' + config.lang + '">\r' + \
