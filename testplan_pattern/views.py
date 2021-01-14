@@ -3,7 +3,8 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from .models import TestplanPattern, CategoryPattern, TestPattern
-from .forms import TestplanPatternForm, CategoryPatternForm, TestPatternForm, TestsUpdateForm
+from testplan.models import Test
+from .forms import TestplanPatternForm, CategoryPatternForm, TestPatternForm, TestNamesUpdateForm
 from django.urls import reverse
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
@@ -11,6 +12,7 @@ from device.views import Item
 from django.http import HttpResponseRedirect
 from django.db.models import Max, Min
 import textile
+from django.utils.translation import gettext_lazy as _
 
 
 @method_decorator(login_required, name='dispatch')
@@ -244,12 +246,12 @@ class TestPatternDelete(DeleteView):
 def test_pattern_details(request, pk, tab_id: int):
     test_pattern = get_object_or_404(TestPattern, id=pk)
     num = test_pattern.get_num()
-    subs = test_pattern.get_subs()
     procedure = textile.textile(test_pattern.procedure)
     expected = textile.textile(test_pattern.expected)
-    form = TestsUpdateForm()
+    # tests=test_pattern.get_subs()
+    form = TestNamesUpdateForm(initial={'name': test_pattern.name}, pattern_id=test_pattern.id)
     return render(request, 'testplan_pattern/test_pattern_details.html', {'test_pattern': test_pattern, 'num': num,
-                                                                          'subs': subs, 'form': form,
+                                                                          'form': form,
                                                                           'procedure': procedure, 'expected': expected,
                                                                           'tab_id': tab_id})
 
@@ -278,3 +280,25 @@ def test_pattern_down(request, pk):
     Item.set_priority(foo=test, priority=next_tests['priority__min'])
     return HttpResponseRedirect(reverse('testplan_pattern_details',
                                         kwargs={'pk': test.category_pattern.testplan_pattern.id, 'tab_id': 2}))
+
+
+@login_required
+def test_names_update(request):
+    if request.method == "POST":
+        test_pattern = get_object_or_404(TestPattern, id=request.POST['pattern_id'])
+        back_url = reverse('test_pattern_details', kwargs={'pk': test_pattern.id, 'tab_id': 3})
+        form = TestNamesUpdateForm(request.POST, pattern_id=test_pattern.id)
+        if form.is_valid():
+            test_pattern.name = request.POST['name']
+            test_pattern.save()
+            for test_id in form.cleaned_data.get('tests'):
+                test = get_object_or_404(Test, id=test_id)
+                test.name = request.POST['name']
+                test.save()
+            return render(request, 'device/message.html', {'message': [True, _('Update successful')],
+                                                           'back_url': back_url})
+        return HttpResponseRedirect(reverse('test_pattern_details', kwargs={'pk': test_pattern.id,
+                                                                            'tab_id': 3}))
+    else:
+        back_url = reverse('testplan_patterns')
+        return render(request, 'device/message.html', {'message': [False, _('Page not found')], 'back_url': back_url})

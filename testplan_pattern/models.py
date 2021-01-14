@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 
 
 class TestplanPattern(models.Model):
@@ -88,7 +89,7 @@ class TestPattern(models.Model):
         subs = []
         tests = Test.objects.filter(parent=self).order_by('id')
         for test in tests:
-            subs.append({'id': test.id, 'name': test.name, 'category': test.cat.name, 'testplan': test.cat.testplan})
+            subs.append((test.id, _('Testplan') + ' ' + str(test.cat.testplan)))
         return subs
 
 

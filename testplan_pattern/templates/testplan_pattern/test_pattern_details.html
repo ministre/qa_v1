@@ -94,22 +94,11 @@
         <div class="cell">
             <div class="card">
                 <div class="card-section">
-                    <h5>{% trans "Name" %}</h5>
-                    <p>{{ test_pattern.name }}</p>
-                    <a href="{# url 'test_update' pk=test.id #}" class="button small">{% trans "Update all" %}</a>
-                    {{ form }}
-                </div>
-            </div>
-        </div>
-        <div class="cell">
-            <div class="card">
-                <div class="card-section">
-                    <h5>{% trans "Dependencies" %} ({{ subs|length }})</h5>
-                    <ul>
-                    {% for sub in subs %}
-                        <li><a href="{% url 'test_details' pk=sub.id tab_id=1%}">{{ sub.id }} / {% trans "Testplan" %} {{ sub.testplan }}</a></li>
-                    {% endfor %}
-                    </ul>
+                    <form method="post" action="{% url 'test_names_update' %}">
+                        <input type="submit" value='{% trans "Update" %}' class="button success small" />
+                        {% csrf_token %}
+                        {{ form }}
+                    </form>
                 </div>
             </div>
         </div>
