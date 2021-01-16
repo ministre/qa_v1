@@ -40,7 +40,7 @@ class RedmineProject:
             if project_parent:
                 is_parent_project = self.check_project(project=project_parent)
                 if is_parent_project[0] != 200:
-                    return [False, _('Parent project error') + ': ' + is_parent_project[1]]
+                    return [False, _('Parent project error') + ': ' + str(is_parent_project[1])]
                 else:
                     try:
                         if project_desc:
