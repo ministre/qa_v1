@@ -132,6 +132,7 @@ class TestResultNote(models.Model):
     result = models.ForeignKey(TestResult, on_delete=models.CASCADE, related_name='result_note')
     desc = models.CharField(max_length=1000, blank=True, null=True)
     text = models.TextField()
+    format = models.IntegerField(default=0)
     created_by = models.ForeignKey(User, models.SET_NULL, related_name='result_note_c', blank=True, null=True)
     created_at = models.DateTimeField(default=timezone.now)
     updated_by = models.ForeignKey(User, models.SET_NULL, related_name='result_note_u', blank=True, null=True)
