@@ -65,12 +65,19 @@ class ResultNoteForm(ModelForm):
     class Meta:
         model = TestResultNote
         labels = {
+            'desc': _('Description'),
             'text': _('Text'),
+            'format': _('Format'),
         }
         fields = '__all__'
+        FORMAT = (
+            (0, 'Textile'),
+            (1, _('Code')),
+        )
         widgets = {
             'result': HiddenInput(),
-            'text': forms.Textarea(attrs={'rows': '10'}),
+            'text': forms.Textarea(attrs={'rows': '15'}),
+            'format': forms.Select(choices=FORMAT, attrs={'class': 'form-control'}),
             'created_by': HiddenInput(), 'created_at': HiddenInput(),
             'updated_by': HiddenInput(), 'updated_at': HiddenInput()
         }

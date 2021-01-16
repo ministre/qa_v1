@@ -21,7 +21,7 @@
     </li>
     <li class="tabs-title{% if tab_id == 3 %} is-active{% endif %}">
         <a data-tabs-target="notes" href="#notes">{% trans "Notes" %}
-            {% if result.result_note.all.count > 0 %}({{ result.result_note.all.count }}){% endif %}
+            {% if notes|length > 0 %}({{ notes|length }}){% endif %}
         </a>
     </li>
     <li class="tabs-title{% if tab_id == 4 %} is-active{% endif %}">
@@ -113,13 +113,27 @@
                 <div class="card">
                     <div class="card-section">
                         <a href="{% url 'result_note_create' result=result.id %}" class="button small">{% trans "Add" %}</a>
-                        {% for note in result.result_note.all|dictsort:"id" %}
+                        {% for note in notes %}
                         <p>
                             {% if note.desc %}{{ note.desc }}{% endif %}
                             <a href="{% url 'result_note_update' pk=note.id %}"><i class="step fi-pencil" style="color: #7700ff"></i></a>
                             <a href="{% url 'result_note_delete' pk=note.id %}"><i class="step fi-minus" style="color: red"></i></a>
                         </p>
+
+                        {% if note.format == 0 %}
+                        <div class="grid-x grid-margin-x">
+                            <div class="cell">
+                                <div class="card">
+                                    <div class="card-section">
+                                        {{ note.text|safe }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% else %}
                         <pre><code>{{ note.text }}</code></pre>
+                        {% endif %}
+
                         {% endfor %}
                     </div>
                 </div>

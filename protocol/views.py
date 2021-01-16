@@ -213,7 +213,17 @@ def result_details(request, pk, tab_id):
     else:
         procedure = textile.textile(result.test.procedure)
         expected = textile.textile(result.test.expected)
-        num = result.test.get_num()
+        notes = TestResultNote.objects.filter(result=result)
+        converted_notes = []
+        for note in notes:
+            if note.format == 0:
+                converted_note = {'id': note.id, 'desc': note.desc, 'text': textile.textile(note.text),
+                                  'format': note.format}
+            else:
+                converted_note = {'id': note.id, 'desc': note.desc, 'text': note.text,
+                                  'format': note.format}
+            converted_notes.append(converted_note)
+
         result_form = ResultForm(instance=result)
         result_form.fields['redmine_wiki'].widget = forms.HiddenInput()
         export_form = RedmineResultExportForm(initial={'result_id': result.id,
@@ -221,8 +231,9 @@ def result_details(request, pk, tab_id):
                                                        'redmine_wiki': result.redmine_wiki,
                                                        'redmine_parent_wiki': result.protocol.redmine_wiki})
 
-        return render(request, 'protocol/result_details.html', {'result': result, 'procedure': procedure,
-                                                                'expected': expected, 'num': num,
+        return render(request, 'protocol/result_details.html', {'num': result.test.get_num(),
+                                                                'result': result, 'procedure': procedure,
+                                                                'expected': expected, 'notes': converted_notes,
                                                                 'result_form': result_form,
                                                                 'export_form': export_form,
                                                                 'redmine_url': settings.REDMINE_URL, 'tab_id': tab_id})

@@ -324,7 +324,10 @@ class RedmineResult:
             for note in notes:
                 if note.desc:
                     wiki += '\nh3. ' + note.desc + '\r\n\r'
-                wiki += '\n<pre>' + note.text + '</pre>\r\n\r'
+                if note.format == 0:
+                    wiki += '\n' + note.text + '\r\n\r'
+                else:
+                    wiki += '\n<pre>' + note.text + '</pre>\r\n\r'
         # configs
         if result_configs:
             configs = TestResultConfig.objects.filter(result=result).order_by('id')
