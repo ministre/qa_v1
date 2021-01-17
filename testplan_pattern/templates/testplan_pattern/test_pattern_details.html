@@ -94,6 +94,17 @@
     </div>
 
     <div class="tabs-panel {% if tab_id == 2 %}is-active{% endif %}" id="types">
+        <div class="cell">
+            <div class="card">
+                <div class="card-section">
+                    <form method="post" action="{% url 'test_pattern_device_types_update' pk=test_pattern.id %}">
+                        <input type="submit" value='{% trans "Update" %}' class="button success small" />
+                        {% csrf_token %}
+                        {{ device_types_update_form }}
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="tabs-panel {% if tab_id == 3 %}is-active{% endif %}" id="name">

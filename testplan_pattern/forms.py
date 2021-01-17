@@ -57,6 +57,10 @@ class TestPatternForm(ModelForm):
                    'created_by': HiddenInput(), 'created_at': HiddenInput(),
                    'updated_by': HiddenInput(), 'updated_at': HiddenInput()}
 
+    def __init__(self, *args, **kwargs):
+        super(TestPatternForm, self).__init__(*args, **kwargs)
+        self.fields['device_types'].widget.attrs = {'size': 35}
+
 
 class TestNamesUpdateForm(forms.Form):
     pattern_id = forms.IntegerField()

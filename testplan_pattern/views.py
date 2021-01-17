@@ -14,6 +14,7 @@ from django.http import HttpResponseRedirect
 from django.db.models import Max, Min
 import textile
 from django.utils.translation import gettext_lazy as _
+from django import forms
 
 
 @method_decorator(login_required, name='dispatch')
@@ -249,6 +250,14 @@ def test_pattern_details(request, pk, tab_id: int):
     num = test_pattern.get_num()
     procedure = textile.textile(test_pattern.procedure)
     expected = textile.textile(test_pattern.expected)
+
+    device_types_update_form = TestPatternForm(instance=test_pattern)
+    device_types_update_form.fields['name'].widget = forms.HiddenInput()
+    device_types_update_form.fields['procedure'].widget = forms.HiddenInput()
+    device_types_update_form.fields['expected'].widget = forms.HiddenInput()
+    device_types_update_form.fields['purpose'].widget = forms.HiddenInput()
+    device_types_update_form.fields['redmine_wiki'].widget = forms.HiddenInput()
+
     test_names_update_form = TestNamesUpdateForm(initial={'name': test_pattern.name}, pattern_id=test_pattern.id)
     test_purposes_update_form = TestPurposesUpdateForm(initial={'purpose': test_pattern.purpose},
                                                        pattern_id=test_pattern.id)
@@ -259,6 +268,8 @@ def test_pattern_details(request, pk, tab_id: int):
     test_redmine_wiki_update_form = TestRedmineWikiUpdateForm(initial={'redmine_wiki': test_pattern.redmine_wiki},
                                                               pattern_id=test_pattern.id)
     return render(request, 'testplan_pattern/test_pattern_details.html', {'test_pattern': test_pattern, 'num': num,
+                                                                          'device_types_update_form':
+                                                                              device_types_update_form,
                                                                           'test_names_update_form':
                                                                               test_names_update_form,
                                                                           'test_purposes_update_form':
@@ -427,3 +438,19 @@ def test_redmine_wiki_update(request):
     else:
         back_url = reverse('testplan_patterns')
         return render(request, 'device/message.html', {'message': [False, _('Page not found')], 'back_url': back_url})
+
+
+@login_required
+def test_pattern_device_types_update(request, pk):
+    if request.method == "POST":
+        test_pattern = get_object_or_404(TestPattern, id=pk)
+        back_url = reverse('test_pattern_details', kwargs={'pk': test_pattern.id, 'tab_id': 2})
+        form = TestPatternForm(request.POST)
+        if form.is_valid():
+            test_pattern.device_types.set(form.cleaned_data.get('device_types'))
+            test_pattern.save()
+            return render(request, 'device/message.html', {'message': [True, _('Update successful')],
+                                                           'back_url': back_url})
+        return HttpResponseRedirect(reverse('test_pattern_details', kwargs={'pk': test_pattern.id, 'tab_id': 2}))
+    else:
+        return render(request, 'device/message.html', {'message': [False, _('Page not found')]})
