@@ -31,18 +31,24 @@
         <a data-tabs-target="expected" href="#expected">{% trans "Expected result" %}</a>
     </li>
     <li class="tabs-title {% if tab_id == 7 %} is-active{% endif %}">
-        <a data-tabs-target="images" href="#images">{% trans "Images" %}</a>
-    </li>
-    <li class="tabs-title {% if tab_id == 8 %} is-active{% endif %}">
         <a data-tabs-target="configs" href="#configs">{% trans "Configs" %}</a>
     </li>
+    <li class="tabs-title {% if tab_id == 8 %} is-active{% endif %}">
+        <a data-tabs-target="images" href="#images">{% trans "Images" %}</a>
+    </li>
     <li class="tabs-title {% if tab_id == 9 %} is-active{% endif %}">
-        <a data-tabs-target="links" href="#links">{% trans "Links" %}</a>
+        <a data-tabs-target="images" href="#files">{% trans "Files" %}</a>
     </li>
     <li class="tabs-title {% if tab_id == 10 %} is-active{% endif %}">
-        <a data-tabs-target="comments" href="#comments">{% trans "Comments" %}</a>
+        <a data-tabs-target="links" href="#links">{% trans "Links" %}</a>
     </li>
     <li class="tabs-title {% if tab_id == 11 %} is-active{% endif %}">
+        <a data-tabs-target="comments" href="#comments">{% trans "Comments" %}</a>
+    </li>
+    <li class="tabs-title {% if tab_id == 12 %} is-active{% endif %}">
+        <a data-tabs-target="redmine_wiki" href="#redmine_wiki">Redmine Wiki</a>
+    </li>
+    <li class="tabs-title {% if tab_id == 13 %} is-active{% endif %}">
         <a data-tabs-target="redmine" href="#redmine">Redmine</a>
     </li>
 </ul>
@@ -146,19 +152,36 @@
         </div>
     </div>
 
-    <div class="tabs-panel {% if tab_id == 7 %}is-active{% endif %}" id="images">
+    <div class="tabs-panel {% if tab_id == 7 %}is-active{% endif %}" id="configs">
     </div>
 
-    <div class="tabs-panel {% if tab_id == 8 %}is-active{% endif %}" id="configs">
+    <div class="tabs-panel {% if tab_id == 8 %}is-active{% endif %}" id="images">
     </div>
 
-    <div class="tabs-panel {% if tab_id == 9 %}is-active{% endif %}" id="links">
+    <div class="tabs-panel {% if tab_id == 9 %}is-active{% endif %}" id="files">
     </div>
 
-    <div class="tabs-panel {% if tab_id == 10 %}is-active{% endif %}" id="comments">
+    <div class="tabs-panel {% if tab_id == 10 %}is-active{% endif %}" id="links">
     </div>
 
-    <div class="tabs-panel {% if tab_id == 11 %}is-active{% endif %}" id="redmine">
+    <div class="tabs-panel {% if tab_id == 11 %}is-active{% endif %}" id="comments">
+    </div>
+
+    <div class="tabs-panel {% if tab_id == 12 %}is-active{% endif %}" id="redmine_wiki">
+        <div class="cell">
+            <div class="card">
+                <div class="card-section">
+                    <form method="post" action="{% url 'test_redmine_wiki_update' %}">
+                        <input type="submit" value='{% trans "Update" %}' class="button success small" />
+                        {% csrf_token %}
+                        {{ test_redmine_wiki_update_form }}
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tabs-panel {% if tab_id == 13 %}is-active{% endif %}" id="redmine">
     </div>
 
 </div>

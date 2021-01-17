@@ -5,7 +5,7 @@ from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from .models import TestplanPattern, CategoryPattern, TestPattern
 from testplan.models import Test
 from .forms import TestplanPatternForm, CategoryPatternForm, TestPatternForm, TestNamesUpdateForm, \
-    TestPurposesUpdateForm, TestProceduresUpdateForm, TestExpectedUpdateForm
+    TestPurposesUpdateForm, TestProceduresUpdateForm, TestExpectedUpdateForm, TestRedmineWikiUpdateForm
 from django.urls import reverse
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
@@ -256,6 +256,8 @@ def test_pattern_details(request, pk, tab_id: int):
                                                            pattern_id=test_pattern.id)
     test_expected_update_form = TestExpectedUpdateForm(initial={'expected': test_pattern.expected},
                                                        pattern_id=test_pattern.id)
+    test_redmine_wiki_update_form = TestRedmineWikiUpdateForm(initial={'redmine_wiki': test_pattern.redmine_wiki},
+                                                              pattern_id=test_pattern.id)
     return render(request, 'testplan_pattern/test_pattern_details.html', {'test_pattern': test_pattern, 'num': num,
                                                                           'test_names_update_form':
                                                                               test_names_update_form,
@@ -265,6 +267,8 @@ def test_pattern_details(request, pk, tab_id: int):
                                                                               test_procedures_update_form,
                                                                           'test_expected_update_form':
                                                                               test_expected_update_form,
+                                                                          'test_redmine_wiki_update_form':
+                                                                              test_redmine_wiki_update_form,
                                                                           'procedure': procedure, 'expected': expected,
                                                                           'tab_id': tab_id})
 
@@ -303,10 +307,14 @@ def test_names_update(request):
         form = TestNamesUpdateForm(request.POST, pattern_id=test_pattern.id)
         if form.is_valid():
             test_pattern.name = request.POST['name']
+            test_pattern.updated_by = request.user
+            test_pattern.updated_at = timezone.now()
             test_pattern.save()
             for test_id in form.cleaned_data.get('tests'):
                 test = get_object_or_404(Test, id=test_id)
                 test.name = request.POST['name']
+                test.updated_by = request.user
+                test.updated_at = timezone.now()
                 test.save()
             return render(request, 'device/message.html', {'message': [True, _('Update successful')],
                                                            'back_url': back_url})
@@ -325,10 +333,14 @@ def test_purposes_update(request):
         form = TestPurposesUpdateForm(request.POST, pattern_id=test_pattern.id)
         if form.is_valid():
             test_pattern.purpose = request.POST['purpose']
+            test_pattern.updated_by = request.user
+            test_pattern.updated_at = timezone.now()
             test_pattern.save()
             for test_id in form.cleaned_data.get('tests'):
                 test = get_object_or_404(Test, id=test_id)
                 test.purpose = request.POST['purpose']
+                test.updated_by = request.user
+                test.updated_at = timezone.now()
                 test.save()
             return render(request, 'device/message.html', {'message': [True, _('Update successful')],
                                                            'back_url': back_url})
@@ -347,10 +359,14 @@ def test_procedures_update(request):
         form = TestProceduresUpdateForm(request.POST, pattern_id=test_pattern.id)
         if form.is_valid():
             test_pattern.procedure = request.POST['procedure']
+            test_pattern.updated_by = request.user
+            test_pattern.updated_at = timezone.now()
             test_pattern.save()
             for test_id in form.cleaned_data.get('tests'):
                 test = get_object_or_404(Test, id=test_id)
                 test.procedure = request.POST['procedure']
+                test.updated_by = request.user
+                test.updated_at = timezone.now()
                 test.save()
             return render(request, 'device/message.html', {'message': [True, _('Update successful')],
                                                            'back_url': back_url})
@@ -369,15 +385,45 @@ def test_expected_update(request):
         form = TestExpectedUpdateForm(request.POST, pattern_id=test_pattern.id)
         if form.is_valid():
             test_pattern.expected = request.POST['expected']
+            test_pattern.updated_by = request.user
+            test_pattern.updated_at = timezone.now()
             test_pattern.save()
             for test_id in form.cleaned_data.get('tests'):
                 test = get_object_or_404(Test, id=test_id)
                 test.expected = request.POST['expected']
+                test.updated_by = request.user
+                test.updated_at = timezone.now()
                 test.save()
             return render(request, 'device/message.html', {'message': [True, _('Update successful')],
                                                            'back_url': back_url})
         return HttpResponseRedirect(reverse('test_pattern_details', kwargs={'pk': test_pattern.id,
                                                                             'tab_id': 6}))
+    else:
+        back_url = reverse('testplan_patterns')
+        return render(request, 'device/message.html', {'message': [False, _('Page not found')], 'back_url': back_url})
+
+
+@login_required
+def test_redmine_wiki_update(request):
+    if request.method == "POST":
+        test_pattern = get_object_or_404(TestPattern, id=request.POST['pattern_id'])
+        back_url = reverse('test_pattern_details', kwargs={'pk': test_pattern.id, 'tab_id': 12})
+        form = TestRedmineWikiUpdateForm(request.POST, pattern_id=test_pattern.id)
+        if form.is_valid():
+            test_pattern.redmine_wiki = request.POST['redmine_wiki']
+            test_pattern.updated_by = request.user
+            test_pattern.updated_at = timezone.now()
+            test_pattern.save()
+            for test_id in form.cleaned_data.get('tests'):
+                test = get_object_or_404(Test, id=test_id)
+                test.redmine_wiki = request.POST['redmine_wiki']
+                test.updated_by = request.user
+                test.updated_at = timezone.now()
+                test.save()
+            return render(request, 'device/message.html', {'message': [True, _('Update successful')],
+                                                           'back_url': back_url})
+        return HttpResponseRedirect(reverse('test_pattern_details', kwargs={'pk': test_pattern.id,
+                                                                            'tab_id': 12}))
     else:
         back_url = reverse('testplan_patterns')
         return render(request, 'device/message.html', {'message': [False, _('Page not found')], 'back_url': back_url})

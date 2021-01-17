@@ -120,3 +120,19 @@ class TestExpectedUpdateForm(forms.Form):
         subs = test_pattern.get_subs()
         self.fields['tests'].choices = subs
         self.fields['tests'].initial = [item[0] for item in subs]
+
+
+class TestRedmineWikiUpdateForm(forms.Form):
+    pattern_id = forms.IntegerField()
+    redmine_wiki = forms.CharField(max_length=300)
+    tests = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple(), label=_('Dependencies'), required=False)
+
+    def __init__(self, *args, **kwargs):
+        pattern_id = kwargs.pop('pattern_id', None)
+        super(TestRedmineWikiUpdateForm, self).__init__(*args, **kwargs)
+        self.fields['pattern_id'].initial = pattern_id
+        self.fields['pattern_id'].widget = forms.HiddenInput()
+        test_pattern = get_object_or_404(TestPattern, id=pattern_id)
+        subs = test_pattern.get_subs()
+        self.fields['tests'].choices = subs
+        self.fields['tests'].initial = [item[0] for item in subs]

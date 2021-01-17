@@ -116,7 +116,7 @@
                                 {% for test_pattern in category_pattern.category_pattern_test.all|dictsort:"priority" %}
                                 <ul style="list-style: none">
                                     <li>
-                                        <a href="{% url 'test_pattern_details' pk=test_pattern.id tab_id=2 %}">
+                                        <a href="{% url 'test_pattern_details' pk=test_pattern.id tab_id=1 %}">
                                             {{ forloop.parentloop.counter}}.{{ forloop.counter }}. {{ test_pattern.name }}
                                         </a>
                                         {% if forloop.counter != 1 %}
