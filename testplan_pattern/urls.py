@@ -22,4 +22,6 @@ urlpatterns = [
     path('test/down/<int:pk>/', views.test_pattern_down, name='test_pattern_down'),
     path('test_names_update/', views.test_names_update, name='test_names_update'),
     path('test_purposes_update/', views.test_purposes_update, name='test_purposes_update'),
+    path('test_procedures_update/', views.test_procedures_update, name='test_procedures_update'),
+    path('test_expected_update/', views.test_expected_update, name='test_expected_update'),
 ]

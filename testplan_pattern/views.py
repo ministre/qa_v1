@@ -5,7 +5,7 @@ from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from .models import TestplanPattern, CategoryPattern, TestPattern
 from testplan.models import Test
 from .forms import TestplanPatternForm, CategoryPatternForm, TestPatternForm, TestNamesUpdateForm, \
-    TestPurposesUpdateForm
+    TestPurposesUpdateForm, TestProceduresUpdateForm, TestExpectedUpdateForm
 from django.urls import reverse
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
@@ -252,11 +252,19 @@ def test_pattern_details(request, pk, tab_id: int):
     test_names_update_form = TestNamesUpdateForm(initial={'name': test_pattern.name}, pattern_id=test_pattern.id)
     test_purposes_update_form = TestPurposesUpdateForm(initial={'purpose': test_pattern.purpose},
                                                        pattern_id=test_pattern.id)
+    test_procedures_update_form = TestProceduresUpdateForm(initial={'procedure': test_pattern.procedure},
+                                                           pattern_id=test_pattern.id)
+    test_expected_update_form = TestExpectedUpdateForm(initial={'expected': test_pattern.expected},
+                                                       pattern_id=test_pattern.id)
     return render(request, 'testplan_pattern/test_pattern_details.html', {'test_pattern': test_pattern, 'num': num,
                                                                           'test_names_update_form':
                                                                               test_names_update_form,
                                                                           'test_purposes_update_form':
                                                                               test_purposes_update_form,
+                                                                          'test_procedures_update_form':
+                                                                              test_procedures_update_form,
+                                                                          'test_expected_update_form':
+                                                                              test_expected_update_form,
                                                                           'procedure': procedure, 'expected': expected,
                                                                           'tab_id': tab_id})
 
@@ -313,7 +321,7 @@ def test_names_update(request):
 def test_purposes_update(request):
     if request.method == "POST":
         test_pattern = get_object_or_404(TestPattern, id=request.POST['pattern_id'])
-        back_url = reverse('test_pattern_details', kwargs={'pk': test_pattern.id, 'tab_id': 3})
+        back_url = reverse('test_pattern_details', kwargs={'pk': test_pattern.id, 'tab_id': 4})
         form = TestPurposesUpdateForm(request.POST, pattern_id=test_pattern.id)
         if form.is_valid():
             test_pattern.purpose = request.POST['purpose']
@@ -325,7 +333,51 @@ def test_purposes_update(request):
             return render(request, 'device/message.html', {'message': [True, _('Update successful')],
                                                            'back_url': back_url})
         return HttpResponseRedirect(reverse('test_pattern_details', kwargs={'pk': test_pattern.id,
-                                                                            'tab_id': 3}))
+                                                                            'tab_id': 4}))
+    else:
+        back_url = reverse('testplan_patterns')
+        return render(request, 'device/message.html', {'message': [False, _('Page not found')], 'back_url': back_url})
+
+
+@login_required
+def test_procedures_update(request):
+    if request.method == "POST":
+        test_pattern = get_object_or_404(TestPattern, id=request.POST['pattern_id'])
+        back_url = reverse('test_pattern_details', kwargs={'pk': test_pattern.id, 'tab_id': 5})
+        form = TestProceduresUpdateForm(request.POST, pattern_id=test_pattern.id)
+        if form.is_valid():
+            test_pattern.procedure = request.POST['procedure']
+            test_pattern.save()
+            for test_id in form.cleaned_data.get('tests'):
+                test = get_object_or_404(Test, id=test_id)
+                test.procedure = request.POST['procedure']
+                test.save()
+            return render(request, 'device/message.html', {'message': [True, _('Update successful')],
+                                                           'back_url': back_url})
+        return HttpResponseRedirect(reverse('test_pattern_details', kwargs={'pk': test_pattern.id,
+                                                                            'tab_id': 5}))
+    else:
+        back_url = reverse('testplan_patterns')
+        return render(request, 'device/message.html', {'message': [False, _('Page not found')], 'back_url': back_url})
+
+
+@login_required
+def test_expected_update(request):
+    if request.method == "POST":
+        test_pattern = get_object_or_404(TestPattern, id=request.POST['pattern_id'])
+        back_url = reverse('test_pattern_details', kwargs={'pk': test_pattern.id, 'tab_id': 6})
+        form = TestExpectedUpdateForm(request.POST, pattern_id=test_pattern.id)
+        if form.is_valid():
+            test_pattern.expected = request.POST['expected']
+            test_pattern.save()
+            for test_id in form.cleaned_data.get('tests'):
+                test = get_object_or_404(Test, id=test_id)
+                test.expected = request.POST['expected']
+                test.save()
+            return render(request, 'device/message.html', {'message': [True, _('Update successful')],
+                                                           'back_url': back_url})
+        return HttpResponseRedirect(reverse('test_pattern_details', kwargs={'pk': test_pattern.id,
+                                                                            'tab_id': 6}))
     else:
         back_url = reverse('testplan_patterns')
         return render(request, 'device/message.html', {'message': [False, _('Page not found')], 'back_url': back_url})

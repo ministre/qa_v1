@@ -88,3 +88,35 @@ class TestPurposesUpdateForm(forms.Form):
         subs = test_pattern.get_subs()
         self.fields['tests'].choices = subs
         self.fields['tests'].initial = [item[0] for item in subs]
+
+
+class TestProceduresUpdateForm(forms.Form):
+    pattern_id = forms.IntegerField()
+    procedure = forms.CharField(widget=forms.Textarea, label=_('Procedure'))
+    tests = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple(), label=_('Dependencies'), required=False)
+
+    def __init__(self, *args, **kwargs):
+        pattern_id = kwargs.pop('pattern_id', None)
+        super(TestProceduresUpdateForm, self).__init__(*args, **kwargs)
+        self.fields['pattern_id'].initial = pattern_id
+        self.fields['pattern_id'].widget = forms.HiddenInput()
+        test_pattern = get_object_or_404(TestPattern, id=pattern_id)
+        subs = test_pattern.get_subs()
+        self.fields['tests'].choices = subs
+        self.fields['tests'].initial = [item[0] for item in subs]
+
+
+class TestExpectedUpdateForm(forms.Form):
+    pattern_id = forms.IntegerField()
+    expected = forms.CharField(widget=forms.Textarea, label=_('Expected result'))
+    tests = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple(), label=_('Dependencies'), required=False)
+
+    def __init__(self, *args, **kwargs):
+        pattern_id = kwargs.pop('pattern_id', None)
+        super(TestExpectedUpdateForm, self).__init__(*args, **kwargs)
+        self.fields['pattern_id'].initial = pattern_id
+        self.fields['pattern_id'].widget = forms.HiddenInput()
+        test_pattern = get_object_or_404(TestPattern, id=pattern_id)
+        subs = test_pattern.get_subs()
+        self.fields['tests'].choices = subs
+        self.fields['tests'].initial = [item[0] for item in subs]

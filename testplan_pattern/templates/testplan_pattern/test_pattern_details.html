@@ -122,22 +122,28 @@
         <div class="cell">
             <div class="card">
                 <div class="card-section">
-                    <h4>{% trans "Procedure" %}</h4>
-                    <p>{{ procedure|safe }}</p>
-                </div>
-            </div>
-        </div>
-        <div class="cell">
-            <div class="card">
-                <div class="card-section">
-                    <h4>{% trans "Expected result" %}</h4>
-                    <p>{{ expected|safe }}</p>
+                    <form method="post" action="{% url 'test_procedures_update' %}">
+                        <input type="submit" value='{% trans "Update" %}' class="button success small" />
+                        {% csrf_token %}
+                        {{ test_procedures_update_form }}
+                    </form>
                 </div>
             </div>
         </div>
     </div>
 
     <div class="tabs-panel {% if tab_id == 6 %}is-active{% endif %}" id="expected">
+        <div class="cell">
+            <div class="card">
+                <div class="card-section">
+                    <form method="post" action="{% url 'test_expected_update' %}">
+                        <input type="submit" value='{% trans "Update" %}' class="button success small" />
+                        {% csrf_token %}
+                        {{ test_expected_update_form }}
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="tabs-panel {% if tab_id == 7 %}is-active{% endif %}" id="images">
