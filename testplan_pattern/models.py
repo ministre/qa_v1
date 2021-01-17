@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+from device.models import DeviceType
 
 
 class TestplanPattern(models.Model):
@@ -60,6 +61,7 @@ class CategoryPattern(models.Model):
 class TestPattern(models.Model):
     category_pattern = models.ForeignKey(CategoryPattern, related_name='category_pattern_test',
                                          on_delete=models.CASCADE)
+    device_types = models.ManyToManyField(DeviceType, related_name='device_types_pattern_test', blank=True)
     name = models.CharField(max_length=300)
     purpose = models.CharField(max_length=1000, null=True, blank=True)
     procedure = models.TextField(blank=True)
