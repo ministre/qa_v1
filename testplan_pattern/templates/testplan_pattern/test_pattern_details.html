@@ -97,7 +97,7 @@
                     <form method="post" action="{% url 'test_names_update' %}">
                         <input type="submit" value='{% trans "Update" %}' class="button success small" />
                         {% csrf_token %}
-                        {{ form }}
+                        {{ test_names_update_form }}
                     </form>
                 </div>
             </div>
@@ -105,6 +105,17 @@
     </div>
 
     <div class="tabs-panel {% if tab_id == 4 %}is-active{% endif %}" id="purpose">
+        <div class="cell">
+            <div class="card">
+                <div class="card-section">
+                    <form method="post" action="{% url 'test_purposes_update' %}">
+                        <input type="submit" value='{% trans "Update" %}' class="button success small" />
+                        {% csrf_token %}
+                        {{ test_purposes_update_form }}
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="tabs-panel {% if tab_id == 5 %}is-active{% endif %}" id="procedure">

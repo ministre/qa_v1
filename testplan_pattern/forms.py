@@ -60,12 +60,28 @@ class TestPatternForm(ModelForm):
 
 class TestNamesUpdateForm(forms.Form):
     pattern_id = forms.IntegerField()
-    name = forms.CharField(label=_('Name'), max_length=100)
+    name = forms.CharField(label=_('Name'), max_length=300)
     tests = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple(), label=_('Dependencies'), required=False)
 
     def __init__(self, *args, **kwargs):
         pattern_id = kwargs.pop('pattern_id', None)
         super(TestNamesUpdateForm, self).__init__(*args, **kwargs)
+        self.fields['pattern_id'].initial = pattern_id
+        self.fields['pattern_id'].widget = forms.HiddenInput()
+        test_pattern = get_object_or_404(TestPattern, id=pattern_id)
+        subs = test_pattern.get_subs()
+        self.fields['tests'].choices = subs
+        self.fields['tests'].initial = [item[0] for item in subs]
+
+
+class TestPurposesUpdateForm(forms.Form):
+    pattern_id = forms.IntegerField()
+    purpose = forms.CharField(label=_('Purpose'), max_length=1000)
+    tests = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple(), label=_('Dependencies'), required=False)
+
+    def __init__(self, *args, **kwargs):
+        pattern_id = kwargs.pop('pattern_id', None)
+        super(TestPurposesUpdateForm, self).__init__(*args, **kwargs)
         self.fields['pattern_id'].initial = pattern_id
         self.fields['pattern_id'].widget = forms.HiddenInput()
         test_pattern = get_object_or_404(TestPattern, id=pattern_id)

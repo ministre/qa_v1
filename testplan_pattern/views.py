@@ -4,7 +4,8 @@ from django.contrib.auth.decorators import login_required
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from .models import TestplanPattern, CategoryPattern, TestPattern
 from testplan.models import Test
-from .forms import TestplanPatternForm, CategoryPatternForm, TestPatternForm, TestNamesUpdateForm
+from .forms import TestplanPatternForm, CategoryPatternForm, TestPatternForm, TestNamesUpdateForm, \
+    TestPurposesUpdateForm
 from django.urls import reverse
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
@@ -248,10 +249,14 @@ def test_pattern_details(request, pk, tab_id: int):
     num = test_pattern.get_num()
     procedure = textile.textile(test_pattern.procedure)
     expected = textile.textile(test_pattern.expected)
-    # tests=test_pattern.get_subs()
-    form = TestNamesUpdateForm(initial={'name': test_pattern.name}, pattern_id=test_pattern.id)
+    test_names_update_form = TestNamesUpdateForm(initial={'name': test_pattern.name}, pattern_id=test_pattern.id)
+    test_purposes_update_form = TestPurposesUpdateForm(initial={'purpose': test_pattern.purpose},
+                                                       pattern_id=test_pattern.id)
     return render(request, 'testplan_pattern/test_pattern_details.html', {'test_pattern': test_pattern, 'num': num,
-                                                                          'form': form,
+                                                                          'test_names_update_form':
+                                                                              test_names_update_form,
+                                                                          'test_purposes_update_form':
+                                                                              test_purposes_update_form,
                                                                           'procedure': procedure, 'expected': expected,
                                                                           'tab_id': tab_id})
 
@@ -294,6 +299,28 @@ def test_names_update(request):
             for test_id in form.cleaned_data.get('tests'):
                 test = get_object_or_404(Test, id=test_id)
                 test.name = request.POST['name']
+                test.save()
+            return render(request, 'device/message.html', {'message': [True, _('Update successful')],
+                                                           'back_url': back_url})
+        return HttpResponseRedirect(reverse('test_pattern_details', kwargs={'pk': test_pattern.id,
+                                                                            'tab_id': 3}))
+    else:
+        back_url = reverse('testplan_patterns')
+        return render(request, 'device/message.html', {'message': [False, _('Page not found')], 'back_url': back_url})
+
+
+@login_required
+def test_purposes_update(request):
+    if request.method == "POST":
+        test_pattern = get_object_or_404(TestPattern, id=request.POST['pattern_id'])
+        back_url = reverse('test_pattern_details', kwargs={'pk': test_pattern.id, 'tab_id': 3})
+        form = TestPurposesUpdateForm(request.POST, pattern_id=test_pattern.id)
+        if form.is_valid():
+            test_pattern.purpose = request.POST['purpose']
+            test_pattern.save()
+            for test_id in form.cleaned_data.get('tests'):
+                test = get_object_or_404(Test, id=test_id)
+                test.purpose = request.POST['purpose']
                 test.save()
             return render(request, 'device/message.html', {'message': [True, _('Update successful')],
                                                            'back_url': back_url})
