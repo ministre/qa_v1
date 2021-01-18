@@ -164,6 +164,14 @@
     </div>
 
     <div class="tabs-panel {% if tab_id == 7 %}is-active{% endif %}" id="configs">
+        <a href="{% url 'test_pattern_config_create' test_pattern_id=test_pattern.id %}" class="button small">{% trans "Add" %}</a>
+        <div class="cell">
+            <div class="card">
+                <div class="card-section">
+
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="tabs-panel {% if tab_id == 8 %}is-active{% endif %}" id="images">

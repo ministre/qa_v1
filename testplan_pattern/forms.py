@@ -1,5 +1,5 @@
 from django.forms import ModelForm, HiddenInput
-from .models import TestplanPattern, CategoryPattern, TestPattern
+from .models import TestplanPattern, CategoryPattern, TestPattern, TestPatternConfig
 from django import forms
 from django.utils.translation import gettext_lazy as _
 from django.shortcuts import get_object_or_404
@@ -140,3 +140,38 @@ class TestRedmineWikiUpdateForm(forms.Form):
         subs = test_pattern.get_subs()
         self.fields['tests'].choices = subs
         self.fields['tests'].initial = [item[0] for item in subs]
+
+
+class TestPatternConfigForm(ModelForm):
+    class Meta:
+        model = TestPatternConfig
+        labels = {
+            'name': _('Name'),
+            'lang': _('Style'),
+            'config': _('Configuration'),
+        }
+        fields = '__all__'
+        LANG = (
+            ('json', 'JSON'),
+            ('c', 'C'),
+            ('coffee', 'Coffeescript'),
+            ('csharp', 'C#'),
+            ('css', 'CSS'),
+            ('d', 'D'),
+            ('go', 'Go'),
+            ('haskell', 'Haskell'),
+            ('html', 'HTML'),
+            ('javascript', 'JavaScript'),
+            ('lua', 'Lua'),
+            ('php', 'PHP'),
+            ('python', 'Python'),
+            ('r', 'R'),
+            ('ruby', 'Ruby'),
+            ('scheme', 'Scheme'),
+            ('shell', 'Shell'),
+        )
+
+        widgets = {
+            'lang': forms.Select(choices=LANG, attrs={'class': 'form-control'}),
+            'test': HiddenInput()
+        }

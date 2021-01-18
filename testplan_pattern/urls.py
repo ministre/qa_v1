@@ -27,4 +27,6 @@ urlpatterns = [
     path('test/procedures_update/', views.test_procedures_update, name='test_procedures_update'),
     path('test/expected_update/', views.test_expected_update, name='test_expected_update'),
     path('test/redmine_wiki_update/', views.test_redmine_wiki_update, name='test_redmine_wiki_update'),
+    path('test/config/create/<int:test_pattern_id>/', views.TestPatternConfigCreate.as_view(),
+         name='test_pattern_config_create'),
 ]

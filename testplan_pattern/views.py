@@ -2,10 +2,11 @@ from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
-from .models import TestplanPattern, CategoryPattern, TestPattern
+from .models import TestplanPattern, CategoryPattern, TestPattern, TestPatternConfig
 from testplan.models import Test
 from .forms import TestplanPatternForm, CategoryPatternForm, TestPatternForm, TestNamesUpdateForm, \
-    TestPurposesUpdateForm, TestProceduresUpdateForm, TestExpectedUpdateForm, TestRedmineWikiUpdateForm
+    TestPurposesUpdateForm, TestProceduresUpdateForm, TestExpectedUpdateForm, TestRedmineWikiUpdateForm, \
+    TestPatternConfigForm
 from django.urls import reverse
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
@@ -454,3 +455,24 @@ def test_pattern_device_types_update(request, pk):
         return HttpResponseRedirect(reverse('test_pattern_details', kwargs={'pk': test_pattern.id, 'tab_id': 2}))
     else:
         return render(request, 'device/message.html', {'message': [False, _('Page not found')]})
+
+
+@method_decorator(login_required, name='dispatch')
+class TestPatternConfigCreate(CreateView):
+    model = TestPatternConfig
+    form_class = TestPatternConfigForm
+    template_name = 'device/create.html'
+
+    def get_initial(self):
+        return {'test_pattern': self.kwargs.get('test_pattern_id')}
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('test_pattern_details', kwargs={'pk': self.kwargs.get('test_pattern_id'),
+                                                                      'tab_id': 7})
+        return context
+
+    def get_success_url(self):
+        Item.update_timestamp(foo=self.object.test_pattern, user=self.request.user)
+        Item.update_timestamp(foo=self.object.test_pattern.category_pattern, user=self.request.user)
+        return reverse('test_pattern_details', kwargs={'pk': self.object.test_pattern.id, 'tab_id': 7})
