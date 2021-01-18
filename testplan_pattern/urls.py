@@ -29,4 +29,8 @@ urlpatterns = [
     path('test/redmine_wiki_update/', views.test_redmine_wiki_update, name='test_redmine_wiki_update'),
     path('test/config/create/<int:test_pattern_id>/', views.TestPatternConfigCreate.as_view(),
          name='test_pattern_config_create'),
+    path('test/config/update/<int:pk>/', views.TestPatternConfigUpdate.as_view(),
+         name='test_pattern_config_update'),
+    path('test/config/delete/<int:pk>/', views.TestPatternConfigDelete.as_view(),
+         name='test_pattern_config_delete'),
 ]

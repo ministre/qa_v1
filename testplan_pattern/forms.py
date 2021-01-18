@@ -146,7 +146,7 @@ class TestPatternConfigForm(ModelForm):
     class Meta:
         model = TestPatternConfig
         labels = {
-            'name': _('Name'),
+            'desc': _('Description'),
             'lang': _('Style'),
             'config': _('Configuration'),
         }
@@ -173,5 +173,7 @@ class TestPatternConfigForm(ModelForm):
 
         widgets = {
             'lang': forms.Select(choices=LANG, attrs={'class': 'form-control'}),
-            'test': HiddenInput()
+            'test_pattern': HiddenInput(),
+            'created_by': HiddenInput(), 'created_at': HiddenInput(),
+            'updated_by': HiddenInput(), 'updated_at': HiddenInput()
         }
