@@ -986,3 +986,9 @@ msgstr "Импорт тестов"
 #: .\testplan\views.py:130
 msgid "Are you sure?"
 msgstr "Вы уверены?"
+
+msgid "Notes"
+msgstr "Заметки"
+
+msgid "Detailed test results"
+msgstr "Детализированные результаты испытаний"
