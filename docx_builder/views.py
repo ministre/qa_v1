@@ -308,7 +308,108 @@ def build_protocol(request):
 
 @login_required
 def build_protocol_detailed(request):
-    return Http404
+    if request.method == 'POST':
+        protocol = get_object_or_404(Protocol, id=request.POST['protocol_id'])
+        docx_profile = get_object_or_404(DocxProfile, id=request.POST['docx_profile_id'])
+        header = test_purpose = test_procedure = test_expected = test_images = test_configs = test_links = False
+        result_configs = result_images = result_notes = result_status = False
+        try:
+            if request.POST['header']:
+                header = True
+        except MultiValueDictKeyError:
+            pass
+        try:
+            if request.POST['test_purpose']:
+                test_purpose = True
+        except MultiValueDictKeyError:
+            pass
+        try:
+            if request.POST['test_procedure']:
+                test_procedure = True
+        except MultiValueDictKeyError:
+            pass
+        try:
+            if request.POST['test_expected']:
+                test_expected = True
+        except MultiValueDictKeyError:
+            pass
+        try:
+            if request.POST['test_images']:
+                test_images = True
+        except MultiValueDictKeyError:
+            pass
+        try:
+            if request.POST['test_configs']:
+                test_configs = True
+        except MultiValueDictKeyError:
+            pass
+        try:
+            if request.POST['test_links']:
+                test_links = True
+        except MultiValueDictKeyError:
+            pass
+        try:
+            if request.POST['result_configs']:
+                result_configs = True
+        except MultiValueDictKeyError:
+            pass
+        try:
+            if request.POST['result_images']:
+                result_images = True
+        except MultiValueDictKeyError:
+            pass
+        try:
+            if request.POST['result_notes']:
+                result_notes = True
+        except MultiValueDictKeyError:
+            pass
+        try:
+            if request.POST['result_status']:
+                result_status = True
+        except MultiValueDictKeyError:
+            pass
+
+        document = Document()
+        document.styles['Title'].font.name = docx_profile.title_font_name
+        document.styles['Title'].font.color.rgb = RGBColor(docx_profile.title_font_color_red,
+                                                           docx_profile.title_font_color_green,
+                                                           docx_profile.title_font_color_blue)
+        document.styles['Title'].font.size = Pt(docx_profile.title_font_size)
+        document.styles['Title'].font.bold = docx_profile.title_font_bold
+        document.styles['Title'].font.italic = docx_profile.title_font_italic
+        document.styles['Title'].font.underline = docx_profile.title_font_underline
+        document.styles['Title'].paragraph_format.space_before = Pt(docx_profile.title_space_before)
+        document.styles['Title'].paragraph_format.space_after = Pt(docx_profile.title_space_after)
+        if docx_profile.title_alignment == 0:
+            document.styles['Title'].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.LEFT
+        elif docx_profile.title_alignment == 1:
+            document.styles['Title'].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+        elif docx_profile.title_alignment == 2:
+            document.styles['Title'].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.RIGHT
+        elif docx_profile.title_alignment == 3:
+            document.styles['Title'].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.JUSTIFY
+
+        # margin
+        section = document.sections
+        section[0].left_margin = Cm(2)
+        section[0].right_margin = Cm(1)
+        section[0].top_margin = Cm(1)
+        section[0].bottom_margin = Cm(1)
+        ###
+        document.add_paragraph(str(_('Detailed test results')), style='Title')
+        ###
+        file = os.path.join(settings.MEDIA_ROOT + '/docx_builder/protocols_detailed/',
+                            'Detailed_Protocol_' + str(protocol.id) + '.docx')
+        document.save(file)
+        if os.path.exists(file):
+            with open(file, 'rb') as fh:
+                response = HttpResponse(fh.read(), content_type="application/vnd.ms-word")
+                response['Content-Disposition'] = 'inline; filename=' + os.path.basename(file)
+                return response
+        raise Http404
+    else:
+        message = [False, _('Page not found')]
+        return render(request, 'device/message.html', {'message': message})
 
 
 def build_document():
