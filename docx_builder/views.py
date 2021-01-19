@@ -59,7 +59,6 @@ class DocxProfileUpdate(UpdateView):
         return context
 
     def get_success_url(self):
-        self.object.update_timestamp(user=self.request.user)
         return reverse('docx_profiles')
 
 
