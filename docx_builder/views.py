@@ -9,8 +9,7 @@ import os
 from django.http import HttpResponse, Http404
 from django.utils.datastructures import MultiValueDictKeyError
 from docx.shared import Cm, Pt, Inches, RGBColor
-from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
-from docx.enum.text import WD_BREAK
+from docx.enum.text import WD_PARAGRAPH_ALIGNMENT, WD_BREAK
 from django.views.generic import CreateView, ListView, UpdateView, DeleteView
 from django.utils.decorators import method_decorator
 from .models import DocxProfile
@@ -18,8 +17,7 @@ from .forms import DocxProfileForm
 from django.urls import reverse
 from django.utils import timezone
 from docx.enum.style import WD_STYLE_TYPE
-from docx.enum.table import WD_TABLE_ALIGNMENT
-from docx.enum.table import WD_CELL_VERTICAL_ALIGNMENT
+from docx.enum.table import WD_TABLE_ALIGNMENT, WD_CELL_VERTICAL_ALIGNMENT
 
 
 @method_decorator(login_required, name='dispatch')
@@ -51,7 +49,7 @@ class DocxProfileCreate(CreateView):
 class DocxProfileUpdate(UpdateView):
     model = DocxProfile
     form_class = DocxProfileForm
-    template_name = 'device/update.html'
+    template_name = 'docx_builder/update.html'
 
     def get_initial(self):
         return {'updated_by': self.request.user, 'updated_at': timezone.now()}
@@ -83,6 +81,7 @@ class DocxProfileDelete(DeleteView):
 def build_protocol(request):
     if request.method == 'POST':
         protocol = get_object_or_404(Protocol, id=request.POST['protocol_id'])
+        docx_profile = get_object_or_404(DocxProfile, id=request.POST['docx_profile_id'])
         general = performance = results_table = summary = team = False
         try:
             if request.POST['general']:
@@ -110,7 +109,8 @@ def build_protocol(request):
         except MultiValueDictKeyError:
             pass
 
-        document = build_document()
+        document = build_document(docx_profile=docx_profile)
+
         # margin
         section = document.sections
         section[0].left_margin = Cm(2)
@@ -372,86 +372,22 @@ def build_protocol_detailed(request):
         except MultiValueDictKeyError:
             pass
 
-        document = Document()
-        document.styles['Title'].font.name = docx_profile.title_font_name
-        document.styles['Title'].font.color.rgb = RGBColor(docx_profile.title_font_color_red,
-                                                           docx_profile.title_font_color_green,
-                                                           docx_profile.title_font_color_blue)
-        document.styles['Title'].font.size = Pt(docx_profile.title_font_size)
-        document.styles['Title'].font.bold = docx_profile.title_font_bold
-        document.styles['Title'].font.italic = docx_profile.title_font_italic
-        document.styles['Title'].font.underline = docx_profile.title_font_underline
-        document.styles['Title'].paragraph_format.space_before = Pt(docx_profile.title_space_before)
-        document.styles['Title'].paragraph_format.space_after = Pt(docx_profile.title_space_after)
-        if docx_profile.title_alignment == 0:
-            document.styles['Title'].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.LEFT
-        elif docx_profile.title_alignment == 1:
-            document.styles['Title'].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
-        elif docx_profile.title_alignment == 2:
-            document.styles['Title'].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.RIGHT
-        elif docx_profile.title_alignment == 3:
-            document.styles['Title'].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.JUSTIFY
-        document.styles['Heading 1'].font.name = docx_profile.h1_font_name
-        document.styles['Heading 1'].font.color.rgb = RGBColor(docx_profile.h1_font_color_red,
-                                                               docx_profile.h1_font_color_green,
-                                                               docx_profile.h1_font_color_blue)
-        document.styles['Heading 1'].font.size = Pt(docx_profile.h1_font_size)
-        document.styles['Heading 1'].font.bold = docx_profile.h1_font_bold
-        document.styles['Heading 1'].font.italic = docx_profile.h1_font_italic
-        document.styles['Heading 1'].font.underline = docx_profile.h1_font_underline
-        document.styles['Heading 1'].paragraph_format.space_before = Pt(docx_profile.h1_space_before)
-        document.styles['Heading 1'].paragraph_format.space_after = Pt(docx_profile.h1_space_after)
-        if docx_profile.h1_alignment == 0:
-            document.styles['Heading 1'].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.LEFT
-        elif docx_profile.h1_alignment == 1:
-            document.styles['Heading 1'].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
-        elif docx_profile.h1_alignment == 2:
-            document.styles['Heading 1'].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.RIGHT
-        elif docx_profile.h1_alignment == 3:
-            document.styles['Heading 1'].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.JUSTIFY
-        document.styles['Heading 2'].font.name = docx_profile.h2_font_name
-        document.styles['Heading 2'].font.color.rgb = RGBColor(docx_profile.h2_font_color_red,
-                                                               docx_profile.h2_font_color_green,
-                                                               docx_profile.h2_font_color_blue)
-        document.styles['Heading 2'].font.size = Pt(docx_profile.h2_font_size)
-        document.styles['Heading 2'].font.bold = docx_profile.h2_font_bold
-        document.styles['Heading 2'].font.italic = docx_profile.h2_font_italic
-        document.styles['Heading 2'].font.underline = docx_profile.h2_font_underline
-        document.styles['Heading 2'].paragraph_format.space_before = Pt(docx_profile.h2_space_before)
-        document.styles['Heading 2'].paragraph_format.space_after = Pt(docx_profile.h2_space_after)
-        if docx_profile.h1_alignment == 0:
-            document.styles['Heading 2'].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.LEFT
-        elif docx_profile.h1_alignment == 1:
-            document.styles['Heading 2'].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
-        elif docx_profile.h1_alignment == 2:
-            document.styles['Heading 2'].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.RIGHT
-        elif docx_profile.h1_alignment == 3:
-            document.styles['Heading 2'].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.JUSTIFY
+        document = build_document(docx_profile=docx_profile)
 
         # margin
         section = document.sections
         section[0].left_margin = Cm(2)
         section[0].right_margin = Cm(1)
-        section[0].top_margin = Cm(1)
+        section[0].top_margin = Cm(5)
         section[0].bottom_margin = Cm(1)
         ###
         if header:
             style = document.styles.add_style('Header Table', WD_STYLE_TYPE.TABLE)
             style.base_style = document.styles['Table Grid']
-            style.font.name = 'Cambria'
-            style.font.size = Pt(11)
-            style.paragraph_format.space_before = Pt(2)
-            style.paragraph_format.space_after = Pt(2)
-            style.paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
-            section = document.sections
-            section[0].left_margin = Cm(2.5)
-            section[0].right_margin = Cm(1)
-            section[0].top_margin = Cm(4.5)
-            section[0].bottom_margin = Cm(1)
+
             header = document.sections[0].header
             table = header.add_table(rows=0, cols=3, width=Cm(19.5))
             table.style = 'Header Table'
-            table.alignment = WD_TABLE_ALIGNMENT.CENTER
             row_cells = table.add_row().cells
             paragraph = row_cells[0].paragraphs[0]
             run = paragraph.add_run()
@@ -471,15 +407,20 @@ def build_protocol_detailed(request):
             run = paragraph.add_run()
             if docx_profile.header_text2:
                 run.add_text(docx_profile.header_text2)
-            a = table.cell(0, 1)
-            b = table.cell(0, 2)
-            a.merge(b)
+
+            table.cell(0, 1).merge(table.cell(0, 2))
             table.cell(0, 0).width = Cm(5)
+            table.cell(0, 0).paragraphs[0].paragraph_format.alignment = WD_TABLE_ALIGNMENT.CENTER
             table.cell(1, 0).width = Cm(5)
+            table.cell(1, 0).paragraphs[0].paragraph_format.alignment = WD_TABLE_ALIGNMENT.CENTER
             table.cell(0, 1).width = Cm(10.5)
+            table.cell(0, 1).paragraphs[0].paragraph_format.alignment = WD_TABLE_ALIGNMENT.CENTER
             table.cell(1, 1).width = Cm(10.5)
+            table.cell(1, 1).paragraphs[0].paragraph_format.alignment = WD_TABLE_ALIGNMENT.CENTER
             table.cell(0, 2).width = Cm(4)
+            table.cell(0, 2).paragraphs[0].paragraph_format.alignment = WD_TABLE_ALIGNMENT.CENTER
             table.cell(1, 2).width = Cm(4)
+            table.cell(1, 2).paragraphs[0].paragraph_format.alignment = WD_TABLE_ALIGNMENT.CENTER
             table.cell(0, 1).vertical_alignment = WD_CELL_VERTICAL_ALIGNMENT.CENTER
 
         document.add_paragraph(str(_('Detailed test results')), style='Title')
@@ -502,12 +443,14 @@ def build_protocol_detailed(request):
                     row_cells = table.add_row().cells
                     row_cells[0].text = str(_('Procedure')) + ': '
                     if result['test_procedure']:
-                        row_cells[1].text = result['test_procedure']
+                        procedure_text = result['test_procedure'].replace('\r', '')
+                        row_cells[1].text = procedure_text
                 if test_expected:
                     row_cells = table.add_row().cells
                     row_cells[0].text = str(_('Expected Result')) + ': '
                     if result['test_expected']:
-                        row_cells[1].text = result['test_expected']
+                        expected_text = result['test_expected'].replace('\r', '')
+                        row_cells[1].text = expected_text
 
                 for cell in table.columns[0].cells:
                     cell.width = Cm(4)
@@ -540,23 +483,134 @@ def build_protocol_detailed(request):
         return render(request, 'device/message.html', {'message': message})
 
 
-def build_document():
+def build_document(docx_profile: DocxProfile):
     document = Document()
-    document.styles['Heading 1'].font.name = 'Calibri'
-    document.styles['Heading 1'].font.color.rgb = RGBColor(0x77, 0x00, 0xFF)
-    document.styles['Heading 1'].font.size = Pt(16)
-    document.styles['Heading 1'].font.bold = True
-    document.styles['Heading 1'].font.italic = False
-    document.styles['Heading 1'].font.underline = False
-    document.styles['Heading 1'].paragraph_format.space_before = Pt(5)
-    document.styles['Heading 1'].paragraph_format.space_after = Pt(5)
+    document.styles['Title'].font.name = docx_profile.title_font_name
+    document.styles['Title'].font.color.rgb = RGBColor(docx_profile.title_font_color_red,
+                                                       docx_profile.title_font_color_green,
+                                                       docx_profile.title_font_color_blue)
+    document.styles['Title'].font.size = Pt(docx_profile.title_font_size)
+    document.styles['Title'].font.bold = docx_profile.title_font_bold
+    document.styles['Title'].font.italic = docx_profile.title_font_italic
+    document.styles['Title'].font.underline = docx_profile.title_font_underline
+    document.styles['Title'].paragraph_format.space_before = Pt(docx_profile.title_space_before)
+    document.styles['Title'].paragraph_format.space_after = Pt(docx_profile.title_space_after)
+    if docx_profile.title_alignment == 0:
+        document.styles['Title'].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.LEFT
+    elif docx_profile.title_alignment == 1:
+        document.styles['Title'].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+    elif docx_profile.title_alignment == 2:
+        document.styles['Title'].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.RIGHT
+    elif docx_profile.title_alignment == 3:
+        document.styles['Title'].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.JUSTIFY
+    document.styles['Heading 1'].font.name = docx_profile.h1_font_name
+    document.styles['Heading 1'].font.color.rgb = RGBColor(docx_profile.h1_font_color_red,
+                                                           docx_profile.h1_font_color_green,
+                                                           docx_profile.h1_font_color_blue)
+    document.styles['Heading 1'].font.size = Pt(docx_profile.h1_font_size)
+    document.styles['Heading 1'].font.bold = docx_profile.h1_font_bold
+    document.styles['Heading 1'].font.italic = docx_profile.h1_font_italic
+    document.styles['Heading 1'].font.underline = docx_profile.h1_font_underline
+    document.styles['Heading 1'].paragraph_format.space_before = Pt(docx_profile.h1_space_before)
+    document.styles['Heading 1'].paragraph_format.space_after = Pt(docx_profile.h1_space_after)
+    if docx_profile.h1_alignment == 0:
+        document.styles['Heading 1'].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.LEFT
+    elif docx_profile.h1_alignment == 1:
+        document.styles['Heading 1'].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+    elif docx_profile.h1_alignment == 2:
+        document.styles['Heading 1'].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.RIGHT
+    elif docx_profile.h1_alignment == 3:
+        document.styles['Heading 1'].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.JUSTIFY
+    document.styles['Heading 2'].font.name = docx_profile.h2_font_name
+    document.styles['Heading 2'].font.color.rgb = RGBColor(docx_profile.h2_font_color_red,
+                                                           docx_profile.h2_font_color_green,
+                                                           docx_profile.h2_font_color_blue)
+    document.styles['Heading 2'].font.size = Pt(docx_profile.h2_font_size)
+    document.styles['Heading 2'].font.bold = docx_profile.h2_font_bold
+    document.styles['Heading 2'].font.italic = docx_profile.h2_font_italic
+    document.styles['Heading 2'].font.underline = docx_profile.h2_font_underline
+    document.styles['Heading 2'].paragraph_format.space_before = Pt(docx_profile.h2_space_before)
+    document.styles['Heading 2'].paragraph_format.space_after = Pt(docx_profile.h2_space_after)
+    if docx_profile.h2_alignment == 0:
+        document.styles['Heading 2'].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.LEFT
+    elif docx_profile.h2_alignment == 1:
+        document.styles['Heading 2'].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+    elif docx_profile.h2_alignment == 2:
+        document.styles['Heading 2'].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.RIGHT
+    elif docx_profile.h2_alignment == 3:
+        document.styles['Heading 2'].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.JUSTIFY
+    document.styles['Heading 3'].font.name = docx_profile.h3_font_name
+    document.styles['Heading 3'].font.color.rgb = RGBColor(docx_profile.h3_font_color_red,
+                                                           docx_profile.h3_font_color_green,
+                                                           docx_profile.h3_font_color_blue)
+    document.styles['Heading 3'].font.size = Pt(docx_profile.h3_font_size)
+    document.styles['Heading 3'].font.bold = docx_profile.h3_font_bold
+    document.styles['Heading 3'].font.italic = docx_profile.h3_font_italic
+    document.styles['Heading 3'].font.underline = docx_profile.h3_font_underline
+    document.styles['Heading 3'].paragraph_format.space_before = Pt(docx_profile.h3_space_before)
+    document.styles['Heading 3'].paragraph_format.space_after = Pt(docx_profile.h3_space_after)
+    if docx_profile.h3_alignment == 0:
+        document.styles['Heading 3'].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.LEFT
+    elif docx_profile.h3_alignment == 1:
+        document.styles['Heading 3'].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+    elif docx_profile.h3_alignment == 2:
+        document.styles['Heading 3'].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.RIGHT
+    elif docx_profile.h3_alignment == 3:
+        document.styles['Heading 3'].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.JUSTIFY
 
-    document.styles['Heading 2'].font.name = 'Calibri'
-    document.styles['Heading 2'].font.color.rgb = RGBColor(0x00, 0x00, 0x00)
-    document.styles['Heading 2'].font.size = Pt(12)
-    document.styles['Heading 2'].font.bold = False
-    document.styles['Heading 2'].font.italic = False
-    document.styles['Heading 2'].font.underline = False
-    document.styles['Heading 2'].paragraph_format.space_before = Pt(5)
-    document.styles['Heading 2'].paragraph_format.space_after = Pt(5)
+    document.styles['Normal'].font.name = docx_profile.normal_font_name
+    document.styles['Normal'].font.color.rgb = RGBColor(docx_profile.normal_font_color_red,
+                                                        docx_profile.normal_font_color_green,
+                                                        docx_profile.normal_font_color_blue)
+    document.styles['Normal'].font.size = Pt(docx_profile.normal_font_size)
+    document.styles['Normal'].font.bold = docx_profile.normal_font_bold
+    document.styles['Normal'].font.italic = docx_profile.normal_font_italic
+    document.styles['Normal'].font.underline = docx_profile.normal_font_underline
+    document.styles['Normal'].paragraph_format.space_before = Pt(docx_profile.normal_space_before)
+    document.styles['Normal'].paragraph_format.space_after = Pt(docx_profile.normal_space_after)
+    if docx_profile.normal_alignment == 0:
+        document.styles['Normal'].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.LEFT
+    elif docx_profile.normal_alignment == 1:
+        document.styles['Normal'].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+    elif docx_profile.normal_alignment == 2:
+        document.styles['Normal'].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.RIGHT
+    elif docx_profile.normal_alignment == 3:
+        document.styles['Normal'].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.JUSTIFY
+    document.styles['Caption'].font.name = docx_profile.caption_font_name
+    document.styles['Caption'].font.color.rgb = RGBColor(docx_profile.caption_font_color_red,
+                                                         docx_profile.caption_font_color_green,
+                                                         docx_profile.caption_font_color_blue)
+    document.styles['Caption'].font.size = Pt(docx_profile.caption_font_size)
+    document.styles['Caption'].font.bold = docx_profile.caption_font_bold
+    document.styles['Caption'].font.italic = docx_profile.caption_font_italic
+    document.styles['Caption'].font.underline = docx_profile.caption_font_underline
+    document.styles['Caption'].paragraph_format.space_before = Pt(docx_profile.caption_space_before)
+    document.styles['Caption'].paragraph_format.space_after = Pt(docx_profile.caption_space_after)
+    if docx_profile.caption_alignment == 0:
+        document.styles['Caption'].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.LEFT
+    elif docx_profile.caption_alignment == 1:
+        document.styles['Caption'].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+    elif docx_profile.caption_alignment == 2:
+        document.styles['Caption'].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.RIGHT
+    elif docx_profile.caption_alignment == 3:
+        document.styles['Caption'].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.JUSTIFY
+    document.styles['Quote'].font.name = docx_profile.quote_font_name
+    document.styles['Quote'].font.color.rgb = RGBColor(docx_profile.quote_font_color_red,
+                                                       docx_profile.quote_font_color_green,
+                                                       docx_profile.quote_font_color_blue)
+    document.styles['Quote'].font.size = Pt(docx_profile.quote_font_size)
+    document.styles['Quote'].font.bold = docx_profile.quote_font_bold
+    document.styles['Quote'].font.italic = docx_profile.quote_font_italic
+    document.styles['Quote'].font.underline = docx_profile.quote_font_underline
+    document.styles['Quote'].paragraph_format.space_before = Pt(docx_profile.quote_space_before)
+    document.styles['Quote'].paragraph_format.space_after = Pt(docx_profile.quote_space_after)
+    if docx_profile.quote_alignment == 0:
+        document.styles['Quote'].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.LEFT
+    elif docx_profile.quote_alignment == 1:
+        document.styles['Quote'].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+    elif docx_profile.quote_alignment == 2:
+        document.styles['Quote'].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.RIGHT
+    elif docx_profile.quote_alignment == 3:
+        document.styles['Quote'].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.JUSTIFY
+
     return document
