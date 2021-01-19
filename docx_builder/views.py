@@ -11,6 +11,70 @@ from django.utils.datastructures import MultiValueDictKeyError
 from docx.shared import Cm, Pt, RGBColor
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 from docx.enum.text import WD_BREAK
+from django.views.generic import CreateView, ListView, UpdateView, DeleteView
+from django.utils.decorators import method_decorator
+from .models import DocxProfile
+from .forms import DocxProfileForm
+from django.urls import reverse
+from django.utils import timezone
+
+
+@method_decorator(login_required, name='dispatch')
+class DocxProfileListView(ListView):
+    context_object_name = 'docx_profiles'
+    queryset = DocxProfile.objects.all().order_by('id')
+    template_name = 'docx_builder/docx_profiles.html'
+
+
+@method_decorator(login_required, name='dispatch')
+class DocxProfileCreate(CreateView):
+    model = DocxProfile
+    form_class = DocxProfileForm
+    template_name = 'device/create.html'
+
+    def get_initial(self):
+        return {'created_by': self.request.user, 'updated_by': self.request.user}
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('docx_profiles')
+        return context
+
+    def get_success_url(self):
+        return reverse('docx_profiles')
+
+
+@method_decorator(login_required, name='dispatch')
+class DocxProfileUpdate(UpdateView):
+    model = DocxProfile
+    form_class = DocxProfileForm
+    template_name = 'device/update.html'
+
+    def get_initial(self):
+        return {'updated_by': self.request.user, 'updated_at': timezone.now()}
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('docx_profiles')
+        return context
+
+    def get_success_url(self):
+        self.object.update_timestamp(user=self.request.user)
+        return reverse('docx_profiles')
+
+
+@method_decorator(login_required, name='dispatch')
+class DocxProfileDelete(DeleteView):
+    model = DocxProfile
+    template_name = 'device/delete.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('docx_profiles')
+        return context
+
+    def get_success_url(self):
+        return reverse('docx_profiles')
 
 
 @login_required
