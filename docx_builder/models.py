@@ -80,7 +80,7 @@ class DocxProfile(models.Model):
     quote_font_color_red = models.IntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(255)])
     quote_font_color_green = models.IntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(255)])
     quote_font_color_blue = models.IntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(255)])
-    quote_font_size = models.IntegerField(default=11, validators=[MinValueValidator(10), MaxValueValidator(40)])
+    quote_font_size = models.IntegerField(default=10, validators=[MinValueValidator(10), MaxValueValidator(40)])
     quote_font_bold = models.BooleanField(blank=True, null=True, default=False)
     quote_font_italic = models.BooleanField(blank=True, null=True, default=False)
     quote_font_underline = models.BooleanField(blank=True, null=True, default=False)

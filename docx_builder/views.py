@@ -18,6 +18,7 @@ from django.urls import reverse
 from django.utils import timezone
 from docx.enum.style import WD_STYLE_TYPE
 from docx.enum.table import WD_TABLE_ALIGNMENT, WD_CELL_VERTICAL_ALIGNMENT
+from docx.oxml.shared import OxmlElement, qn
 
 
 @method_decorator(login_required, name='dispatch')
@@ -459,14 +460,17 @@ def build_protocol_detailed(request):
 
                 if result_configs:
                     if result['configs']:
-                        row_cells = table.add_row().cells
-                        row_cells[0].merge(row_cells[1])
-                        row_cells[0].text = str(_('Configurations')) + ': '
+                        document.add_heading(str(_('Configurations')), level=3)
                         for config in result['configs']:
                             if config['desc']:
-                                row_cells[0].add_paragraph(str(config['desc']))
+                                document.add_paragraph(config['desc'], style='Caption')
                             config_text = config['config'].replace('\r', '')
-                            row_cells[0].add_paragraph(config_text)
+                            table = document.add_table(rows=1, cols=1)
+                            table.style = 'Table Grid'
+                            shade_cells([table.cell(0, 0)], "#e3e8ec")
+                            table.cell(0, 0).text = config_text
+                            table.cell(0, 0).paragraphs[0].style = 'Quote'
+
 
         ###
         file = os.path.join(settings.MEDIA_ROOT + '/docx_builder/protocols_detailed/',
@@ -614,3 +618,11 @@ def build_document(docx_profile: DocxProfile):
         document.styles['Quote'].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.JUSTIFY
 
     return document
+
+
+def shade_cells(cells, shade):
+    for cell in cells:
+        tcPr = cell._tc.get_or_add_tcPr()
+        tcVAlign = OxmlElement("w:shd")
+        tcVAlign.set(qn("w:fill"), shade)
+        tcPr.append(tcVAlign)
