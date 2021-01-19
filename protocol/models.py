@@ -57,7 +57,7 @@ class Protocol(models.Model):
                     test_configs = TestResultConfig.objects.filter(result=result).order_by('id')
                     configs = []
                     for config in test_configs:
-                        configs.append(config.id)
+                        configs.append({'id': config.id, 'desc': config.desc, 'config': config.config})
                     # images
                     test_images = TestResultImage.objects.filter(result=result).order_by('id')
                     images = []
@@ -88,6 +88,9 @@ class Protocol(models.Model):
                                 'category_name': test.cat,
                                 'test_id': test.id,
                                 'test_name': test.name,
+                                'test_purpose': test.purpose,
+                                'test_procedure': test.procedure,
+                                'test_expected': test.expected,
                                 'result_id': result_id,
                                 'result_redmine_wiki': result_redmine_wiki,
                                 'result': result,

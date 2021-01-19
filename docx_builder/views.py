@@ -490,6 +490,40 @@ def build_protocol_detailed(request):
             else:
                 document.add_heading(str(result['num'][0]) + '.' + str(result['num'][1]) + '. ' +
                                      result['test_name'], level=2)
+                table = document.add_table(rows=0, cols=2)
+                table.style = 'TableGrid'
+                # test table
+                if test_purpose:
+                    row_cells = table.add_row().cells
+                    row_cells[0].text = str(_('Purpose')) + ': '
+                    if result['test_purpose']:
+                        row_cells[1].text = result['test_purpose']
+                if test_procedure:
+                    row_cells = table.add_row().cells
+                    row_cells[0].text = str(_('Procedure')) + ': '
+                    if result['test_procedure']:
+                        row_cells[1].text = result['test_procedure']
+                if test_expected:
+                    row_cells = table.add_row().cells
+                    row_cells[0].text = str(_('Expected Result')) + ': '
+                    if result['test_expected']:
+                        row_cells[1].text = result['test_expected']
+
+                for cell in table.columns[0].cells:
+                    cell.width = Cm(4)
+                for cell in table.columns[1].cells:
+                    cell.width = Cm(14.5)
+
+                if result_configs:
+                    if result['configs']:
+                        row_cells = table.add_row().cells
+                        row_cells[0].merge(row_cells[1])
+                        row_cells[0].text = str(_('Configurations')) + ': '
+                        for config in result['configs']:
+                            if config['desc']:
+                                row_cells[0].add_paragraph(str(config['desc']))
+                            config_text = config['config'].replace('\r', '')
+                            row_cells[0].add_paragraph(config_text)
 
         ###
         file = os.path.join(settings.MEDIA_ROOT + '/docx_builder/protocols_detailed/',
