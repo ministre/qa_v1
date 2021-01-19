@@ -8,7 +8,7 @@ from django.conf import settings
 import os
 from django.http import HttpResponse, Http404
 from django.utils.datastructures import MultiValueDictKeyError
-from docx.shared import Cm, Pt, RGBColor
+from docx.shared import Cm, Pt, Inches, RGBColor
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 from docx.enum.text import WD_BREAK
 from django.views.generic import CreateView, ListView, UpdateView, DeleteView
@@ -17,6 +17,9 @@ from .models import DocxProfile
 from .forms import DocxProfileForm
 from django.urls import reverse
 from django.utils import timezone
+from docx.enum.style import WD_STYLE_TYPE
+from docx.enum.table import WD_TABLE_ALIGNMENT
+from docx.enum.table import WD_CELL_VERTICAL_ALIGNMENT
 
 
 @method_decorator(login_required, name='dispatch')
@@ -396,6 +399,53 @@ def build_protocol_detailed(request):
         section[0].top_margin = Cm(1)
         section[0].bottom_margin = Cm(1)
         ###
+        if header:
+            style = document.styles.add_style('Header Table', WD_STYLE_TYPE.TABLE)
+            style.base_style = document.styles['Table Grid']
+            style.font.name = 'Cambria'
+            style.font.size = Pt(11)
+            style.paragraph_format.space_before = Pt(2)
+            style.paragraph_format.space_after = Pt(2)
+            style.paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+            section = document.sections
+            section[0].left_margin = Cm(2.5)
+            section[0].right_margin = Cm(1)
+            section[0].top_margin = Cm(4.5)
+            section[0].bottom_margin = Cm(1)
+            header = document.sections[0].header
+            table = header.add_table(rows=0, cols=3, width=Cm(19.5))
+            table.style = 'Header Table'
+            table.alignment = WD_TABLE_ALIGNMENT.CENTER
+            row_cells = table.add_row().cells
+            paragraph = row_cells[0].paragraphs[0]
+            run = paragraph.add_run()
+            if docx_profile.header_logo:
+                run.add_picture(docx_profile.header_logo, width=Inches(1.25))
+            paragraph = row_cells[1].paragraphs[0]
+            run = paragraph.add_run()
+            run.add_text(str(_('Protocol')) + ' ' + protocol.device.vendor.name + ' ' + protocol.device.model)
+            if protocol.device.hw:
+                run.add_text(' (' + protocol.device.hw + ')')
+            row_cells = table.add_row().cells
+            paragraph = row_cells[0].paragraphs[0]
+            run = paragraph.add_run()
+            if docx_profile.header_text1:
+                run.add_text(docx_profile.header_text1)
+            paragraph = row_cells[1].paragraphs[0]
+            run = paragraph.add_run()
+            if docx_profile.header_text2:
+                run.add_text(docx_profile.header_text2)
+            a = table.cell(0, 1)
+            b = table.cell(0, 2)
+            a.merge(b)
+            table.cell(0, 0).width = Cm(5)
+            table.cell(1, 0).width = Cm(5)
+            table.cell(0, 1).width = Cm(10.5)
+            table.cell(1, 1).width = Cm(10.5)
+            table.cell(0, 2).width = Cm(4)
+            table.cell(1, 2).width = Cm(4)
+            table.cell(0, 1).vertical_alignment = WD_CELL_VERTICAL_ALIGNMENT.CENTER
+
         document.add_paragraph(str(_('Detailed test results')), style='Title')
         ###
         file = os.path.join(settings.MEDIA_ROOT + '/docx_builder/protocols_detailed/',
