@@ -64,6 +64,7 @@ class DocxProfileForm(ModelForm):
             (3, 'Justify'),
         )
         widgets = {
+            'type': forms.Select(choices=TYPE, attrs={'class': 'form-control'}),
             'title_font_name': forms.Select(choices=FONTNAME, attrs={'class': 'form-control'}),
             'title_font_bold': forms.CheckboxInput(),
             'title_font_italic': forms.CheckboxInput(),
