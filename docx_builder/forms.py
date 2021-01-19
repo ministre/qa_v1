@@ -79,6 +79,7 @@ class DocxProfileForm(ModelForm):
 
 class BuildDocxProtocolForm(forms.Form):
     protocol_id = forms.IntegerField()
+    docx_profile_id = forms.ModelChoiceField(queryset=DocxProfile.objects.all().order_by('id'), label=_('Docx Profile'))
     title_page = forms.BooleanField(label=_('Title page'), required=False, initial=True)
     header = forms.BooleanField(label=_('Page header'), required=False, initial=True)
     general = forms.BooleanField(label=_('Device information'), required=False, initial=True)
@@ -89,4 +90,13 @@ class BuildDocxProtocolForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         super(BuildDocxProtocolForm, self).__init__(*args, **kwargs)
+        self.fields['protocol_id'].widget = forms.HiddenInput()
+
+
+class BuildDocxProtocolDetailedForm(forms.Form):
+    protocol_id = forms.IntegerField()
+    docx_profile_id = forms.ModelChoiceField(queryset=DocxProfile.objects.all().order_by('id'), label=_('Docx Profile'))
+
+    def __init__(self, *args, **kwargs):
+        super(BuildDocxProtocolDetailedForm, self).__init__(*args, **kwargs)
         self.fields['protocol_id'].widget = forms.HiddenInput()

@@ -78,7 +78,7 @@ class DocxProfileDelete(DeleteView):
 
 
 @login_required
-def build_protocol_beta(request):
+def build_protocol(request):
     if request.method == 'POST':
         protocol = get_object_or_404(Protocol, id=request.POST['protocol_id'])
         general = performance = results_table = summary = team = False
@@ -305,6 +305,11 @@ def build_protocol_beta(request):
     else:
         message = [False, _('Page not found')]
         return render(request, 'device/message.html', {'message': message})
+
+
+@login_required
+def build_protocol_detailed(request):
+    return Http404
 
 
 def build_document():

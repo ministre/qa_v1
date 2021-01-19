@@ -227,13 +227,37 @@
     </div>
 
     <div class="tabs-panel {% if tab_id == 4 %}is-active{% endif %}" id="docx">
-        <form action="{% url 'build_protocol_beta' %}" method="post">
-            <input type="submit" value='{% trans "Build protocol" %}' class="button small success" />
-            <table class="unstriped" style="text-align: left; width: 350px;">
-                {% csrf_token %}
-                {{ build_protocol_form_beta.as_table }}
-            </table>
-        </form>
+        <div class="grid-x grid-margin-x small-up-2 medium-up-2">
+            <div class="cell">
+                <div class="card">
+                    <div class="card-section">
+                        <h4>{% trans "Protocol" %}</h4>
+                        <form action="{% url 'build_protocol' %}" method="post">
+                            <input type="submit" value='{% trans "Build" %}' class="button small success" />
+                            <table class="unstriped" style="text-align: left">
+                                {% csrf_token %}
+                                {{ build_protocol_form.as_table }}
+                            </table>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="cell">
+                <div class="card">
+                    <div class="card-section">
+                        <h4>{% trans "Detailed protocol" %}</h4>
+                        <form action="{% url 'build_protocol_detailed' %}" method="post">
+                            <input type="submit" value='{% trans "Build" %}' class="button small success" />
+                            <table class="unstriped" style="text-align: left">
+                                {% csrf_token %}
+                                {{ build_protocol_detailed_form.as_table }}
+                            </table>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <div class="tabs-panel{% if tab_id == 5 %} is-active{% endif %}" id="redmine">

@@ -8,8 +8,7 @@ from django.http import HttpResponseRedirect
 from .forms import ProtocolForm, ResultForm, ResultNoteForm, ResultConfigForm, ResultImageForm, ResultIssueForm, \
     ResultFileForm, ProtocolCopyResultsForm
 from redmine.forms import RedmineProtocolExportForm, RedmineResultExportForm
-from docx_builder.forms import BuildDocxProtocolForm
-from docx_generator.forms import BuildProtocolForm, BuildProtocolDetailedForm
+from docx_builder.forms import BuildDocxProtocolForm, BuildDocxProtocolDetailedForm
 from qa_v1 import settings
 from redminelib import Redmine
 from redminelib.exceptions import ResourceNotFoundError
@@ -115,11 +114,8 @@ def protocol_details(request, pk, tab_id):
     tests_fail = TestResult.objects.filter(Q(protocol=pk) & Q(result=1)).count()
 
     build_protocol_form = BuildDocxProtocolForm(initial={'protocol_id': protocol.id})
-    protocol_form = BuildProtocolForm(initial={'protocol_id': protocol.id})
+    build_protocol_detailed_form = BuildDocxProtocolDetailedForm(initial={'protocol_id': protocol.id})
 
-    protocol_form.fields['protocol_id'].widget = forms.HiddenInput()
-    protocol_detailed_form = BuildProtocolDetailedForm(initial={'protocol_id': protocol.id})
-    protocol_detailed_form.fields['protocol_id'].widget = forms.HiddenInput()
     copy_test_results_form = ProtocolCopyResultsForm(device_id=protocol.device.id, dst_protocol=protocol.id)
 
     export_form = RedmineProtocolExportForm(initial={'protocol_id': protocol.id,
@@ -136,9 +132,9 @@ def protocol_details(request, pk, tab_id):
                                                               'tests_success': tests_success,
                                                               'tests_warn': tests_warn,
                                                               'tests_fail': tests_fail,
-                                                              'build_protocol_form': protocol_form,
-                                                              'build_protocol_form_beta': build_protocol_form,
-                                                              'build_protocol_detailed_form': protocol_detailed_form,
+                                                              'build_protocol_form': build_protocol_form,
+                                                              'build_protocol_detailed_form':
+                                                                  build_protocol_detailed_form,
                                                               'copy_test_results_form': copy_test_results_form,
                                                               'redmine_url': settings.REDMINE_URL,
                                                               'export_form': export_form,
