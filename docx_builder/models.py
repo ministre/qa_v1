@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 
 class DocxProfile(models.Model):
     name = models.CharField(max_length=1000)
+    type = models.IntegerField(default=0)
     header_logo = models.FileField(upload_to="docx_builder/files/", blank=True, null=True)
     header_text1 = models.CharField(max_length=1000, blank=True, null=True)
     header_text2 = models.CharField(max_length=1000, blank=True, null=True)

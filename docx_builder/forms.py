@@ -9,6 +9,7 @@ class DocxProfileForm(ModelForm):
         model = DocxProfile
         labels = {
             'name': _('Name'),
+            'type': _('Type'),
             'header_text1': _('Header Text 1'),
             'header_text2': _('Header Text 2'),
             'title_font_name': _('Title Font Name'),
@@ -46,6 +47,12 @@ class DocxProfileForm(ModelForm):
             'h2_alignment': _('Heading 2 Alignment'),
         }
         fields = '__all__'
+        TYPE = (
+            (0, _('Protocol')),
+            (1, _('Detailed Protocol')),
+            (2, _('Testplan')),
+            (3, _('Technical requirements')),
+        )
         FONTNAME = (
             ('Calibri', 'Calibri'),
             ('Cambria', 'Cambria'),
@@ -79,9 +86,10 @@ class DocxProfileForm(ModelForm):
 
 class BuildDocxProtocolForm(forms.Form):
     protocol_id = forms.IntegerField()
-    docx_profile_id = forms.ModelChoiceField(queryset=DocxProfile.objects.all().order_by('id'), label=_('Docx Profile'))
+    docx_profile_id = forms.ModelChoiceField(queryset=DocxProfile.objects.filter(type=0).order_by('id'),
+                                             label=_('Docx Profile'))
     title_page = forms.BooleanField(label=_('Title page'), required=False, initial=True)
-    header = forms.BooleanField(label=_('Page header'), required=False, initial=True)
+    header = forms.BooleanField(label=_('Header'), required=False, initial=True)
     general = forms.BooleanField(label=_('Device information'), required=False, initial=True)
     performance = forms.BooleanField(label=_('Performance results'), required=False, initial=True)
     results_table = forms.BooleanField(label=_('Test results'), required=False, initial=True)
@@ -95,7 +103,8 @@ class BuildDocxProtocolForm(forms.Form):
 
 class BuildDocxProtocolDetailedForm(forms.Form):
     protocol_id = forms.IntegerField()
-    docx_profile_id = forms.ModelChoiceField(queryset=DocxProfile.objects.all().order_by('id'), label=_('Docx Profile'))
+    docx_profile_id = forms.ModelChoiceField(queryset=DocxProfile.objects.filter(type=1).order_by('id'),
+                                             label=_('Docx Profile'))
 
     def __init__(self, *args, **kwargs):
         super(BuildDocxProtocolDetailedForm, self).__init__(*args, **kwargs)
