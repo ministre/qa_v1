@@ -391,6 +391,42 @@ def build_protocol_detailed(request):
             document.styles['Title'].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.RIGHT
         elif docx_profile.title_alignment == 3:
             document.styles['Title'].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.JUSTIFY
+        document.styles['Heading 1'].font.name = docx_profile.h1_font_name
+        document.styles['Heading 1'].font.color.rgb = RGBColor(docx_profile.h1_font_color_red,
+                                                               docx_profile.h1_font_color_green,
+                                                               docx_profile.h1_font_color_blue)
+        document.styles['Heading 1'].font.size = Pt(docx_profile.h1_font_size)
+        document.styles['Heading 1'].font.bold = docx_profile.h1_font_bold
+        document.styles['Heading 1'].font.italic = docx_profile.h1_font_italic
+        document.styles['Heading 1'].font.underline = docx_profile.h1_font_underline
+        document.styles['Heading 1'].paragraph_format.space_before = Pt(docx_profile.h1_space_before)
+        document.styles['Heading 1'].paragraph_format.space_after = Pt(docx_profile.h1_space_after)
+        if docx_profile.h1_alignment == 0:
+            document.styles['Heading 1'].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.LEFT
+        elif docx_profile.h1_alignment == 1:
+            document.styles['Heading 1'].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+        elif docx_profile.h1_alignment == 2:
+            document.styles['Heading 1'].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.RIGHT
+        elif docx_profile.h1_alignment == 3:
+            document.styles['Heading 1'].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.JUSTIFY
+        document.styles['Heading 2'].font.name = docx_profile.h2_font_name
+        document.styles['Heading 2'].font.color.rgb = RGBColor(docx_profile.h2_font_color_red,
+                                                               docx_profile.h2_font_color_green,
+                                                               docx_profile.h2_font_color_blue)
+        document.styles['Heading 2'].font.size = Pt(docx_profile.h2_font_size)
+        document.styles['Heading 2'].font.bold = docx_profile.h2_font_bold
+        document.styles['Heading 2'].font.italic = docx_profile.h2_font_italic
+        document.styles['Heading 2'].font.underline = docx_profile.h2_font_underline
+        document.styles['Heading 2'].paragraph_format.space_before = Pt(docx_profile.h2_space_before)
+        document.styles['Heading 2'].paragraph_format.space_after = Pt(docx_profile.h2_space_after)
+        if docx_profile.h1_alignment == 0:
+            document.styles['Heading 2'].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.LEFT
+        elif docx_profile.h1_alignment == 1:
+            document.styles['Heading 2'].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+        elif docx_profile.h1_alignment == 2:
+            document.styles['Heading 2'].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.RIGHT
+        elif docx_profile.h1_alignment == 3:
+            document.styles['Heading 2'].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.JUSTIFY
 
         # margin
         section = document.sections
@@ -447,6 +483,14 @@ def build_protocol_detailed(request):
             table.cell(0, 1).vertical_alignment = WD_CELL_VERTICAL_ALIGNMENT.CENTER
 
         document.add_paragraph(str(_('Detailed test results')), style='Title')
+        results = protocol.get_results(headers=True)
+        for result in results:
+            if result['header']:
+                document.add_heading(str(result['num']) + '. ' + result['category_name'], level=1)
+            else:
+                document.add_heading(str(result['num'][0]) + '.' + str(result['num'][1]) + '. ' +
+                                     result['test_name'], level=2)
+
         ###
         file = os.path.join(settings.MEDIA_ROOT + '/docx_builder/protocols_detailed/',
                             'Detailed_Protocol_' + str(protocol.id) + '.docx')
