@@ -83,7 +83,12 @@ def build_protocol(request):
     if request.method == 'POST':
         protocol = get_object_or_404(Protocol, id=request.POST['protocol_id'])
         docx_profile = get_object_or_404(DocxProfile, id=request.POST['docx_profile_id'])
-        general = performance = results_table = summary = team = False
+        header = general = performance = results_table = summary = team = False
+        try:
+            if request.POST['header']:
+                header = True
+        except MultiValueDictKeyError:
+            pass
         try:
             if request.POST['general']:
                 general = True
@@ -119,6 +124,48 @@ def build_protocol(request):
         section[0].top_margin = Cm(1)
         section[0].bottom_margin = Cm(1)
         ###
+        if header:
+            style = document.styles.add_style('Header Table', WD_STYLE_TYPE.TABLE)
+            style.base_style = document.styles['Table Grid']
+
+            header = document.sections[0].header
+            table = header.add_table(rows=0, cols=3, width=Cm(19.5))
+            table.style = 'Header Table'
+            row_cells = table.add_row().cells
+            paragraph = row_cells[0].paragraphs[0]
+            run = paragraph.add_run()
+            if docx_profile.header_logo:
+                run.add_picture(docx_profile.header_logo, width=Inches(1.25))
+            paragraph = row_cells[1].paragraphs[0]
+            run = paragraph.add_run()
+            run.add_text(str(_('Protocol')) + ' ' + protocol.device.vendor.name + ' ' + protocol.device.model)
+            if protocol.device.hw:
+                run.add_text(' (' + protocol.device.hw + ')')
+            row_cells = table.add_row().cells
+            paragraph = row_cells[0].paragraphs[0]
+            run = paragraph.add_run()
+            if docx_profile.header_text1:
+                run.add_text(docx_profile.header_text1)
+            paragraph = row_cells[1].paragraphs[0]
+            run = paragraph.add_run()
+            if docx_profile.header_text2:
+                run.add_text(docx_profile.header_text2)
+
+            table.cell(0, 1).merge(table.cell(0, 2))
+            table.cell(0, 0).width = Cm(5)
+            table.cell(0, 0).paragraphs[0].paragraph_format.alignment = WD_TABLE_ALIGNMENT.CENTER
+            table.cell(1, 0).width = Cm(5)
+            table.cell(1, 0).paragraphs[0].paragraph_format.alignment = WD_TABLE_ALIGNMENT.CENTER
+            table.cell(0, 1).width = Cm(10.5)
+            table.cell(0, 1).paragraphs[0].paragraph_format.alignment = WD_TABLE_ALIGNMENT.CENTER
+            table.cell(1, 1).width = Cm(10.5)
+            table.cell(1, 1).paragraphs[0].paragraph_format.alignment = WD_TABLE_ALIGNMENT.CENTER
+            table.cell(0, 2).width = Cm(4)
+            table.cell(0, 2).paragraphs[0].paragraph_format.alignment = WD_TABLE_ALIGNMENT.CENTER
+            table.cell(1, 2).width = Cm(4)
+            table.cell(1, 2).paragraphs[0].paragraph_format.alignment = WD_TABLE_ALIGNMENT.CENTER
+            table.cell(0, 1).vertical_alignment = WD_CELL_VERTICAL_ALIGNMENT.CENTER
+
         if general:
             document.add_paragraph(str(_('General Information about DUT')), style='Heading 1')
             table = document.add_table(rows=0, cols=2)
@@ -471,6 +518,18 @@ def build_protocol_detailed(request):
                             table.cell(0, 0).text = config_text
                             table.cell(0, 0).paragraphs[0].style = 'Quote'
 
+                if result_notes:
+                    if result['notes']:
+                        document.add_heading(str(_('Notes')), level=3)
+                        for note in result['notes']:
+                            if note['desc']:
+                                document.add_paragraph(note['desc'], style='Caption')
+                            note_text = note['text'].replace('\r', '')
+                            table = document.add_table(rows=1, cols=1)
+                            table.style = 'Table Grid'
+                            shade_cells([table.cell(0, 0)], "#e3e8ec")
+                            table.cell(0, 0).text = note_text
+                            table.cell(0, 0).paragraphs[0].style = 'Quote'
 
         ###
         file = os.path.join(settings.MEDIA_ROOT + '/docx_builder/protocols_detailed/',

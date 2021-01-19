@@ -155,7 +155,7 @@ class BuildDocxProtocolForm(forms.Form):
     protocol_id = forms.IntegerField()
     docx_profile_id = forms.ModelChoiceField(queryset=DocxProfile.objects.filter(type=0).order_by('id'),
                                              label=_('Docx Profile'))
-    title_page = forms.BooleanField(label=_('Title Page'), required=False, initial=True)
+    title_page = forms.BooleanField(label=_('Title Page'), required=False, initial=False, disabled=True)
     header = forms.BooleanField(label=_('Header'), required=False, initial=True)
     general = forms.BooleanField(label=_('Device Information'), required=False, initial=True)
     performance = forms.BooleanField(label=_('Performance'), required=False, initial=True)
@@ -173,14 +173,14 @@ class BuildDocxProtocolDetailedForm(forms.Form):
     docx_profile_id = forms.ModelChoiceField(queryset=DocxProfile.objects.filter(type=1).order_by('id'),
                                              label=_('Docx Profile'))
     header = forms.BooleanField(label=_('Header'), required=False, initial=True)
-    test_purpose = forms.BooleanField(label=_('Test Purpose'), required=False, initial=True)
-    test_procedure = forms.BooleanField(label=_('Test Procedure'), required=False, initial=True)
-    test_expected = forms.BooleanField(label=_('Test Expected Result'), required=False, initial=True)
+    test_purpose = forms.BooleanField(label=_('Test Purpose'), required=False, initial=False)
+    test_procedure = forms.BooleanField(label=_('Test Procedure'), required=False, initial=False)
+    test_expected = forms.BooleanField(label=_('Test Expected Result'), required=False, initial=False)
     test_images = forms.BooleanField(label=_('Test Images'), required=False, initial=False, disabled=True)
     test_configs = forms.BooleanField(label=_('Test Configurations'), required=False, initial=False, disabled=True)
     test_links = forms.BooleanField(label=_('Test Links'), required=False, initial=False, disabled=True)
     result_configs = forms.BooleanField(label=_('Result Configurations'), required=False, initial=True)
-    result_images = forms.BooleanField(label=_('Result Images'), required=False, initial=True)
+    result_images = forms.BooleanField(label=_('Result Images'), required=False, initial=False, disabled=True)
     result_notes = forms.BooleanField(label=_('Result Notes'), required=False, initial=True)
     result_status = forms.BooleanField(label=_('Result Status'), required=False, initial=True)
 

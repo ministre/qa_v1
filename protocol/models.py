@@ -52,7 +52,7 @@ class Protocol(models.Model):
                     test_notes = TestResultNote.objects.filter(result=result).order_by('id')
                     notes = []
                     for note in test_notes:
-                        notes.append({'id': note.id, 'text': note.text})
+                        notes.append({'id': note.id, 'desc': note.desc, 'format': note.format, 'text': note.text})
                     # configs
                     test_configs = TestResultConfig.objects.filter(result=result).order_by('id')
                     configs = []
