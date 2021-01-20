@@ -1,5 +1,5 @@
 from django.forms import ModelForm, HiddenInput
-from .models import TestplanPattern, CategoryPattern, TestPattern, TestPatternConfig
+from .models import TestplanPattern, CategoryPattern, TestPattern, TestPatternConfig, TestPatternLink
 from django import forms
 from django.utils.translation import gettext_lazy as _
 from django.shortcuts import get_object_or_404
@@ -173,6 +173,21 @@ class TestPatternConfigForm(ModelForm):
 
         widgets = {
             'lang': forms.Select(choices=LANG, attrs={'class': 'form-control'}),
+            'test_pattern': HiddenInput(),
+            'created_by': HiddenInput(), 'created_at': HiddenInput(),
+            'updated_by': HiddenInput(), 'updated_at': HiddenInput()
+        }
+
+
+class TestPatternLinkForm(ModelForm):
+    class Meta:
+        model = TestPatternLink
+        labels = {
+            'desc': _('Description'),
+            'url': _('URL'),
+        }
+        fields = '__all__'
+        widgets = {
             'test_pattern': HiddenInput(),
             'created_by': HiddenInput(), 'created_at': HiddenInput(),
             'updated_by': HiddenInput(), 'updated_at': HiddenInput()

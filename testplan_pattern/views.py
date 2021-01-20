@@ -2,11 +2,11 @@ from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
-from .models import TestplanPattern, CategoryPattern, TestPattern, TestPatternConfig
+from .models import TestplanPattern, CategoryPattern, TestPattern, TestPatternConfig, TestPatternLink
 from testplan.models import Test
 from .forms import TestplanPatternForm, CategoryPatternForm, TestPatternForm, TestNamesUpdateForm, \
     TestPurposesUpdateForm, TestProceduresUpdateForm, TestExpectedUpdateForm, TestRedmineWikiUpdateForm, \
-    TestPatternConfigForm
+    TestPatternConfigForm, TestPatternLinkForm
 from django.urls import reverse
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
@@ -512,3 +512,60 @@ class TestPatternConfigDelete(DeleteView):
         Item.update_timestamp(foo=self.object.test_pattern, user=self.request.user)
         Item.update_timestamp(foo=self.object.test_pattern.category_pattern.testplan_pattern, user=self.request.user)
         return reverse('test_pattern_details', kwargs={'pk': self.object.test_pattern.id, 'tab_id': 7})
+
+
+@method_decorator(login_required, name='dispatch')
+class TestPatternLinkCreate(CreateView):
+    model = TestPatternLink
+    form_class = TestPatternLinkForm
+    template_name = 'device/create.html'
+
+    def get_initial(self):
+        return {'test_pattern': self.kwargs.get('test_pattern_id')}
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('test_pattern_details', kwargs={'pk': self.kwargs.get('test_pattern_id'),
+                                                                      'tab_id': 10})
+        return context
+
+    def get_success_url(self):
+        Item.update_timestamp(foo=self.object.test_pattern, user=self.request.user)
+        Item.update_timestamp(foo=self.object.test_pattern.category_pattern, user=self.request.user)
+        return reverse('test_pattern_details', kwargs={'pk': self.object.test_pattern.id, 'tab_id': 10})
+
+
+@method_decorator(login_required, name='dispatch')
+class TestPatternLinkUpdate(UpdateView):
+    model = TestPatternLink
+    form_class = TestPatternLinkForm
+    template_name = 'device/update.html'
+
+    def get_initial(self):
+        return {'updated_by': self.request.user, 'updated_at': timezone.now()}
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('test_pattern_details', kwargs={'pk': self.object.test_pattern.id, 'tab_id': 10})
+        return context
+
+    def get_success_url(self):
+        Item.update_timestamp(foo=self.object.test_pattern, user=self.request.user)
+        Item.update_timestamp(foo=self.object.test_pattern.category_pattern.testplan_pattern, user=self.request.user)
+        return reverse('test_pattern_details', kwargs={'pk': self.object.test_pattern.id, 'tab_id': 10})
+
+
+@method_decorator(login_required, name='dispatch')
+class TestPatternLinkDelete(DeleteView):
+    model = TestPatternLink
+    template_name = 'device/delete.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('test_pattern_details', kwargs={'pk': self.object.test_pattern.id, 'tab_id': 10})
+        return context
+
+    def get_success_url(self):
+        Item.update_timestamp(foo=self.object.test_pattern, user=self.request.user)
+        Item.update_timestamp(foo=self.object.test_pattern.category_pattern.testplan_pattern, user=self.request.user)
+        return reverse('test_pattern_details', kwargs={'pk': self.object.test_pattern.id, 'tab_id': 10})

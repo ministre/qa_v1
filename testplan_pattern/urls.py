@@ -33,4 +33,10 @@ urlpatterns = [
          name='test_pattern_config_update'),
     path('test/config/delete/<int:pk>/', views.TestPatternConfigDelete.as_view(),
          name='test_pattern_config_delete'),
+    path('test/link/create/<int:test_pattern_id>/', views.TestPatternLinkCreate.as_view(),
+         name='test_pattern_link_create'),
+    path('test/link/update/<int:pk>/', views.TestPatternLinkUpdate.as_view(),
+         name='test_pattern_link_update'),
+    path('test/link/delete/<int:pk>/', views.TestPatternLinkDelete.as_view(),
+         name='test_pattern_link_delete'),
 ]

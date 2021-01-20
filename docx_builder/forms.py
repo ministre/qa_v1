@@ -57,7 +57,6 @@ class DocxProfileForm(ModelForm):
             'h3_space_before': _('Heading 3 Space Before') + ', [0-40]',
             'h3_space_after': _('Heading 3 Space After') + ', [0-40]',
             'h3_alignment': _('Heading 3 Alignment'),
-
             'normal_font_name': _('Normal Font Name'),
             'normal_font_size': _('Normal Size') + ', [10-40]',
             'normal_font_bold': _('Normal Font Bold'),
