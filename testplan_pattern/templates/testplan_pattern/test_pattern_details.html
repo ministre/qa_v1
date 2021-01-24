@@ -38,10 +38,18 @@
         </a>
     </li>
     <li class="tabs-title {% if tab_id == 8 %} is-active{% endif %}">
-        <a data-tabs-target="images" href="#images">{% trans "Images" %}</a>
+        <a data-tabs-target="images" href="#images">{% trans "Images" %}
+            {% if test_pattern.test_pattern_image.all.count > 0 %}
+            ({{ test_pattern.test_pattern_image.all.count }})
+            {% endif %}
+        </a>
     </li>
     <li class="tabs-title {% if tab_id == 9 %} is-active{% endif %}">
-        <a data-tabs-target="images" href="#files">{% trans "Files" %}</a>
+        <a data-tabs-target="images" href="#files">{% trans "Files" %}
+            {% if test_pattern.test_pattern_file.all.count > 0 %}
+            ({{ test_pattern.test_pattern_file.all.count }})
+            {% endif %}
+        </a>
     </li>
     <li class="tabs-title {% if tab_id == 10 %} is-active{% endif %}">
         <a data-tabs-target="links" href="#links">{% trans "Links" %}
@@ -192,9 +200,45 @@
     </div>
 
     <div class="tabs-panel {% if tab_id == 8 %}is-active{% endif %}" id="images">
+        <div class="grid-x grid-margin-x">
+            <div class="cell">
+                <div class="card">
+                    <div class="card-section">
+                        <a href="{% url 'test_pattern_image_create' test_pattern_id=test_pattern.id %}" class="button small">{% trans "Add" %}</a>
+                        {% for image in test_pattern.test_pattern_image.all|dictsort:"id" %}
+                        <p>
+                            {% if image.desc %}{{ image.desc }}{% endif %}
+                            <a href="{% url 'test_pattern_image_update' pk=image.id %}"><i class="step fi-pencil" style="color: #7700ff"></i></a>
+                            <a href="{% url 'test_pattern_image_delete' pk=image.id %}"><i class="step fi-minus" style="color: red"></i></a>
+                        </p>
+                        <p>
+                            <img src="{{ image.image.url }}"{% if image.width %} width="{{ image.width }}"{% endif %}{% if image.height %} height="{{ image.height }}"{% endif %}>
+                        </p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="tabs-panel {% if tab_id == 9 %}is-active{% endif %}" id="files">
+        <div class="grid-x grid-margin-x">
+            <div class="cell">
+                <div class="card">
+                    <div class="card-section">
+                        <a href="{% url 'test_pattern_file_create' test_pattern_id=test_pattern.id %}" class="button small">{% trans "Add" %}</a>
+                        <ul>
+                        {% for file in result.result_file.all|dictsort:"id" %}
+                            <li>{% if file.desc %}{{ file.desc }}<br>{% endif %}
+                                <a href="{% url 'test_pattern_file_update' pk=file.id %}">{{ file.filename }}</a>
+                                <a href="{% url 'test_pattern_file_delete' pk=file.id %}"><i class="step fi-minus" style="color: red"></i></a>
+                            </li>
+                        {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="tabs-panel {% if tab_id == 10 %}is-active{% endif %}" id="links">
