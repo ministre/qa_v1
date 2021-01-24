@@ -223,13 +223,13 @@
 
     <div class="tabs-panel {% if tab_id == 9 %}is-active{% endif %}" id="files">
         <a href="{% url 'test_pattern_file_create' test_pattern_id=test_pattern.id %}" class="button small">{% trans "Add" %}</a>
-        {% if result.result_file.all %}
+        {% if test_pattern.test_pattern_file.all %}
         <div class="grid-x grid-margin-x">
             <div class="cell">
                 <div class="card">
                     <div class="card-section">
                         <ul>
-                        {% for file in result.result_file.all|dictsort:"id" %}
+                        {% for file in test_pattern.test_pattern_file.all|dictsort:"id" %}
                             <li>{% if file.desc %}{{ file.desc }}<br>{% endif %}
                                 <a href="{% url 'test_pattern_file_update' pk=file.id %}">{{ file.filename }}</a>
                                 <a href="{% url 'test_pattern_file_delete' pk=file.id %}"><i class="step fi-minus" style="color: red"></i></a>
