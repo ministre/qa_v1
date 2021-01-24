@@ -45,7 +45,7 @@
         </a>
     </li>
     <li class="tabs-title {% if tab_id == 9 %} is-active{% endif %}">
-        <a data-tabs-target="images" href="#files">{% trans "Files" %}
+        <a data-tabs-target="files" href="#files">{% trans "Files" %}
             {% if test_pattern.test_pattern_file.all.count > 0 %}
             ({{ test_pattern.test_pattern_file.all.count }})
             {% endif %}
