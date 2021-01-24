@@ -222,11 +222,12 @@
     </div>
 
     <div class="tabs-panel {% if tab_id == 9 %}is-active{% endif %}" id="files">
+        <a href="{% url 'test_pattern_file_create' test_pattern_id=test_pattern.id %}" class="button small">{% trans "Add" %}</a>
+        {% if result.result_file.all %}
         <div class="grid-x grid-margin-x">
             <div class="cell">
                 <div class="card">
                     <div class="card-section">
-                        <a href="{% url 'test_pattern_file_create' test_pattern_id=test_pattern.id %}" class="button small">{% trans "Add" %}</a>
                         <ul>
                         {% for file in result.result_file.all|dictsort:"id" %}
                             <li>{% if file.desc %}{{ file.desc }}<br>{% endif %}
@@ -239,6 +240,7 @@
                 </div>
             </div>
         </div>
+        {% endif %}
     </div>
 
     <div class="tabs-panel {% if tab_id == 10 %}is-active{% endif %}" id="links">
