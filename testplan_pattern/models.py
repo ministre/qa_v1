@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from device.models import DeviceType
+import os
 
 
 class TestplanPattern(models.Model):
@@ -126,6 +127,9 @@ class TestPatternFile(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
     updated_by = models.ForeignKey(User, models.SET_NULL, related_name='test_pattern_file_u', blank=True, null=True)
     updated_at = models.DateTimeField(default=timezone.now)
+
+    def filename(self):
+        return os.path.basename(self.file.name)
 
 
 class TestPatternLink(models.Model):
