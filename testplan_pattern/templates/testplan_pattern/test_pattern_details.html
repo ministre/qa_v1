@@ -60,9 +60,7 @@
     </li>
     <li class="tabs-title {% if tab_id == 11 %} is-active{% endif %}">
         <a data-tabs-target="comments" href="#comments">{% trans "Comments" %}
-            {% if test_pattern.test_pattern_comment.all.count > 0 %}
-            ({{ test_pattern.test_pattern_comment.all.count }})
-            {% endif %}
+            {% if comments|length > 0 %}({{ comments|length }}){% endif %}
         </a>
     </li>
     <li class="tabs-title {% if tab_id == 12 %} is-active{% endif %}">
@@ -270,18 +268,29 @@
 
     <div class="tabs-panel {% if tab_id == 11 %}is-active{% endif %}" id="comments">
         <a href="{% url 'test_pattern_comment_create' test_pattern_id=test_pattern.id %}" class="button small">{% trans "Add" %}</a>
-        {% if test_pattern.test_pattern_comment.all %}
+        {% if comments %}
         <div class="cell">
             <div class="card">
                 <div class="card-section">
-                    {% for comment in test_pattern.test_pattern_comment.all|dictsort:"id" %}
+                    {% for comment in comments %}
                     <p>
                         {% if comment.desc %}{{ comment.desc }}{% endif %}
                         <a href="{% url 'test_pattern_comment_update' pk=comment.id %}"><i class="step fi-pencil" style="color: #7700ff"></i></a>
                         <a href="{% url 'test_pattern_comment_delete' pk=comment.id %}"><i class="step fi-minus" style="color: red"></i></a>
-                        <br>
-                        {{ comment.text }}
                     </p>
+                    {% if comment.format == 0 %}
+                    <div class="grid-x grid-margin-x">
+                        <div class="cell">
+                            <div class="card">
+                                <div class="card-section">
+                                    {{ comment.text|safe }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% else %}
+                    <pre><code>{{ comment.text }}</code></pre>
+                    {% endif %}
                     {% endfor %}
                 </div>
             </div>

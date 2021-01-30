@@ -252,6 +252,16 @@ def test_pattern_details(request, pk, tab_id: int):
     num = test_pattern.get_num()
     procedure = textile.textile(test_pattern.procedure)
     expected = textile.textile(test_pattern.expected)
+    comments = TestPatternComment.objects.filter(test_pattern=test_pattern).order_by('id')
+    converted_comments = []
+    for comment in comments:
+        if comment.format == 0:
+            converted_comment = {'id': comment.id, 'desc': comment.desc, 'text': textile.textile(comment.text),
+                                 'format': comment.format}
+        else:
+            converted_comment = {'id': comment.id, 'desc': comment.desc, 'text': comment.text,
+                                 'format': comment.format}
+        converted_comments.append(converted_comment)
 
     device_types_update_form = TestPatternForm(instance=test_pattern)
     device_types_update_form.fields['name'].widget = forms.HiddenInput()
@@ -270,6 +280,7 @@ def test_pattern_details(request, pk, tab_id: int):
     test_redmine_wiki_update_form = TestRedmineWikiUpdateForm(initial={'redmine_wiki': test_pattern.redmine_wiki},
                                                               pattern_id=test_pattern.id)
     return render(request, 'testplan_pattern/test_pattern_details.html', {'test_pattern': test_pattern, 'num': num,
+                                                                          'comments': converted_comments,
                                                                           'device_types_update_form':
                                                                               device_types_update_form,
                                                                           'test_names_update_form':
