@@ -1,6 +1,6 @@
 from django.forms import ModelForm, HiddenInput
-from .models import TestplanPattern, CategoryPattern, TestPattern, TestPatternConfig, TestPatternLink, \
-    TestPatternImage, TestPatternFile
+from .models import TestplanPattern, CategoryPattern, TestPattern, TestPatternConfig, TestPatternImage, \
+    TestPatternFile, TestPatternLink, TestPatternComment
 from django import forms
 from django.utils.translation import gettext_lazy as _
 from django.shortcuts import get_object_or_404
@@ -222,6 +222,28 @@ class TestPatternLinkForm(ModelForm):
         fields = '__all__'
         widgets = {
             'test_pattern': HiddenInput(),
+            'created_by': HiddenInput(), 'created_at': HiddenInput(),
+            'updated_by': HiddenInput(), 'updated_at': HiddenInput()
+        }
+
+
+class TestPatternCommentForm(ModelForm):
+    class Meta:
+        model = TestPatternComment
+        labels = {
+            'desc': _('Description'),
+            'text': _('Text'),
+            'format': _('Format'),
+        }
+        fields = '__all__'
+        FORMAT = (
+            (0, 'Textile'),
+            (1, _('Code')),
+        )
+        widgets = {
+            'test_pattern': HiddenInput(),
+            'text': forms.Textarea(attrs={'rows': '15'}),
+            'format': forms.Select(choices=FORMAT, attrs={'class': 'form-control'}),
             'created_by': HiddenInput(), 'created_at': HiddenInput(),
             'updated_by': HiddenInput(), 'updated_at': HiddenInput()
         }

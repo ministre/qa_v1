@@ -59,7 +59,11 @@
         </a>
     </li>
     <li class="tabs-title {% if tab_id == 11 %} is-active{% endif %}">
-        <a data-tabs-target="comments" href="#comments">{% trans "Comments" %}</a>
+        <a data-tabs-target="comments" href="#comments">{% trans "Comments" %}
+            {% if test_pattern.test_pattern_comment.all.count > 0 %}
+            ({{ test_pattern.test_pattern_comment.all.count }})
+            {% endif %}
+        </a>
     </li>
     <li class="tabs-title {% if tab_id == 12 %} is-active{% endif %}">
         <a data-tabs-target="redmine_wiki" href="#redmine_wiki">Redmine Wiki</a>
@@ -265,6 +269,24 @@
     </div>
 
     <div class="tabs-panel {% if tab_id == 11 %}is-active{% endif %}" id="comments">
+        <a href="{% url 'test_pattern_comment_create' test_pattern_id=test_pattern.id %}" class="button small">{% trans "Add" %}</a>
+        {% if test_pattern.test_pattern_comment.all %}
+        <div class="cell">
+            <div class="card">
+                <div class="card-section">
+                    {% for comment in test_pattern.test_pattern_comment.all|dictsort:"id" %}
+                    <p>
+                        {% if comment.desc %}{{ comment.desc }}{% endif %}
+                        <a href="{% url 'test_pattern_comment_update' pk=comment.id %}"><i class="step fi-pencil" style="color: #7700ff"></i></a>
+                        <a href="{% url 'test_pattern_comment_delete' pk=comment.id %}"><i class="step fi-minus" style="color: red"></i></a>
+                        <br>
+                        {{ comment.text }}
+                    </p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
     </div>
 
     <div class="tabs-panel {% if tab_id == 12 %}is-active{% endif %}" id="redmine_wiki">

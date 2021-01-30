@@ -144,6 +144,7 @@ class TestPatternLink(models.Model):
 
 class TestPatternComment(models.Model):
     test_pattern = models.ForeignKey(TestPattern, related_name='test_pattern_comment', on_delete=models.CASCADE)
+    desc = models.CharField(max_length=1000, blank=True, null=True)
     text = models.TextField()
     format = models.IntegerField(default=0)
     created_by = models.ForeignKey(User, models.SET_NULL, related_name='test_pattern_comment_c', blank=True, null=True)
