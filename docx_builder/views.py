@@ -615,8 +615,7 @@ def build_testplan(request):
             row_cells = table.add_row().cells
             paragraph = row_cells[0].paragraphs[0]
             run = paragraph.add_run()
-            if docx_profile.header_text1:
-                run.add_text(docx_profile.header_text1)
+            run.add_text(str(_('Document Version')) + ': ' + testplan.version)
             paragraph = row_cells[1].paragraphs[0]
             run = paragraph.add_run()
             if docx_profile.header_text2:
@@ -657,6 +656,14 @@ def build_testplan(request):
                     row_cells = table.add_row().cells
                     row_cells[0].text = str(_('Procedure')) + ': '
                     if test.procedure:
+                        # paragraphs = test.procedure.split('\r\n')
+                        # for paragraph in paragraphs:
+                        #    if paragraph.startswith('###'):
+                        #        p = row_cells[1].add_paragraph(paragraph[4:], style='List Number 3')
+                        #    elif paragraph.startswith('##'):
+                        #        p = row_cells[1].add_paragraph(paragraph[3:], style='List Number 2')
+                        #    else:
+                        #        p = row_cells[1].add_paragraph(paragraph[2:], style='List Number')
                         row_cells[1].text = test.procedure.replace('\r', '')
                 if expected:
                     row_cells = table.add_row().cells
