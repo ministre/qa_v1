@@ -4,9 +4,9 @@ from qa_v1 import settings
 from redminelib import Redmine
 from redminelib.exceptions import ResourceNotFoundError
 import re
-from .models import TestPlan, Category, Test, TestConfig
+from .models import TestPlan, Category, Test, TestConfig, TestImage
 from device.models import DeviceType
-from .forms import TestPlanForm, CategoryForm, TestForm, TestConfigForm
+from .forms import TestPlanForm, CategoryForm, TestForm, TestConfigForm, TestImageForm
 from docx_generator.forms import BuildTestplanForm
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
@@ -392,6 +392,62 @@ class TestConfigDelete(DeleteView):
         Item.update_timestamp(foo=self.object.test, user=self.request.user)
         Item.update_timestamp(foo=self.object.test.cat.testplan, user=self.request.user)
         return reverse('test_details', kwargs={'pk': self.object.test_pattern.id, 'tab_id': 3})
+
+
+@method_decorator(login_required, name='dispatch')
+class TestImageCreate(CreateView):
+    model = TestImage
+    form_class = TestImageForm
+    template_name = 'device/create.html'
+
+    def get_initial(self):
+        return {'test': self.kwargs.get('test_id')}
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('test_details', kwargs={'pk': self.kwargs.get('test_id'), 'tab_id': 4})
+        return context
+
+    def get_success_url(self):
+        Item.update_timestamp(foo=self.object.test, user=self.request.user)
+        Item.update_timestamp(foo=self.object.test.cat, user=self.request.user)
+        return reverse('test_details', kwargs={'pk': self.object.test.id, 'tab_id': 4})
+
+
+@method_decorator(login_required, name='dispatch')
+class TestImageUpdate(UpdateView):
+    model = TestImage
+    form_class = TestImageForm
+    template_name = 'device/update.html'
+
+    def get_initial(self):
+        return {'updated_by': self.request.user, 'updated_at': timezone.now()}
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('test_details', kwargs={'pk': self.object.test.id, 'tab_id': 4})
+        return context
+
+    def get_success_url(self):
+        Item.update_timestamp(foo=self.object.test, user=self.request.user)
+        Item.update_timestamp(foo=self.object.test.cat.testplan, user=self.request.user)
+        return reverse('test_details', kwargs={'pk': self.object.test.id, 'tab_id': 4})
+
+
+@method_decorator(login_required, name='dispatch')
+class TestImageDelete(DeleteView):
+    model = TestImage
+    template_name = 'device/delete.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('test_details', kwargs={'pk': self.object.test.id, 'tab_id': 4})
+        return context
+
+    def get_success_url(self):
+        Item.update_timestamp(foo=self.object.test, user=self.request.user)
+        Item.update_timestamp(foo=self.object.test.cat.testplan, user=self.request.user)
+        return reverse('test_details', kwargs={'pk': self.object.test_pattern.id, 'tab_id': 4})
 
 
 @login_required
