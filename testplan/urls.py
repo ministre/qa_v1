@@ -26,6 +26,11 @@ urlpatterns = [
     path('test/up/<int:pk>/', views.test_up, name='test_up'),
     path('test/down/<int:pk>/', views.test_down, name='test_down'),
 
+    # configs
+    path('test/config/create/<int:test_id>/', views.TestConfigCreate.as_view(), name='test_config_create'),
+    path('test/config/update/<int:pk>/', views.TestConfigUpdate.as_view(), name='test_config_update'),
+    path('test/config/delete/<int:pk>/', views.TestConfigDelete.as_view(), name='test_config_delete'),
+
     # Testplans Redmine
     path('import/<int:testplan_id>/', views.testplan_import, name='testplan_import'),
     path('test/import/', views.test_import_details, name='test_import_details'),

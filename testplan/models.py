@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
-from testplan_pattern.models import TestplanPattern, CategoryPattern, TestPattern, TestPatternConfig
+from testplan_pattern.models import TestplanPattern, CategoryPattern, TestPattern, TestPatternConfig, TestPatternImage
 
 
 class TestPlan(models.Model):
@@ -92,8 +92,22 @@ class TestConfig(models.Model):
                                blank=True, null=True)
     desc = models.CharField(max_length=1000, blank=True, null=True)
     lang = models.CharField(max_length=40, blank=True, null=True)
-    config = models.TextField()
+    config = models.TextField(blank=True)
     created_by = models.ForeignKey(User, models.SET_NULL, related_name='test_config_c', blank=True, null=True)
     created_at = models.DateTimeField(default=timezone.now)
     updated_by = models.ForeignKey(User, models.SET_NULL, related_name='test_config_u', blank=True, null=True)
+    updated_at = models.DateTimeField(default=timezone.now)
+
+
+class TestImage(models.Model):
+    test = models.ForeignKey(Test, related_name='test_image', on_delete=models.CASCADE)
+    parent = models.ForeignKey(TestPatternConfig, related_name='parent_image', on_delete=models.CASCADE,
+                               blank=True, null=True)
+    desc = models.CharField(max_length=1000, blank=True, null=True)
+    image = models.ImageField(upload_to="testplan/images/", blank=True, null=True)
+    width = models.IntegerField(blank=True, null=True)
+    height = models.IntegerField(blank=True, null=True)
+    created_by = models.ForeignKey(User, models.SET_NULL, related_name='test_image_c', blank=True, null=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_by = models.ForeignKey(User, models.SET_NULL, related_name='test_image_u', blank=True, null=True)
     updated_at = models.DateTimeField(default=timezone.now)

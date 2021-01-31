@@ -18,6 +18,16 @@
         <a data-tabs-target="desc" href="#desc">{% trans "Description" %}</a>
     </li>
     <li class="tabs-title {% if tab_id == 3 %} is-active{% endif %}">
+        <a data-tabs-target="configs" href="#configs">{% trans "Configurations" %}
+            {% if test.test_config.all.count > 0 %}
+            ({{ test.test_config.all.count }})
+            {% endif %}
+        </a>
+    </li>
+    <li class="tabs-title {% if tab_id == 4 %} is-active{% endif %}">
+        <a data-tabs-target="images" href="#images">{% trans "Images" %}</a>
+    </li>
+    <li class="tabs-title {% if tab_id == 5 %} is-active{% endif %}">
         <a data-tabs-target="redmine" href="#redmine">Redmine</a>
     </li>
 </ul>
@@ -95,9 +105,49 @@
         </div>
     </div>
 
-    <div class="tabs-panel {% if tab_id == 3 %}is-active{% endif %}" id="redmine">
+    <div class="tabs-panel {% if tab_id == 3 %}is-active{% endif %}" id="configs">
+        <div class="grid-x grid-margin-x small-up-2 medium-up-2">
+            <div class="cell">
+                <div class="card">
+                    <div class="card-section">
+                        <a href="{% url 'test_config_create' test_id=test.id %}" class="button small">{% trans "Add" %}</a>
+                    </div>
+                </div>
+            </div>
+            <div class="cell">
+                <div class="card">
+                    <div class="card-section">
+                        <h5>{% trans "Add from pattern" %}</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% if test.test_config.all %}
+        <div class="cell">
+            <div class="card">
+                <div class="card-section">
+                    {% for config in test.test_config.all|dictsort:"id" %}
+                    <p>
+                        {% if config.desc %}{{ config.desc }}{% endif %}
+                        <a href="{% url 'test_config_update' pk=config.id %}"><i class="step fi-pencil" style="color: #7700ff"></i></a>
+                        <a href="{% url 'test_config_delete' pk=config.id %}"><i class="step fi-minus" style="color: red"></i></a>
+                    </p>
+                    <pre><code data-language="{{ config.lang }}">{{ config.config }}</code></pre>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="tabs-panel {% if tab_id == 4 %}is-active{% endif %}" id="images">
+    </div>
+
+    <div class="tabs-panel {% if tab_id == 5 %}is-active{% endif %}" id="redmine">
     </div>
 
 </div>
+
+<script src="{% static 'rainbow/rainbow-custom.min.js' %}"></script>
 
 {% endblock %}
