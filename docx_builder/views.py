@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
 from protocol.models import Protocol
+from testplan.models import TestPlan
 from django.utils.translation import gettext_lazy as _
 from docx import Document
 from django.conf import settings
@@ -549,9 +550,107 @@ def build_protocol_detailed(request):
 @login_required
 def build_testplan(request):
     if request.method == 'POST':
-        return 0
+        testplan = get_object_or_404(TestPlan, id=request.POST['testplan_id'])
+        docx_profile = get_object_or_404(DocxProfile, id=request.POST['docx_profile_id'])
+        title_page = header = purpose = procedure = expected = configs = images = False
+        try:
+            if request.POST['title_page']:
+                title_page = True
+        except MultiValueDictKeyError:
+            pass
+        try:
+            if request.POST['header']:
+                header = True
+        except MultiValueDictKeyError:
+            pass
+        try:
+            if request.POST['purpose']:
+                purpose = True
+        except MultiValueDictKeyError:
+            pass
+        try:
+            if request.POST['procedure']:
+                procedure = True
+        except MultiValueDictKeyError:
+            pass
+        try:
+            if request.POST['expected']:
+                expected = True
+        except MultiValueDictKeyError:
+            pass
+        try:
+            if request.POST['configs']:
+                configs = True
+        except MultiValueDictKeyError:
+            pass
+        try:
+            if request.POST['images']:
+                images = True
+        except MultiValueDictKeyError:
+            pass
+
+        document = build_document(docx_profile=docx_profile)
+        # margin
+        section = document.sections
+        section[0].left_margin = Cm(2)
+        section[0].right_margin = Cm(1)
+        section[0].top_margin = Cm(5)
+        section[0].bottom_margin = Cm(1)
+        ###
+        if header:
+            style = document.styles.add_style('Header Table', WD_STYLE_TYPE.TABLE)
+            style.base_style = document.styles['Table Grid']
+
+            header = document.sections[0].header
+            table = header.add_table(rows=0, cols=3, width=Cm(19.5))
+            table.style = 'Header Table'
+            row_cells = table.add_row().cells
+            paragraph = row_cells[0].paragraphs[0]
+            run = paragraph.add_run()
+            if docx_profile.header_logo:
+                run.add_picture(docx_profile.header_logo, width=Inches(1.25))
+            paragraph = row_cells[1].paragraphs[0]
+            run = paragraph.add_run()
+            run.add_text(str(_('Testplan')) + ' ' + testplan.name)
+            row_cells = table.add_row().cells
+            paragraph = row_cells[0].paragraphs[0]
+            run = paragraph.add_run()
+            if docx_profile.header_text1:
+                run.add_text(docx_profile.header_text1)
+            paragraph = row_cells[1].paragraphs[0]
+            run = paragraph.add_run()
+            if docx_profile.header_text2:
+                run.add_text(docx_profile.header_text2)
+
+            table.cell(0, 1).merge(table.cell(0, 2))
+            table.cell(0, 0).width = Cm(5)
+            table.cell(0, 0).paragraphs[0].paragraph_format.alignment = WD_TABLE_ALIGNMENT.CENTER
+            table.cell(1, 0).width = Cm(5)
+            table.cell(1, 0).paragraphs[0].paragraph_format.alignment = WD_TABLE_ALIGNMENT.CENTER
+            table.cell(0, 1).width = Cm(10.5)
+            table.cell(0, 1).paragraphs[0].paragraph_format.alignment = WD_TABLE_ALIGNMENT.CENTER
+            table.cell(1, 1).width = Cm(10.5)
+            table.cell(1, 1).paragraphs[0].paragraph_format.alignment = WD_TABLE_ALIGNMENT.CENTER
+            table.cell(0, 2).width = Cm(4)
+            table.cell(0, 2).paragraphs[0].paragraph_format.alignment = WD_TABLE_ALIGNMENT.CENTER
+            table.cell(1, 2).width = Cm(4)
+            table.cell(1, 2).paragraphs[0].paragraph_format.alignment = WD_TABLE_ALIGNMENT.CENTER
+            table.cell(0, 1).vertical_alignment = WD_CELL_VERTICAL_ALIGNMENT.CENTER
+
+
+        ###
+        file = os.path.join(settings.MEDIA_ROOT + '/docx_builder/testplans/',
+                            'Testplan_' + str(testplan.id) + '.docx')
+        document.save(file)
+        if os.path.exists(file):
+            with open(file, 'rb') as fh:
+                response = HttpResponse(fh.read(), content_type="application/vnd.ms-word")
+                response['Content-Disposition'] = 'inline; filename=' + os.path.basename(file)
+                return response
+        raise Http404
     else:
-        return 0
+        message = [False, _('Page not found')]
+        return render(request, 'device/message.html', {'message': message})
 
 
 def build_document(docx_profile: DocxProfile):

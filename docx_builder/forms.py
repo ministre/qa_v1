@@ -194,11 +194,11 @@ class BuildDocxTestplanForm(forms.Form):
                                              label=_('Docx Profile'))
     title_page = forms.BooleanField(label=_('Title Page'), required=False, initial=False, disabled=True)
     header = forms.BooleanField(label=_('Header'), required=False, initial=True)
-    test_purpose = forms.BooleanField(label=_('Test Purpose'), required=False, initial=True)
-    test_procedure = forms.BooleanField(label=_('Test Procedure'), required=False, initial=True)
-    test_expected = forms.BooleanField(label=_('Test Expected Result'), required=False, initial=True)
-    test_configs = forms.BooleanField(label=_('Test Configurations'), required=False, initial=True)
-    test_images = forms.BooleanField(label=_('Test Images'), required=False, initial=True)
+    purpose = forms.BooleanField(label=_('Purpose'), required=False, initial=True)
+    procedure = forms.BooleanField(label=_('Procedure'), required=False, initial=True)
+    expected = forms.BooleanField(label=_('Expected Result'), required=False, initial=True)
+    configs = forms.BooleanField(label=_('Configurations'), required=False, initial=True)
+    images = forms.BooleanField(label=_('Images'), required=False, initial=True)
 
     def __init__(self, *args, **kwargs):
         super(BuildDocxTestplanForm, self).__init__(*args, **kwargs)
