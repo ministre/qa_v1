@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
 from protocol.models import Protocol
-from testplan.models import TestPlan
+from testplan.models import TestPlan, Category, Test, TestImage
 from django.utils.translation import gettext_lazy as _
 from docx import Document
 from django.conf import settings
@@ -636,7 +636,46 @@ def build_testplan(request):
             table.cell(1, 2).width = Cm(4)
             table.cell(1, 2).paragraphs[0].paragraph_format.alignment = WD_TABLE_ALIGNMENT.CENTER
             table.cell(0, 1).vertical_alignment = WD_CELL_VERTICAL_ALIGNMENT.CENTER
+        ###
+        document.add_paragraph(str(_('Testplan')), style='Title')
 
+        categories = Category.objects.filter(testplan=testplan).order_by('priority')
+        for i, category in enumerate(categories):
+            document.add_heading(str(i+1) + '. ' + category.name, level=1)
+            tests = Test.objects.filter(cat=category).order_by('priority')
+            for j, test in enumerate(tests):
+                document.add_heading(str(i + 1) + '.' + str(j + 1) + '. ' + test.name, level=2)
+                # test table
+                table = document.add_table(rows=0, cols=2)
+                table.style = 'TableGrid'
+                if purpose:
+                    row_cells = table.add_row().cells
+                    row_cells[0].text = str(_('Purpose')) + ': '
+                    if test.purpose:
+                        row_cells[1].text = test.purpose
+                if procedure:
+                    row_cells = table.add_row().cells
+                    row_cells[0].text = str(_('Procedure')) + ': '
+                    if test.procedure:
+                        row_cells[1].text = test.procedure.replace('\r', '')
+                if expected:
+                    row_cells = table.add_row().cells
+                    row_cells[0].text = str(_('Expected result')) + ': '
+                    if test.expected:
+                        row_cells[1].text = test.expected.replace('\r', '')
+
+                for cell in table.columns[0].cells:
+                    cell.width = Cm(4)
+                for cell in table.columns[1].cells:
+                    cell.width = Cm(15)
+
+                if images:
+                    test_images = TestImage.objects.filter(test=test).order_by('id')
+                    for test_image in test_images:
+                        if test_image.desc:
+                            document.add_heading(test_image.desc, level=3)
+                        if test_image.image:
+                            document.add_picture(test_image.image, width=Cm(17))
 
         ###
         file = os.path.join(settings.MEDIA_ROOT + '/docx_builder/testplans/',
