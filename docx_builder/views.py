@@ -546,6 +546,14 @@ def build_protocol_detailed(request):
         return render(request, 'device/message.html', {'message': message})
 
 
+@login_required
+def build_testplan(request):
+    if request.method == 'POST':
+        return 0
+    else:
+        return 0
+
+
 def build_document(docx_profile: DocxProfile):
     document = Document()
     document.styles['Title'].font.name = docx_profile.title_font_name

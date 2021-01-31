@@ -9,4 +9,5 @@ urlpatterns = [
     path('profile/delete/<int:pk>/', views.DocxProfileDelete.as_view(), name='docx_profile_delete'),
     path('build/protocol/', views.build_protocol, name='build_protocol'),
     path('build/protocol_detailed/', views.build_protocol_detailed, name='build_protocol_detailed'),
+    path('build/testplan/', views.build_testplan, name='build_testplan'),
 ]

@@ -7,7 +7,7 @@ import re
 from .models import TestPlan, Category, Test, TestConfig, TestImage
 from device.models import DeviceType
 from .forms import TestPlanForm, CategoryForm, TestForm, TestConfigForm, TestImageForm
-from docx_generator.forms import BuildTestplanForm
+from docx_builder.forms import BuildDocxTestplanForm
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
 from django.utils.decorators import method_decorator
@@ -85,11 +85,11 @@ def testplan_details(request, pk, tab_id):
     testplan = get_object_or_404(TestPlan, id=pk)
     tests_count = testplan.tests_count()
     protocols = testplan.get_protocols()
-    testplan_form = BuildTestplanForm(initial={'testplan_id': testplan.id})
-    testplan_form.fields['testplan_id'].widget = forms.HiddenInput()
+    build_testplan_form = BuildDocxTestplanForm(initial={'testplan_id': testplan.id})
     return render(request, 'testplan/testplan_details.html', {'testplan': testplan, 'tests_count': tests_count,
                                                               'protocols': protocols,
-                                                              'build_testplan_form': testplan_form, 'tab_id': tab_id})
+                                                              'build_testplan_form': build_testplan_form,
+                                                              'tab_id': tab_id})
 
 
 @login_required
