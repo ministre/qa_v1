@@ -793,7 +793,7 @@ msgstr "Родительский проект"
 
 #: .\redmine\forms.py:11 .\redmine\forms.py:24 .\redmine\forms.py:36
 msgid "General Information"
-msgstr "Главная"
+msgstr "Общая информация"
 
 #: .\redmine\forms.py:25
 msgid "Protocol List"
