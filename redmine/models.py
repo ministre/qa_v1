@@ -133,7 +133,7 @@ class RedmineDevice:
     def build_wiki(device: Device, project_name: str, general=False, photos=False, samples=False, protocols=False):
         wiki = 'h1. ' + project_name + '\r\n\r'
         if general:
-            wiki += '\nh2. ' + str(_('General')) + '\r' \
+            wiki += '\nh2. ' + str(_('General Information')) + '\r' \
                     '\n\r' \
                     '\n| ' + str(_('Device Type')) + ': | ' + device.type.name + ' |\r' \
                     '\n| ' + str(_('Vendor')) + ': | ' + device.vendor.name + ' |\r' \
