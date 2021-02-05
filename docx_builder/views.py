@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
 from protocol.models import Protocol
-from testplan.models import TestPlan, Category, Test, TestImage
+from testplan.models import TestPlan, Category, Test, TestImage, TestConfig
 from django.utils.translation import gettext_lazy as _
 from docx import Document
 from django.conf import settings
@@ -675,6 +675,18 @@ def build_testplan(request):
                     cell.width = Cm(4)
                 for cell in table.columns[1].cells:
                     cell.width = Cm(15)
+
+                if configs:
+                    test_configs = TestConfig.objects.filter(test=test).order_by('id')
+                    if test_configs:
+                        document.add_heading(str(_('Configurations')), level=3)
+                        for test_config in test_configs:
+                            document.add_paragraph(test_config.desc, style='Caption')
+                            test_config.config = test_config.config.replace('\r', '')
+                            table = document.add_table(rows=1, cols=1)
+                            table.style = 'Table Grid'
+                            shade_cells([table.cell(0, 0)], "#e3e8ec")
+                            table.cell(0, 0).text = test_config.config
 
                 if images:
                     test_images = TestImage.objects.filter(test=test).order_by('id')
