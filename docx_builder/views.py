@@ -615,7 +615,7 @@ def build_testplan(request):
             row_cells = table.add_row().cells
             paragraph = row_cells[0].paragraphs[0]
             run = paragraph.add_run()
-            run.add_text(str(_('Document Version')) + ': ' + testplan.version)
+            run.add_text(str(_('document version')) + ': ' + testplan.version)
             paragraph = row_cells[1].paragraphs[0]
             run = paragraph.add_run()
             if docx_profile.header_text2:
