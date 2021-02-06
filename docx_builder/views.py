@@ -647,6 +647,7 @@ def build_testplan(request):
                 # test table
                 table = document.add_table(rows=0, cols=2)
                 table.style = 'TableGrid'
+
                 if purpose:
                     row_cells = table.add_row().cells
                     row_cells[0].text = str(_('Purpose')) + ': '
@@ -656,20 +657,13 @@ def build_testplan(request):
                     row_cells = table.add_row().cells
                     row_cells[0].text = str(_('Procedure')) + ': '
                     if test.procedure:
-                        # paragraphs = test.procedure.split('\r\n')
-                        # for paragraph in paragraphs:
-                        #    if paragraph.startswith('###'):
-                        #        p = row_cells[1].add_paragraph(paragraph[4:], style='List Number 3')
-                        #    elif paragraph.startswith('##'):
-                        #        p = row_cells[1].add_paragraph(paragraph[3:], style='List Number 2')
-                        #    else:
-                        #        p = row_cells[1].add_paragraph(paragraph[2:], style='List Number')
-                        row_cells[1].text = test.procedure.replace('\r', '')
+                        row_cells[1].text = textile_to_docx(test.procedure)
+
                 if expected:
                     row_cells = table.add_row().cells
                     row_cells[0].text = str(_('Expected result')) + ': '
                     if test.expected:
-                        row_cells[1].text = test.expected.replace('\r', '')
+                        row_cells[1].text = textile_to_docx(test.expected)
 
                 for cell in table.columns[0].cells:
                     cell.width = Cm(4)
@@ -850,3 +844,26 @@ def shade_cells(cells, shade):
         tcVAlign = OxmlElement("w:shd")
         tcVAlign.set(qn("w:fill"), shade)
         tcPr.append(tcVAlign)
+
+
+def textile_to_docx(foo: str):
+    j = 1
+    k = 1
+    lines = foo.split('\r')
+    for i, line in enumerate(lines):
+        if lines[i].startswith('# '):
+            lines[i] = str(j) + '.' + lines[i][1:]
+            j += 1
+        elif lines[i].startswith('\n# '):
+            lines[i] = '\n' + str(j) + '.' + lines[i][2:]
+            j += 1
+            k = 1
+        elif lines[i].startswith('\n## '):
+            lines[i] = '\n    ' + str(j-1) + '.' + str(k) + '.' + lines[i][3:]
+            k += 1
+        elif lines[i].startswith('\n* '):
+            lines[i] = '\n' + u'\u2022' + ' ' + lines[i][2:]
+        elif lines[i].startswith('\n** '):
+            lines[i] = '\n    ' + u'\u2022' + ' ' + lines[i][3:]
+    bar = ''.join(lines)
+    return bar

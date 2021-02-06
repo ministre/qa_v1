@@ -1,7 +1,9 @@
 from django.forms import ModelForm, HiddenInput
 from .models import TestPlan, Category, Test, TestConfig, TestImage
+from testplan_pattern.models import TestPatternConfig
 from django.utils.translation import gettext_lazy as _
 from django import forms
+from django.shortcuts import get_object_or_404
 
 
 class TestPlanForm(ModelForm):
@@ -88,6 +90,7 @@ class TestConfigForm(ModelForm):
         widgets = {
             'lang': forms.Select(choices=LANG, attrs={'class': 'form-control'}),
             'test': HiddenInput(),
+            'parent': HiddenInput(),
             'created_by': HiddenInput(), 'created_at': HiddenInput(),
             'updated_by': HiddenInput(), 'updated_at': HiddenInput()
         }
@@ -108,3 +111,17 @@ class TestImageForm(ModelForm):
             'created_by': HiddenInput(), 'created_at': HiddenInput(),
             'updated_by': HiddenInput(), 'updated_at': HiddenInput()
         }
+
+
+class TestAddConfigForm(forms.Form):
+    test_id = forms.IntegerField()
+    parent_config = forms.ModelChoiceField(queryset=TestPatternConfig.objects.all(), label=_('Pattern'),
+                                           required=False)
+
+    def __init__(self, *args, **kwargs):
+        test_id = kwargs.pop('test_id', None)
+        super(TestAddConfigForm, self).__init__(*args, **kwargs)
+        self.fields['test_id'].initial = test_id
+        test = get_object_or_404(Test, id=test_id)
+        self.fields['parent_config'].queryset = TestPatternConfig.objects.filter(test_pattern=test.parent).order_by('id')
+        self.fields['test_id'].widget = forms.HiddenInput()

@@ -110,38 +110,44 @@
     </div>
 
     <div class="tabs-panel {% if tab_id == 3 %}is-active{% endif %}" id="configs">
-        <div class="grid-x grid-margin-x small-up-2 medium-up-2">
-            <div class="cell">
-                <div class="card">
-                    <div class="card-section">
-                        <a href="{% url 'test_config_create' test_id=test.id %}" class="button small">{% trans "Add" %}</a>
-                    </div>
-                </div>
-            </div>
-            <div class="cell">
-                <div class="card">
-                    <div class="card-section">
-                        <h5>{% trans "Add from pattern" %}</h5>
-                    </div>
-                </div>
-            </div>
-        </div>
-        {% if test.test_config.all %}
         <div class="cell">
             <div class="card">
                 <div class="card-section">
-                    {% for config in test.test_config.all|dictsort:"id" %}
-                    <p>
-                        {% if config.desc %}{{ config.desc }}{% endif %}
-                        <a href="{% url 'test_config_update' pk=config.id %}"><i class="step fi-pencil" style="color: #7700ff"></i></a>
-                        <a href="{% url 'test_config_delete' pk=config.id %}"><i class="step fi-minus" style="color: red"></i></a>
-                    </p>
-                    <pre><code data-language="{{ config.lang }}">{{ config.config }}</code></pre>
-                    {% endfor %}
+                    <form method="post" action="{% url 'test_config_add' %}">
+                        <input type="submit" value='{% trans "Add" %}' class="button small" />
+                        {% csrf_token %}
+                        {{ add_config_form }}
+                    </form>
                 </div>
             </div>
         </div>
-        {% endif %}
+
+        {% for config in test.test_config.all|dictsort:"id" %}
+        <div class="cell">
+            <div class="card">
+                <div class="card-section">
+                    <p>
+                        {% if config.parent %}
+                          {% if config.parent.desc %}{{ config.parent.desc }}{% endif %}
+                        {% else %}
+                          {% if config.desc %}{{ config.desc }}{% endif %}
+                        {% endif %}
+
+                        {% if not config.parent %}
+                        <a href="{% url 'test_config_update' pk=config.id %}"><i class="step fi-pencil" style="color: #7700ff"></i></a>
+                        {% endif %}
+                        <a href="{% url 'test_config_delete' pk=config.id %}"><i class="step fi-minus" style="color: red"></i></a>
+                    </p>
+                    {% if config.parent %}
+                    <pre><code data-language="{{ config.parent.lang }}">{{ config.parent.config }}</code></pre>
+                    {% else %}
+                    <pre><code data-language="{{ config.lang }}">{{ config.config }}</code></pre>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+
     </div>
 
     <div class="tabs-panel {% if tab_id == 4 %}is-active{% endif %}" id="images">

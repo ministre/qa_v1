@@ -6,7 +6,7 @@ from redminelib.exceptions import ResourceNotFoundError
 import re
 from .models import TestPlan, Category, Test, TestConfig, TestImage
 from device.models import DeviceType
-from .forms import TestPlanForm, CategoryForm, TestForm, TestConfigForm, TestImageForm
+from .forms import TestPlanForm, CategoryForm, TestForm, TestConfigForm, TestAddConfigForm, TestImageForm
 from docx_builder.forms import BuildDocxTestplanForm
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
@@ -20,7 +20,8 @@ from django.utils import timezone
 from django.http import HttpResponseRedirect
 from device.views import Item
 from django.db.models import Max, Min
-from testplan_pattern.models import CategoryPattern, TestPattern
+from testplan_pattern.models import CategoryPattern, TestPattern, TestPatternConfig
+from django.utils.datastructures import MultiValueDictKeyError
 
 
 @method_decorator(login_required, name='dispatch')
@@ -314,8 +315,10 @@ def test_details(request, pk, tab_id):
     num = test.get_num()
     procedure = textile.textile(test.procedure)
     expected = textile.textile(test.expected)
+    add_config_form = TestAddConfigForm(test_id=test.id)
     return render(request, 'testplan/test_details.html', {'test': test, 'num': num, 'procedure': procedure,
-                                                          'expected': expected, 'tab_id': tab_id})
+                                                          'expected': expected, 'add_config_form': add_config_form,
+                                                          'tab_id': tab_id})
 
 
 @login_required
@@ -336,6 +339,25 @@ def test_down(request, pk):
     Item.set_priority(foo=next_test, priority=test.priority)
     Item.set_priority(foo=test, priority=next_tests['priority__min'])
     return HttpResponseRedirect(reverse('testplan_details', kwargs={'pk': test.cat.testplan.id, 'tab_id': 2}))
+
+
+@login_required
+def test_config_add(request):
+    if request.method == "POST":
+        test = get_object_or_404(Test, id=request.POST['test_id'])
+        try:
+            if request.POST['parent_config']:
+                parent_config = get_object_or_404(TestPatternConfig, id=request.POST['parent_config'])
+                TestConfig.objects.create(test=test, parent=parent_config, created_by=request.user,
+                                          updated_by=request.user)
+                return HttpResponseRedirect(reverse('test_details', kwargs={'pk': test.id, 'tab_id': 3}))
+
+        except MultiValueDictKeyError:
+            pass
+        return HttpResponseRedirect(reverse('test_config_create', kwargs={'test_id': test.id}))
+
+    else:
+        return render(request, 'device/message.html', {'message': [False, _('Page not found')]})
 
 
 @method_decorator(login_required, name='dispatch')
@@ -391,7 +413,7 @@ class TestConfigDelete(DeleteView):
     def get_success_url(self):
         Item.update_timestamp(foo=self.object.test, user=self.request.user)
         Item.update_timestamp(foo=self.object.test.cat.testplan, user=self.request.user)
-        return reverse('test_details', kwargs={'pk': self.object.test_pattern.id, 'tab_id': 3})
+        return reverse('test_details', kwargs={'pk': self.object.test.id, 'tab_id': 3})
 
 
 @method_decorator(login_required, name='dispatch')

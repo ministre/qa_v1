@@ -27,6 +27,7 @@ urlpatterns = [
     path('test/down/<int:pk>/', views.test_down, name='test_down'),
 
     # configs
+    path('test/config/add/', views.test_config_add, name='test_config_add'),
     path('test/config/create/<int:test_id>/', views.TestConfigCreate.as_view(), name='test_config_create'),
     path('test/config/update/<int:pk>/', views.TestConfigUpdate.as_view(), name='test_config_update'),
     path('test/config/delete/<int:pk>/', views.TestConfigDelete.as_view(), name='test_config_delete'),
