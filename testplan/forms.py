@@ -108,6 +108,7 @@ class TestImageForm(ModelForm):
         fields = '__all__'
         widgets = {
             'test': HiddenInput(),
+            'parent': HiddenInput(),
             'created_by': HiddenInput(), 'created_at': HiddenInput(),
             'updated_by': HiddenInput(), 'updated_at': HiddenInput()
         }
