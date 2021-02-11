@@ -489,7 +489,7 @@ class TestImageDelete(DeleteView):
     def get_success_url(self):
         Item.update_timestamp(foo=self.object.test, user=self.request.user)
         Item.update_timestamp(foo=self.object.test.cat.testplan, user=self.request.user)
-        return reverse('test_details', kwargs={'pk': self.object.test_pattern.id, 'tab_id': 4})
+        return reverse('test_details', kwargs={'pk': self.object.test.id, 'tab_id': 4})
 
 
 @login_required
