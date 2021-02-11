@@ -101,7 +101,7 @@ class TestConfig(models.Model):
 
 class TestImage(models.Model):
     test = models.ForeignKey(Test, related_name='test_image', on_delete=models.CASCADE)
-    parent = models.ForeignKey(TestPatternConfig, related_name='parent_image', on_delete=models.CASCADE,
+    parent = models.ForeignKey(TestPatternImage, related_name='parent_image', on_delete=models.CASCADE,
                                blank=True, null=True)
     desc = models.CharField(max_length=1000, blank=True, null=True)
     image = models.ImageField(upload_to="testplan/images/", blank=True, null=True)

@@ -1,6 +1,6 @@
 from django.forms import ModelForm, HiddenInput
 from .models import TestPlan, Category, Test, TestConfig, TestImage
-from testplan_pattern.models import TestPatternConfig
+from testplan_pattern.models import TestPatternConfig, TestPatternImage
 from django.utils.translation import gettext_lazy as _
 from django import forms
 from django.shortcuts import get_object_or_404
@@ -124,4 +124,18 @@ class TestAddConfigForm(forms.Form):
         self.fields['test_id'].initial = test_id
         test = get_object_or_404(Test, id=test_id)
         self.fields['parent_config'].queryset = TestPatternConfig.objects.filter(test_pattern=test.parent).order_by('id')
+        self.fields['test_id'].widget = forms.HiddenInput()
+
+
+class TestAddImageForm(forms.Form):
+    test_id = forms.IntegerField()
+    parent_image = forms.ModelChoiceField(queryset=TestPatternImage.objects.all(), label=_('Pattern'),
+                                          required=False)
+
+    def __init__(self, *args, **kwargs):
+        test_id = kwargs.pop('test_id', None)
+        super(TestAddImageForm, self).__init__(*args, **kwargs)
+        self.fields['test_id'].initial = test_id
+        test = get_object_or_404(Test, id=test_id)
+        self.fields['parent_image'].queryset = TestPatternImage.objects.filter(test_pattern=test.parent).order_by('id')
         self.fields['test_id'].widget = forms.HiddenInput()

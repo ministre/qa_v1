@@ -6,7 +6,8 @@ from redminelib.exceptions import ResourceNotFoundError
 import re
 from .models import TestPlan, Category, Test, TestConfig, TestImage
 from device.models import DeviceType
-from .forms import TestPlanForm, CategoryForm, TestForm, TestConfigForm, TestAddConfigForm, TestImageForm
+from .forms import TestPlanForm, CategoryForm, TestForm, TestConfigForm, TestAddConfigForm, TestImageForm, \
+    TestAddImageForm
 from docx_builder.forms import BuildDocxTestplanForm
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
@@ -20,7 +21,7 @@ from django.utils import timezone
 from django.http import HttpResponseRedirect
 from device.views import Item
 from django.db.models import Max, Min
-from testplan_pattern.models import CategoryPattern, TestPattern, TestPatternConfig
+from testplan_pattern.models import CategoryPattern, TestPattern, TestPatternConfig, TestPatternImage
 from django.utils.datastructures import MultiValueDictKeyError
 
 
@@ -316,9 +317,10 @@ def test_details(request, pk, tab_id):
     procedure = textile.textile(test.procedure)
     expected = textile.textile(test.expected)
     add_config_form = TestAddConfigForm(test_id=test.id)
+    add_image_form = TestAddImageForm(test_id=test.id)
     return render(request, 'testplan/test_details.html', {'test': test, 'num': num, 'procedure': procedure,
                                                           'expected': expected, 'add_config_form': add_config_form,
-                                                          'tab_id': tab_id})
+                                                          'add_image_form': add_image_form, 'tab_id': tab_id})
 
 
 @login_required
@@ -414,6 +416,24 @@ class TestConfigDelete(DeleteView):
         Item.update_timestamp(foo=self.object.test, user=self.request.user)
         Item.update_timestamp(foo=self.object.test.cat.testplan, user=self.request.user)
         return reverse('test_details', kwargs={'pk': self.object.test.id, 'tab_id': 3})
+
+
+@login_required
+def test_image_add(request):
+    if request.method == "POST":
+        test = get_object_or_404(Test, id=request.POST['test_id'])
+        try:
+            if request.POST['parent_image']:
+                parent_image = get_object_or_404(TestPatternImage, id=request.POST['parent_image'])
+                TestImage.objects.create(test=test, parent=parent_image, created_by=request.user,
+                                         updated_by=request.user)
+                return HttpResponseRedirect(reverse('test_details', kwargs={'pk': test.id, 'tab_id': 4}))
+
+        except MultiValueDictKeyError:
+            pass
+        return HttpResponseRedirect(reverse('test_image_create', kwargs={'test_id': test.id}))
+    else:
+        return render(request, 'device/message.html', {'message': [False, _('Page not found')]})
 
 
 @method_decorator(login_required, name='dispatch')

@@ -33,6 +33,7 @@ urlpatterns = [
     path('test/config/delete/<int:pk>/', views.TestConfigDelete.as_view(), name='test_config_delete'),
 
     # images
+    path('test/image/add/', views.test_image_add, name='test_image_add'),
     path('test/image/create/<int:test_id>/', views.TestImageCreate.as_view(), name='test_image_create'),
     path('test/image/update/<int:pk>/', views.TestImageUpdate.as_view(), name='test_image_update'),
     path('test/image/delete/<int:pk>/', views.TestImageDelete.as_view(), name='test_image_delete'),

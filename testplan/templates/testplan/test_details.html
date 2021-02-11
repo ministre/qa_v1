@@ -151,21 +151,18 @@
     </div>
 
     <div class="tabs-panel {% if tab_id == 4 %}is-active{% endif %}" id="images">
-        <div class="grid-x grid-margin-x small-up-2 medium-up-2">
-            <div class="cell">
-                <div class="card">
-                    <div class="card-section">
-                        <a href="{% url 'test_image_create' test_id=test.id %}" class="button small">{% trans "Add" %}</a>
-                    </div>
+        <div class="cell">
+            <div class="card">
+                <div class="card-section">
+                    <form method="post" action="{% url 'test_image_add' %}">
+                        <input type="submit" value='{% trans "Add" %}' class="button small" />
+                        {% csrf_token %}
+                        {{ add_image_form }}
+                    </form>
                 </div>
             </div>
-            <div class="cell">
-                <div class="card">
-                    <div class="card-section">
-                        <h5>{% trans "Add from pattern" %}</h5>
-                    </div>
-                </div>
-            </div>
+        </div>
+
         </div>
         {% if test.test_image.all %}
         <div class="cell">
