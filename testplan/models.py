@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 from testplan_pattern.models import TestplanPattern, CategoryPattern, TestPattern, TestPatternConfig, \
     TestPatternImage, TestPatternFile
+import os
 
 
 class TestPlan(models.Model):
@@ -124,3 +125,6 @@ class TestFile(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
     updated_by = models.ForeignKey(User, models.SET_NULL, related_name='test_file_u', blank=True, null=True)
     updated_at = models.DateTimeField(default=timezone.now)
+
+    def filename(self):
+        return os.path.basename(self.file.name)
