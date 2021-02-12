@@ -1,7 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
-from testplan_pattern.models import TestplanPattern, CategoryPattern, TestPattern, TestPatternConfig, TestPatternImage
+from testplan_pattern.models import TestplanPattern, CategoryPattern, TestPattern, TestPatternConfig, \
+    TestPatternImage, TestPatternFile
 
 
 class TestPlan(models.Model):
@@ -110,4 +111,16 @@ class TestImage(models.Model):
     created_by = models.ForeignKey(User, models.SET_NULL, related_name='test_image_c', blank=True, null=True)
     created_at = models.DateTimeField(default=timezone.now)
     updated_by = models.ForeignKey(User, models.SET_NULL, related_name='test_image_u', blank=True, null=True)
+    updated_at = models.DateTimeField(default=timezone.now)
+
+
+class TestFile(models.Model):
+    test = models.ForeignKey(Test, related_name='test_file', on_delete=models.CASCADE)
+    parent = models.ForeignKey(TestPatternFile, related_name='parent_file', on_delete=models.CASCADE,
+                               blank=True, null=True)
+    desc = models.CharField(max_length=1000, blank=True, null=True)
+    file = models.FileField(upload_to="testplan/files/", blank=True, null=True)
+    created_by = models.ForeignKey(User, models.SET_NULL, related_name='test_file_c', blank=True, null=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_by = models.ForeignKey(User, models.SET_NULL, related_name='test_file_u', blank=True, null=True)
     updated_at = models.DateTimeField(default=timezone.now)
