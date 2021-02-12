@@ -4,10 +4,10 @@ from qa_v1 import settings
 from redminelib import Redmine
 from redminelib.exceptions import ResourceNotFoundError
 import re
-from .models import TestPlan, Category, Test, TestConfig, TestImage
+from .models import TestPlan, Category, Test, TestConfig, TestImage, TestFile
 from device.models import DeviceType
 from .forms import TestPlanForm, CategoryForm, TestForm, TestConfigForm, TestAddConfigForm, TestImageForm, \
-    TestAddImageForm
+    TestAddImageForm, TestFileForm, TestAddFileForm
 from docx_builder.forms import BuildDocxTestplanForm
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
@@ -21,7 +21,7 @@ from django.utils import timezone
 from django.http import HttpResponseRedirect
 from device.views import Item
 from django.db.models import Max, Min
-from testplan_pattern.models import CategoryPattern, TestPattern, TestPatternConfig, TestPatternImage
+from testplan_pattern.models import CategoryPattern, TestPattern, TestPatternConfig, TestPatternImage, TestPatternFile
 from django.utils.datastructures import MultiValueDictKeyError
 
 
@@ -318,9 +318,13 @@ def test_details(request, pk, tab_id):
     expected = textile.textile(test.expected)
     add_config_form = TestAddConfigForm(test_id=test.id)
     add_image_form = TestAddImageForm(test_id=test.id)
+    add_file_form = TestAddFileForm(test_id=test.id)
     return render(request, 'testplan/test_details.html', {'test': test, 'num': num, 'procedure': procedure,
-                                                          'expected': expected, 'add_config_form': add_config_form,
-                                                          'add_image_form': add_image_form, 'tab_id': tab_id})
+                                                          'expected': expected,
+                                                          'add_config_form': add_config_form,
+                                                          'add_image_form': add_image_form,
+                                                          'add_file_form': add_file_form,
+                                                          'tab_id': tab_id})
 
 
 @login_required
@@ -490,6 +494,80 @@ class TestImageDelete(DeleteView):
         Item.update_timestamp(foo=self.object.test, user=self.request.user)
         Item.update_timestamp(foo=self.object.test.cat.testplan, user=self.request.user)
         return reverse('test_details', kwargs={'pk': self.object.test.id, 'tab_id': 4})
+
+
+@login_required
+def test_file_add(request):
+    if request.method == "POST":
+        test = get_object_or_404(Test, id=request.POST['test_id'])
+        try:
+            if request.POST['parent_file']:
+                parent_file = get_object_or_404(TestPatternFile, id=request.POST['parent_file'])
+                TestFile.objects.create(test=test, parent=parent_file, created_by=request.user,
+                                        updated_by=request.user)
+                return HttpResponseRedirect(reverse('test_details', kwargs={'pk': test.id, 'tab_id': 5}))
+
+        except MultiValueDictKeyError:
+            pass
+        return HttpResponseRedirect(reverse('test_file_create', kwargs={'test_id': test.id}))
+    else:
+        return render(request, 'device/message.html', {'message': [False, _('Page not found')]})
+
+
+@method_decorator(login_required, name='dispatch')
+class TestFileCreate(CreateView):
+    model = TestFile
+    form_class = TestFileForm
+    template_name = 'device/create.html'
+
+    def get_initial(self):
+        return {'test': self.kwargs.get('test_id')}
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('test_details', kwargs={'pk': self.kwargs.get('test_id'), 'tab_id': 5})
+        return context
+
+    def get_success_url(self):
+        Item.update_timestamp(foo=self.object.test, user=self.request.user)
+        Item.update_timestamp(foo=self.object.test.cat, user=self.request.user)
+        return reverse('test_details', kwargs={'pk': self.object.test.id, 'tab_id': 5})
+
+
+@method_decorator(login_required, name='dispatch')
+class TestFileUpdate(UpdateView):
+    model = TestFile
+    form_class = TestFileForm
+    template_name = 'device/update.html'
+
+    def get_initial(self):
+        return {'updated_by': self.request.user, 'updated_at': timezone.now()}
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('test_details', kwargs={'pk': self.object.test.id, 'tab_id': 5})
+        return context
+
+    def get_success_url(self):
+        Item.update_timestamp(foo=self.object.test, user=self.request.user)
+        Item.update_timestamp(foo=self.object.test.cat.testplan, user=self.request.user)
+        return reverse('test_details', kwargs={'pk': self.object.test.id, 'tab_id': 5})
+
+
+@method_decorator(login_required, name='dispatch')
+class TestFileDelete(DeleteView):
+    model = TestFile
+    template_name = 'device/delete.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('test_details', kwargs={'pk': self.object.test.id, 'tab_id': 5})
+        return context
+
+    def get_success_url(self):
+        Item.update_timestamp(foo=self.object.test, user=self.request.user)
+        Item.update_timestamp(foo=self.object.test.cat.testplan, user=self.request.user)
+        return reverse('test_details', kwargs={'pk': self.object.test.id, 'tab_id': 5})
 
 
 @login_required

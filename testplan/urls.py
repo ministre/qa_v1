@@ -38,6 +38,12 @@ urlpatterns = [
     path('test/image/update/<int:pk>/', views.TestImageUpdate.as_view(), name='test_image_update'),
     path('test/image/delete/<int:pk>/', views.TestImageDelete.as_view(), name='test_image_delete'),
 
+    # files
+    path('test/file/add/', views.test_file_add, name='test_file_add'),
+    path('test/file/create/<int:test_id>/', views.TestFileCreate.as_view(), name='test_file_create'),
+    path('test/file/update/<int:pk>/', views.TestFileUpdate.as_view(), name='test_file_update'),
+    path('test/file/delete/<int:pk>/', views.TestFileDelete.as_view(), name='test_file_delete'),
+
     # Testplans Redmine
     path('import/<int:testplan_id>/', views.testplan_import, name='testplan_import'),
     path('test/import/', views.test_import_details, name='test_import_details'),
