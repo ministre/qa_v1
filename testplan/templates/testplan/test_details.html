@@ -39,6 +39,13 @@
         </a>
     </li>
     <li class="tabs-title {% if tab_id == 6 %} is-active{% endif %}">
+        <a data-tabs-target="links" href="#links">{% trans "Links" %}
+            {% if test.test_link.all.count > 0 %}
+            ({{ test.test_link.all.count }})
+            {% endif %}
+        </a>
+    </li>
+    <li class="tabs-title {% if tab_id == 7 %} is-active{% endif %}">
         <a data-tabs-target="redmine" href="#redmine">Redmine</a>
     </li>
 </ul>
@@ -241,7 +248,49 @@
         {% endfor %}
     </div>
 
-    <div class="tabs-panel {% if tab_id == 6 %}is-active{% endif %}" id="redmine">
+    <div class="tabs-panel {% if tab_id == 6 %}is-active{% endif %}" id="links">
+        <div class="cell">
+            <div class="card">
+                <div class="card-section">
+                    <form method="post" action="{% url 'test_link_add' %}">
+                        <input type="submit" value='{% trans "Add" %}' class="button small" />
+                        {% csrf_token %}
+                        {{ add_link_form }}
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        {% for link in test.test_link.all|dictsort:"id" %}
+        <div class="cell">
+            <div class="card">
+                <div class="card-section">
+                    <p>
+                        {% if link.parent %}
+                          {% if link.parent.desc %}{{ link.parent.desc }}{% endif %}
+                        {% else %}
+                          {% if link.desc %}{{ link.desc }}{% endif %}
+                        {% endif %}
+
+                        {% if not link.parent %}
+                        <a href="{% url 'test_link_update' pk=link.id %}"><i class="step fi-pencil" style="color: #7700ff"></i></a>
+                        {% endif %}
+                        <a href="{% url 'test_link_delete' pk=link.id %}"><i class="step fi-minus" style="color: red"></i></a>
+                        <br>
+                        {% if link.parent %}
+                        <a href="{{ link.parent.url }}">{{ link.parent.url }}</a>
+                        {% else %}
+                        <a href="{{ link.url }}">{{ link.url }}</a>
+                        {% endif %}
+                    </p>
+
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="tabs-panel {% if tab_id == 7 %}is-active{% endif %}" id="redmine">
     </div>
 
 </div>

@@ -159,6 +159,12 @@ class TestPatternLink(models.Model):
     updated_by = models.ForeignKey(User, models.SET_NULL, related_name='test_pattern_link_u', blank=True, null=True)
     updated_at = models.DateTimeField(default=timezone.now)
 
+    def __str__(self):
+        full_name = str(self.id)
+        if self.desc:
+            full_name += ' / ' + str(self.desc)
+        return full_name
+
 
 class TestPatternComment(models.Model):
     test_pattern = models.ForeignKey(TestPattern, related_name='test_pattern_comment', on_delete=models.CASCADE)
