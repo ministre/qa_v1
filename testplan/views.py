@@ -4,10 +4,10 @@ from qa_v1 import settings
 from redminelib import Redmine
 from redminelib.exceptions import ResourceNotFoundError
 import re
-from .models import TestPlan, Category, Test, TestConfig, TestImage, TestFile, TestLink
+from .models import TestPlan, Category, Test, TestConfig, TestImage, TestFile, TestLink, TestComment
 from device.models import DeviceType
 from .forms import TestPlanForm, CategoryForm, TestForm, TestConfigForm, TestAddConfigForm, TestImageForm, \
-    TestAddImageForm, TestFileForm, TestAddFileForm, TestLinkForm, TestAddLinkForm
+    TestAddImageForm, TestFileForm, TestAddFileForm, TestLinkForm, TestAddLinkForm, TestCommentForm, TestAddCommentForm
 from docx_builder.forms import BuildDocxTestplanForm
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
@@ -22,7 +22,7 @@ from django.http import HttpResponseRedirect
 from device.views import Item
 from django.db.models import Max, Min
 from testplan_pattern.models import CategoryPattern, TestPattern, TestPatternConfig, TestPatternImage, \
-    TestPatternFile, TestPatternLink
+    TestPatternFile, TestPatternLink, TestPatternComment
 from django.utils.datastructures import MultiValueDictKeyError
 
 
@@ -321,12 +321,14 @@ def test_details(request, pk, tab_id):
     add_image_form = TestAddImageForm(test_id=test.id)
     add_file_form = TestAddFileForm(test_id=test.id)
     add_link_form = TestAddLinkForm(test_id=test.id)
+    add_comment_form = TestAddCommentForm(test_id=test.id)
     return render(request, 'testplan/test_details.html', {'test': test, 'num': num, 'procedure': procedure,
                                                           'expected': expected,
                                                           'add_config_form': add_config_form,
                                                           'add_image_form': add_image_form,
                                                           'add_file_form': add_file_form,
                                                           'add_link_form': add_link_form,
+                                                          'add_comment_form': add_comment_form,
                                                           'tab_id': tab_id})
 
 
@@ -644,6 +646,80 @@ class TestLinkDelete(DeleteView):
         Item.update_timestamp(foo=self.object.test, user=self.request.user)
         Item.update_timestamp(foo=self.object.test.cat.testplan, user=self.request.user)
         return reverse('test_details', kwargs={'pk': self.object.test.id, 'tab_id': 6})
+
+
+@login_required
+def test_comment_add(request):
+    if request.method == "POST":
+        test = get_object_or_404(Test, id=request.POST['test_id'])
+        try:
+            if request.POST['parent_comment']:
+                parent_comment = get_object_or_404(TestPatternComment, id=request.POST['parent_comment'])
+                TestComment.objects.create(test=test, parent=parent_comment, created_by=request.user,
+                                           updated_by=request.user)
+                return HttpResponseRedirect(reverse('test_details', kwargs={'pk': test.id, 'tab_id': 7}))
+
+        except MultiValueDictKeyError:
+            pass
+        return HttpResponseRedirect(reverse('test_comment_create', kwargs={'test_id': test.id}))
+    else:
+        return render(request, 'device/message.html', {'message': [False, _('Page not found')]})
+
+
+@method_decorator(login_required, name='dispatch')
+class TestCommentCreate(CreateView):
+    model = TestComment
+    form_class = TestCommentForm
+    template_name = 'device/create.html'
+
+    def get_initial(self):
+        return {'test': self.kwargs.get('test_id')}
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('test_details', kwargs={'pk': self.kwargs.get('test_id'), 'tab_id': 7})
+        return context
+
+    def get_success_url(self):
+        Item.update_timestamp(foo=self.object.test, user=self.request.user)
+        Item.update_timestamp(foo=self.object.test.cat, user=self.request.user)
+        return reverse('test_details', kwargs={'pk': self.object.test.id, 'tab_id': 7})
+
+
+@method_decorator(login_required, name='dispatch')
+class TestCommentUpdate(UpdateView):
+    model = TestComment
+    form_class = TestCommentForm
+    template_name = 'device/update.html'
+
+    def get_initial(self):
+        return {'updated_by': self.request.user, 'updated_at': timezone.now()}
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('test_details', kwargs={'pk': self.object.test.id, 'tab_id': 7})
+        return context
+
+    def get_success_url(self):
+        Item.update_timestamp(foo=self.object.test, user=self.request.user)
+        Item.update_timestamp(foo=self.object.test.cat.testplan, user=self.request.user)
+        return reverse('test_details', kwargs={'pk': self.object.test.id, 'tab_id': 7})
+
+
+@method_decorator(login_required, name='dispatch')
+class TestCommentDelete(DeleteView):
+    model = TestComment
+    template_name = 'device/delete.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('test_details', kwargs={'pk': self.object.test.id, 'tab_id': 7})
+        return context
+
+    def get_success_url(self):
+        Item.update_timestamp(foo=self.object.test, user=self.request.user)
+        Item.update_timestamp(foo=self.object.test.cat.testplan, user=self.request.user)
+        return reverse('test_details', kwargs={'pk': self.object.test.id, 'tab_id': 7})
 
 
 @login_required

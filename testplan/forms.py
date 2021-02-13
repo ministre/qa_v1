@@ -1,6 +1,7 @@
 from django.forms import ModelForm, HiddenInput
-from .models import TestPlan, Category, Test, TestConfig, TestImage, TestFile, TestLink
-from testplan_pattern.models import TestPatternConfig, TestPatternImage, TestPatternFile, TestPatternLink
+from .models import TestPlan, Category, Test, TestConfig, TestImage, TestFile, TestLink, TestComment
+from testplan_pattern.models import TestPatternConfig, TestPatternImage, TestPatternFile, TestPatternLink, \
+    TestPatternComment
 from django.utils.translation import gettext_lazy as _
 from django import forms
 from django.shortcuts import get_object_or_404
@@ -146,6 +147,28 @@ class TestLinkForm(ModelForm):
         }
 
 
+class TestCommentForm(ModelForm):
+    class Meta:
+        model = TestComment
+        labels = {
+            'desc': _('Description'),
+            'text': _('Text'),
+            'format': _('Format'),
+        }
+        fields = '__all__'
+        FORMAT = (
+            (0, 'Textile'),
+            (1, _('Code')),
+        )
+        widgets = {
+            'test': HiddenInput(),
+            'parent': HiddenInput(),
+            'format': forms.Select(choices=FORMAT, attrs={'class': 'form-control'}),
+            'created_by': HiddenInput(), 'created_at': HiddenInput(),
+            'updated_by': HiddenInput(), 'updated_at': HiddenInput()
+        }
+
+
 class TestAddConfigForm(forms.Form):
     test_id = forms.IntegerField()
     parent_config = forms.ModelChoiceField(queryset=TestPatternConfig.objects.all(), label=_('Pattern'),
@@ -199,4 +222,18 @@ class TestAddLinkForm(forms.Form):
         self.fields['test_id'].initial = test_id
         test = get_object_or_404(Test, id=test_id)
         self.fields['parent_link'].queryset = TestPatternLink.objects.filter(test_pattern=test.parent).order_by('id')
+        self.fields['test_id'].widget = forms.HiddenInput()
+
+
+class TestAddCommentForm(forms.Form):
+    test_id = forms.IntegerField()
+    parent_comment = forms.ModelChoiceField(queryset=TestPatternComment.objects.all(), label=_('Pattern'),
+                                            required=False)
+
+    def __init__(self, *args, **kwargs):
+        test_id = kwargs.pop('test_id', None)
+        super(TestAddCommentForm, self).__init__(*args, **kwargs)
+        self.fields['test_id'].initial = test_id
+        test = get_object_or_404(Test, id=test_id)
+        self.fields['parent_comment'].queryset = TestPatternComment.objects.filter(test_pattern=test.parent).order_by('id')
         self.fields['test_id'].widget = forms.HiddenInput()
