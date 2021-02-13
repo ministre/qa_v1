@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
 from testplan_pattern.models import TestplanPattern, CategoryPattern, TestPattern, TestPatternConfig, \
-    TestPatternImage, TestPatternFile, TestPatternLink
+    TestPatternImage, TestPatternFile, TestPatternLink, TestPatternComment
 import os
 
 
@@ -139,4 +139,17 @@ class TestLink(models.Model):
     created_by = models.ForeignKey(User, models.SET_NULL, related_name='test_link_c', blank=True, null=True)
     created_at = models.DateTimeField(default=timezone.now)
     updated_by = models.ForeignKey(User, models.SET_NULL, related_name='test_link_u', blank=True, null=True)
+    updated_at = models.DateTimeField(default=timezone.now)
+
+
+class TestComment(models.Model):
+    test = models.ForeignKey(Test, related_name='test_comment', on_delete=models.CASCADE)
+    parent = models.ForeignKey(TestPatternComment, related_name='parent_comment', on_delete=models.CASCADE,
+                               blank=True, null=True)
+    desc = models.CharField(max_length=1000, blank=True, null=True)
+    text = models.TextField(blank=True)
+    format = models.IntegerField(default=0)
+    created_by = models.ForeignKey(User, models.SET_NULL, related_name='test_comment_c', blank=True, null=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_by = models.ForeignKey(User, models.SET_NULL, related_name='test_comment_u', blank=True, null=True)
     updated_at = models.DateTimeField(default=timezone.now)
