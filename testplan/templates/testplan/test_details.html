@@ -236,9 +236,9 @@
                         <a href="{% url 'test_file_delete' pk=file.id %}"><i class="step fi-minus" style="color: red"></i></a>
                         <br>
                         {% if file.parent %}
-                        <a href="{{ file.parent.file.url }}"><span style="color: #7700ff"><i>{{ file.parent.filename }}</i></span></a>
+                        <a href="{{ file.parent.file.url }}">{{ file.parent.filename }}</a>
                         {% else %}
-                        <a href="{{ file.file.url }}"><span style="color: #7700ff"><i>{{ file.filename }}</i></span></a>
+                        <a href="{{ file.file.url }}">{{ file.filename }}</a>
                         {% endif %}
                     </p>
 
