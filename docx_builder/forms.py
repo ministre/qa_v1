@@ -101,6 +101,7 @@ class DocxProfileForm(ModelForm):
         FONTNAME = (
             ('Calibri', 'Calibri'),
             ('Cambria', 'Cambria'),
+            ('Times New Roman', 'Times New Roman'),
         )
         ALIGNMENT = (
             (0, 'Left'),
