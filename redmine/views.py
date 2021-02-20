@@ -35,7 +35,7 @@ def redmine_device_type_export(request):
 def redmine_device_export(request):
     if request.method == "POST":
         device = get_object_or_404(Device, id=request.POST['device_id'])
-        back_url = reverse('device_details', kwargs={'pk': device.id, 'tab_id': 2})
+        back_url = reverse('device_details', kwargs={'pk': device.id, 'tab_id': 7})
         general = photos = samples = protocols = False
         try:
             if request.POST['general']:
