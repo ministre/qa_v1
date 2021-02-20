@@ -1,6 +1,8 @@
 from django.forms import ModelForm, HiddenInput
-from device.models import Vendor, DeviceType, Device, DevicePhoto, DeviceSample, DeviceSampleAccount
+from device.models import Vendor, DeviceType, Device, DevicePhoto, DeviceSample, DeviceSampleAccount, DeviceFile, \
+    DeviceNote
 from django.utils.translation import gettext_lazy as _
+from django import forms
 
 
 class VendorForm(ModelForm):
@@ -90,3 +92,49 @@ class DeviceSampleAccountForm(ModelForm):
         widgets = {'sample': HiddenInput(),
                    'created_by': HiddenInput(), 'created_at': HiddenInput(),
                    'updated_by': HiddenInput(), 'updated_at': HiddenInput()}
+
+
+class DeviceFileForm(ModelForm):
+    class Meta:
+        model = DeviceFile
+        labels = {
+            'type': _('Type'),
+            'desc': _('Description'),
+            'file': _('File'),
+        }
+        fields = '__all__'
+        TYPE = (
+            (0, _('Datasheet')),
+            (1, _('Quick Installation Guide')),
+            (2, _('HowTo')),
+            (3, _('Certificate')),
+            (4, _('Other')),
+        )
+        widgets = {
+            'device': HiddenInput(),
+            'type': forms.Select(choices=TYPE, attrs={'class': 'form-control'}),
+            'created_by': HiddenInput(), 'created_at': HiddenInput(),
+            'updated_by': HiddenInput(), 'updated_at': HiddenInput()
+        }
+
+
+class DeviceNoteForm(ModelForm):
+    class Meta:
+        model = DeviceNote
+        labels = {
+            'desc': _('Description'),
+            'text': _('Text'),
+            'format': _('Format'),
+        }
+        fields = '__all__'
+        FORMAT = (
+            (0, 'Textile'),
+            (1, _('Code')),
+        )
+        widgets = {
+            'device': HiddenInput(),
+            'text': forms.Textarea(attrs={'rows': '15'}),
+            'format': forms.Select(choices=FORMAT, attrs={'class': 'form-control'}),
+            'created_by': HiddenInput(), 'created_at': HiddenInput(),
+            'updated_by': HiddenInput(), 'updated_at': HiddenInput()
+        }
