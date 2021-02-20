@@ -1,19 +1,22 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from qa_v1 import settings
-from redminelib import Redmine
-from redminelib.exceptions import ResourceNotFoundError
-import re
-from device.models import Vendor, Device, DeviceType, DevicePhoto, DeviceSample, DeviceSampleAccount
-from django.http import HttpResponseRedirect
-from .forms import VendorForm, DeviceTypeForm, DeviceForm, DevicePhotoForm, DeviceSampleForm, DeviceSampleAccountForm
+# from redminelib import Redmine
+# from redminelib.exceptions import ResourceNotFoundError
+# import re
+from device.models import Vendor, Device, DeviceType, DevicePhoto, DeviceSample, DeviceSampleAccount, DeviceFile, \
+    DeviceNote
+# from django.http import HttpResponseRedirect
+from .forms import VendorForm, DeviceTypeForm, DeviceForm, DevicePhotoForm, DeviceSampleForm, DeviceSampleAccountForm, \
+    DeviceFileForm, DeviceNoteForm
 from redmine.forms import RedmineDeviceTypeExportForm, RedmineDeviceExportForm
 from django.shortcuts import get_object_or_404
-from django.db.models import Q
+# from django.db.models import Q
 from django.utils.decorators import method_decorator
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.urls import reverse
 from django.utils import timezone
+import textile
 
 
 class Item(object):
@@ -243,6 +246,16 @@ class DeviceDelete(DeleteView):
 def device_details(request, pk, tab_id):
     device = get_object_or_404(Device, id=pk)
     protocols_count = device.protocols_count()
+    notes = DeviceNote.objects.filter(device=device).order_by('id')
+    converted_notes = []
+    for note in notes:
+        if note.format == 0:
+            converted_note = {'id': note.id, 'desc': note.desc, 'text': textile.textile(note.text),
+                              'format': note.format}
+        else:
+            converted_note = {'id': note.id, 'desc': note.desc, 'text': note.text,
+                              'format': note.format}
+        converted_notes.append(converted_note)
     redmine_url = settings.REDMINE_URL
     export_form = RedmineDeviceExportForm(initial={'device_id': device.id,
                                                    'redmine_project': device.redmine_project,
@@ -250,6 +263,7 @@ def device_details(request, pk, tab_id):
                                                    'redmine_project_desc': device.redmine_project_desc,
                                                    'redmine_parent': device.redmine_parent})
     return render(request, 'device/device_details.html', {'device': device, 'protocols_count': protocols_count,
+                                                          'notes': converted_notes,
                                                           'redmine_url': redmine_url, 'export_form': export_form,
                                                           'tab_id': tab_id})
 
@@ -408,6 +422,109 @@ class DeviceSampleAccountDelete(DeleteView):
         return reverse('device_details', kwargs={'pk': self.object.sample.device.id, 'tab_id': 4})
 
 
+@method_decorator(login_required, name='dispatch')
+class DeviceFileCreate(CreateView):
+    model = DeviceFile
+    form_class = DeviceFileForm
+    template_name = 'device/create.html'
+
+    def get_initial(self):
+        return {'device': self.kwargs.get('device_id'),
+                'created_by': self.request.user, 'updated_by': self.request.user}
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('device_details', kwargs={'pk': self.kwargs.get('device_id'), 'tab_id': 5})
+        return context
+
+    def get_success_url(self):
+        return reverse('device_details', kwargs={'pk': self.object.device.id, 'tab_id': 5})
+
+
+@method_decorator(login_required, name='dispatch')
+class DeviceFileUpdate(UpdateView):
+    model = DeviceFile
+    form_class = DeviceFileForm
+    template_name = 'device/update.html'
+
+    def get_initial(self):
+        return {'updated_by': self.request.user, 'updated_at': timezone.now()}
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('device_details', kwargs={'pk': self.object.device.id, 'tab_id': 5})
+        return context
+
+    def get_success_url(self):
+        return reverse('device_details', kwargs={'pk': self.object.device.id, 'tab_id': 5})
+
+
+@method_decorator(login_required, name='dispatch')
+class DeviceFileDelete(DeleteView):
+    model = DeviceFile
+    template_name = 'device/delete.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('device_details', kwargs={'pk': self.object.device.id, 'tab_id': 5})
+        return context
+
+    def get_success_url(self):
+        return reverse('device_details', kwargs={'pk': self.object.device.id, 'tab_id': 5})
+
+
+@method_decorator(login_required, name='dispatch')
+class DeviceNoteCreate(CreateView):
+    model = DeviceNote
+    form_class = DeviceNoteForm
+    template_name = 'device/create.html'
+
+    def get_initial(self):
+        return {'device': self.kwargs.get('device_id'),
+                'created_by': self.request.user, 'updated_by': self.request.user}
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('device_details', kwargs={'pk': self.kwargs.get('device_id'), 'tab_id': 6})
+        return context
+
+    def get_success_url(self):
+        return reverse('device_details', kwargs={'pk': self.object.device.id, 'tab_id': 6})
+
+
+@method_decorator(login_required, name='dispatch')
+class DeviceNoteUpdate(UpdateView):
+    model = DeviceNote
+    form_class = DeviceNoteForm
+    template_name = 'device/update.html'
+
+    def get_initial(self):
+        return {'updated_by': self.request.user, 'updated_at': timezone.now()}
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('device_details', kwargs={'pk': self.object.device.id, 'tab_id': 6})
+        return context
+
+    def get_success_url(self):
+        return reverse('device_details', kwargs={'pk': self.object.device.id, 'tab_id': 6})
+
+
+@method_decorator(login_required, name='dispatch')
+class DeviceNoteDelete(DeleteView):
+    model = DeviceNote
+    template_name = 'device/delete.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('device_details', kwargs={'pk': self.object.device.id, 'tab_id': 6})
+        return context
+
+    def get_success_url(self):
+        return reverse('device_details', kwargs={'pk': self.object.device.id, 'tab_id': 6})
+
+
+'''
 @login_required
 def device_import(request):
     if request.method == 'POST':
@@ -487,3 +604,5 @@ def device_import(request):
             return render(request, 'device/device_import_error.html', {'error': error})
     else:
         return render(request, 'device/device_import.html')
+
+'''
