@@ -119,3 +119,28 @@ class DeviceSampleAccount(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
     updated_by = models.ForeignKey(User, models.SET_NULL, related_name='sample_account_u', blank=True, null=True)
     updated_at = models.DateTimeField(default=timezone.now)
+
+
+class DeviceFile(models.Model):
+    device = models.ForeignKey(Device, related_name='device_file', on_delete=models.CASCADE)
+    type = models.IntegerField(default=0)
+    desc = models.CharField(max_length=1000, blank=True, null=True)
+    file = models.FileField(upload_to="device/files/")
+    created_by = models.ForeignKey(User, models.SET_NULL, related_name='file_c', blank=True, null=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_by = models.ForeignKey(User, models.SET_NULL, related_name='file_u', blank=True, null=True)
+    updated_at = models.DateTimeField(default=timezone.now)
+
+    def filename(self):
+        return os.path.basename(self.file.name)
+
+
+class DeviceNote(models.Model):
+    device = models.ForeignKey(Device, related_name='device_note', on_delete=models.CASCADE)
+    desc = models.CharField(max_length=1000, blank=True, null=True)
+    text = models.TextField()
+    format = models.IntegerField(default=0)
+    created_by = models.ForeignKey(User, models.SET_NULL, related_name='note_c', blank=True, null=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_by = models.ForeignKey(User, models.SET_NULL, related_name='note_u', blank=True, null=True)
+    updated_at = models.DateTimeField(default=timezone.now)
