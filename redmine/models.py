@@ -2,6 +2,7 @@ from redminelib import Redmine
 from qa_v1 import settings
 from redminelib.exceptions import ResourceNotFoundError, ForbiddenError, AuthError, ValidationError
 from device.models import DeviceType, Device, DevicePhoto, DeviceSample, DeviceSampleAccount
+from testplan.models import Test, TestConfig, TestImage, TestFile, TestLink, TestComment
 from protocol.models import Protocol, TestResult, TestResultNote, TestResultConfig, TestResultImage, TestResultIssue
 from django.utils.translation import gettext_lazy as _
 
@@ -394,3 +395,139 @@ class RedmineResult:
             is_wiki = r.create_or_update_wiki(project=project, wiki_title=project_wiki, wiki_text=wiki,
                                               parent_wiki_title=project_parent_wiki)
             return is_wiki
+
+
+class RedmineTest:
+    @staticmethod
+    def export(test: Test, project: str, project_wiki: str, project_parent_wiki: str, configs=False, images=False,
+               files=False, links=False, comments=False):
+        r = RedmineProject()
+        is_project = r.check_project(project=project)
+        if is_project[0] != 200:
+            return [False, is_project[1]]
+        else:
+            wiki = RedmineTest.build_wiki(test=test, configs=configs, images=images, files=files, links=links,
+                                          comments=comments)
+            is_wiki = r.create_or_update_wiki(project=project, wiki_title=project_wiki, wiki_text=wiki,
+                                              parent_wiki_title=project_parent_wiki)
+            return is_wiki
+
+    @staticmethod
+    def build_wiki(test: Test, configs=False, images=False, files=False, links=False, comments=False):
+        # header
+        wiki = 'h1. ' + test.name + '\r\n\r'
+        # details
+        wiki += RedmineTest.get_details(test=test, configs=configs, images=images, files=files, links=links,
+                                        comments=comments)
+        return wiki
+
+    @staticmethod
+    def get_details(test: Test, configs=False, images=False, files=False, links=False, comments=False):
+        wiki = '\nh2. ' + str(_('Category')) + '\r\n\r'
+        wiki += '\n' + test.cat.name + '\r\n\r'
+        if test.purpose:
+            wiki += '\nh2. ' + str(_('Purpose')) + '\r\n\r'
+            wiki += '\n' + test.purpose + '\r\n\r'
+        if test.procedure:
+            wiki += '\nh2. ' + str(_('Procedure')) + '\r\n\r'
+            wiki += '\n' + test.procedure + '\r\n\r'
+        if test.expected:
+            wiki += '\nh2. ' + str(_('Expected result')) + '\r\n\r'
+            wiki += '\n' + test.expected + '\r\n\r'
+        if configs:
+            test_configs = TestConfig.objects.filter(test=test).order_by('id')
+            if test_configs:
+                wiki += '\nh2. ' + str(_('Configurations')) + '\r\n\r'
+                for test_config in test_configs:
+                    if test_config.parent:
+                        if test_config.parent.desc:
+                            wiki += '\nh3. ' + test_config.parent.desc + '\r\n\r'
+                        if test_config.parent.lang == 'json':
+                            test_config.parent.lang = 'javascript'
+                        wiki += '\n<pre><code class="' + test_config.parent.lang + '">\r' + \
+                                '\n' + test_config.parent.config + '\r' + \
+                                '\n</code></pre>\r\n\r'
+                    else:
+                        if test_config.desc:
+                            wiki += '\nh3. ' + test_config.desc + '\r\n\r'
+                        if test_config.lang == 'json':
+                            test_config.lang = 'javascript'
+                        wiki += '\n<pre><code class="' + test_config.lang + '">\r' + \
+                                '\n' + test_config.config + '\r' + \
+                                '\n</code></pre>\r\n\r'
+        if images:
+            test_images = TestImage.objects.filter(test=test).order_by('id')
+            if test_images:
+                wiki += '\nh2. ' + str(_('Images')) + '\r\n\r'
+                for test_image in test_images:
+                    if test_image.parent:
+                        if test_image.parent.desc:
+                            wiki += '\nh3. ' + test_image.parent.desc + '\r\n\r'
+                        wiki += '\n!'
+                        if test_image.parent.width or test_image.parent.height:
+                            wiki += '{'
+                            if test_image.parent.width:
+                                wiki += 'width:' + str(test_image.parent.width) + 'px;'
+                            if test_image.parent.height:
+                                wiki += 'height:' + str(test_image.parent.height) + 'px;'
+                            wiki += '}'
+                        wiki += settings.REDMINE_MEDIA_ROOT + str(test_image.parent.image) + '!\r\n\r'
+                    else:
+                        if test_image.desc:
+                            wiki += '\nh3. ' + test_image.desc + '\r\n\r'
+                        wiki += '\n!'
+                        if test_image.width or test_image.height:
+                            wiki += '{'
+                            if test_image.width:
+                                wiki += 'width:' + str(test_image.width) + 'px;'
+                            if test_image.height:
+                                wiki += 'height:' + str(test_image.height) + 'px;'
+                            wiki += '}'
+                        wiki += settings.REDMINE_MEDIA_ROOT + str(test_image.image) + '!\r\n\r'
+        if files:
+            test_files = TestFile.objects.filter(test=test).order_by('id')
+            if test_files:
+                wiki += '\nh2. ' + str(_('Files')) + '\r\n\r'
+                for test_file in test_files:
+                    if test_file.parent:
+                        if test_file.parent.desc:
+                            wiki += '\nh3. ' + test_file.parent.desc + '\r\n\r'
+                        wiki += settings.REDMINE_MEDIA_ROOT + str(test_file.parent.file) + '\r\n\r'
+                    else:
+                        if test_file.desc:
+                            wiki += '\nh3. ' + test_file.desc + '\r\n\r'
+                        wiki += settings.REDMINE_MEDIA_ROOT + str(test_file.file) + '\r\n\r'
+        if links:
+            test_links = TestLink.objects.filter(test=test).order_by('id')
+            if test_links:
+                wiki += '\nh2. ' + str(_('Links')) + '\r\n\r'
+                for test_link in test_links:
+                    if test_link.parent:
+                        if test_link.parent.desc:
+                            wiki += '\nh3. ' + test_link.parent.desc + '\r\n\r'
+                        wiki += '\n' + str(test_link.parent.url) + '\r\n\r'
+                    else:
+                        if test_link.desc:
+                            wiki += '\nh3. ' + test_link.desc + '\r\n\r'
+                        wiki += '\n' + str(test_link.url) + '\r\n\r'
+        if comments:
+            test_comments = TestComment.objects.filter(test=test).order_by('id')
+            if test_comments:
+                wiki += '\nh2. ' + str(_('Comments')) + '\r\n\r'
+                for test_comment in test_comments:
+                    if test_comment.parent:
+                        if test_comment.parent.desc:
+                            wiki += '\nh3. ' + test_comment.parent.desc + '\r\n\r'
+                        if test_comment.parent.format > 0:
+                            wiki += '\n<pre>' + str(test_comment.parent.text) + '</pre>\r\n\r'
+                        else:
+                            wiki += '\n' + str(test_comment.parent.text) + '\r\n\r'
+                    else:
+                        if test_comment.desc:
+                            wiki += '\nh3. ' + test_comment.desc + '\r\n\r'
+                        if test_comment.format > 0:
+                            wiki += '\n<pre>' + str(test_comment.text) + '</pre>\r\n\r'
+                        else:
+                            wiki += '\n' + str(test_comment.text) + '\r\n\r'
+
+        return wiki

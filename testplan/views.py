@@ -9,6 +9,7 @@ from device.models import DeviceType
 from .forms import TestPlanForm, CategoryForm, TestForm, TestConfigForm, TestAddConfigForm, TestImageForm, \
     TestAddImageForm, TestFileForm, TestAddFileForm, TestLinkForm, TestAddLinkForm, TestCommentForm, TestAddCommentForm
 from docx_builder.forms import BuildDocxTestplanForm
+from redmine.forms import RedmineTestExportForm
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
 from django.utils.decorators import method_decorator
@@ -322,6 +323,10 @@ def test_details(request, pk, tab_id):
     add_file_form = TestAddFileForm(test_id=test.id)
     add_link_form = TestAddLinkForm(test_id=test.id)
     add_comment_form = TestAddCommentForm(test_id=test.id)
+    export_form = RedmineTestExportForm(initial={'test_id': test.id,
+                                                 'redmine_project': test.cat.testplan.redmine_project,
+                                                 'redmine_wiki': test.redmine_wiki,
+                                                 'redmine_parent_wiki': 'Wiki'})
     return render(request, 'testplan/test_details.html', {'test': test, 'num': num, 'procedure': procedure,
                                                           'expected': expected,
                                                           'add_config_form': add_config_form,
@@ -329,6 +334,8 @@ def test_details(request, pk, tab_id):
                                                           'add_file_form': add_file_form,
                                                           'add_link_form': add_link_form,
                                                           'add_comment_form': add_comment_form,
+                                                          'redmine_url': settings.REDMINE_URL,
+                                                          'export_form': export_form,
                                                           'tab_id': tab_id})
 
 

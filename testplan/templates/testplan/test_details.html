@@ -362,6 +362,39 @@
     </div>
 
     <div class="tabs-panel {% if tab_id == 8 %}is-active{% endif %}" id="redmine">
+        {% if test.cat.testplan.redmine_project and test.redmine_wiki %}
+        <div class="grid-x grid-margin-x">
+            <div class="cell">
+                <div class="card">
+                    <div class="card-section">
+                        <h5>Redmine Project Wiki</h5>
+                        <p>
+                            <a href="{{ redmine_url }}/projects/{{ test.cat.testplan.redmine_project }}/wiki/{{ test.redmine_wiki }}/">
+                                {{ redmine_url }}/projects/{{ test.cat.testplan.redmine_project }}/wiki/{{ test.redmine_wiki }}/
+                            </a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        <div class="grid-x grid-margin-x">
+            <div class="cell">
+                <div class="card">
+                    <div class="card-section">
+                        <h5>{% trans "Export to" %} Redmine</h5>
+                        <form action="{% url 'redmine_test_export' %}" method="post">
+                            <input type="submit" value='{% trans "Export" %}' class="button small success" />
+                            <table class="unstriped" style="text-align: left; width: 600px;">
+                            {% csrf_token %}
+                            {{ export_form.as_table }}
+                            </table>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
 </div>
