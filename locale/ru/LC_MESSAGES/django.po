@@ -1000,4 +1000,4 @@ msgid "Test results list"
 msgstr "Список тестов"
 
 msgid "Test results wiki"
-msgstr "Wiki-страницы с результатами тестов"
+msgstr "Wiki-страницы тестов"
