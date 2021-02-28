@@ -413,9 +413,7 @@ class RedmineTest:
 
     @staticmethod
     def build_wiki(test: Test, configs=False, images=False, files=False, links=False, comments=False):
-        # header
         wiki = 'h1. ' + test.name + '\r\n\r'
-        # details
         wiki += RedmineTest.get_details(test=test, configs=configs, images=images, files=files, links=links,
                                         comments=comments)
         return wiki
@@ -542,6 +540,11 @@ class RedmineTestplan:
         else:
             wiki = RedmineTestplan.build_wiki(testplan=testplan, test_list=test_list)
             is_wiki = r.create_or_update_wiki(project=project, wiki_text=wiki)
+
+            if test_details_wiki:
+                if is_wiki[0]:
+                    RedmineTestplan.create_or_update_test_details_wiki(testplan=testplan, project=project)
+
             return is_wiki
 
     @staticmethod
@@ -560,3 +563,13 @@ class RedmineTestplan:
                         wiki += '\n* ' + test.name + '\r'
                 wiki += '\n\r'
         return wiki
+
+    @staticmethod
+    def create_or_update_test_details_wiki(testplan: TestPlan, project: str):
+        categories = Category.objects.filter(testplan=testplan).order_by('priority')
+        for category in categories:
+            tests = Test.objects.filter(cat=category).order_by('priority')
+            for test in tests:
+                if test.redmine_wiki:
+                    RedmineTest.export(test=test, project=project, project_wiki=test.redmine_wiki,
+                                       configs=True, images=True, files=True, links=True, comments=True)
