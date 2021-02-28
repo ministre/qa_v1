@@ -63,7 +63,6 @@ class RedmineTestExportForm(forms.Form):
     test_id = forms.IntegerField()
     redmine_project = forms.CharField(label=_('Project ID'), max_length=100)
     redmine_wiki = forms.CharField(label='Wiki', max_length=100)
-    redmine_parent_wiki = forms.CharField(label=_('Parent Wiki'), max_length=100)
     configs = forms.BooleanField(label=_('Configurations'), required=False, initial=True)
     images = forms.BooleanField(label=_('Images'), required=False, initial=True)
     files = forms.BooleanField(label=_('Files'), required=False, initial=True)
@@ -73,3 +72,14 @@ class RedmineTestExportForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super(RedmineTestExportForm, self).__init__(*args, **kwargs)
         self.fields['test_id'].widget = forms.HiddenInput()
+
+
+class RedmineTestplanExportForm(forms.Form):
+    testplan_id = forms.IntegerField()
+    redmine_project = forms.CharField(label=_('Project ID'), max_length=100)
+    test_list = forms.BooleanField(label=_('Test list'), required=False, initial=True)
+    test_details_wiki = forms.BooleanField(label=_('Test details wiki'), required=False, initial=True)
+
+    def __init__(self, *args, **kwargs):
+        super(RedmineTestplanExportForm, self).__init__(*args, **kwargs)
+        self.fields['testplan_id'].widget = forms.HiddenInput()

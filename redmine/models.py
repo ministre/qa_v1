@@ -2,7 +2,7 @@ from redminelib import Redmine
 from qa_v1 import settings
 from redminelib.exceptions import ResourceNotFoundError, ForbiddenError, AuthError, ValidationError
 from device.models import DeviceType, Device, DevicePhoto, DeviceSample, DeviceSampleAccount
-from testplan.models import Test, TestConfig, TestImage, TestFile, TestLink, TestComment
+from testplan.models import Test, TestConfig, TestImage, TestFile, TestLink, TestComment, TestPlan, Category
 from protocol.models import Protocol, TestResult, TestResultNote, TestResultConfig, TestResultImage, TestResultIssue
 from django.utils.translation import gettext_lazy as _
 
@@ -76,7 +76,7 @@ class RedmineProject:
         except ForbiddenError:
             return [403, _('Requested wiki resource is forbidden')]
 
-    def create_or_update_wiki(self, project: str, wiki_title: str, wiki_text: str, parent_wiki_title=None):
+    def create_or_update_wiki(self, project: str, wiki_text: str, wiki_title='Wiki', parent_wiki_title=None):
         if parent_wiki_title:
             is_parent_wiki = self.get_wiki(project=project, wiki_title=parent_wiki_title)
             if is_parent_wiki[0] != 200:
@@ -121,7 +121,7 @@ class RedmineDeviceType:
             message = redmine_project[1]
             wiki = RedmineDeviceType.build_wiki(device_type=device_type, project_name=project_name,
                                                 general_info=general_info)
-            is_wiki = r.create_or_update_wiki(project=project, wiki_title='Wiki', wiki_text=wiki)
+            is_wiki = r.create_or_update_wiki(project=project, wiki_text=wiki)
             if not is_wiki[0]:
                 return is_wiki
             else:
@@ -208,7 +208,7 @@ class RedmineDevice:
             message = redmine_project[1]
             wiki = RedmineDevice.build_wiki(device=device, project_name=project_name, general=general,
                                             photos=photos, samples=samples, protocols=protocols)
-            is_wiki = r.create_or_update_wiki(project=project, wiki_title='Wiki', wiki_text=wiki)
+            is_wiki = r.create_or_update_wiki(project=project, wiki_text=wiki)
             if not is_wiki[0]:
                 return is_wiki
             else:
@@ -288,7 +288,7 @@ class RedmineProtocol:
             project_name = str(_('Protocol')) + ' ' + protocol.device.vendor.name + ' ' + str(protocol.device)
             wiki = RedmineProtocol.build_wiki(protocol=protocol, project_name=project_name, general=general,
                                               results=results)
-            is_wiki = r.create_or_update_wiki(project=project, wiki_title=project_wiki, wiki_text=wiki,
+            is_wiki = r.create_or_update_wiki(project=project, wiki_text=wiki, wiki_title=project_wiki,
                                               parent_wiki_title='wiki')
             return is_wiki
 
@@ -392,14 +392,14 @@ class RedmineResult:
             wiki = RedmineResult.build_wiki(result=result, test_desc=test_desc, result_notes=result_notes,
                                             result_configs=result_configs, result_images=result_images,
                                             result_summary=result_summary)
-            is_wiki = r.create_or_update_wiki(project=project, wiki_title=project_wiki, wiki_text=wiki,
+            is_wiki = r.create_or_update_wiki(project=project, wiki_text=wiki, wiki_title=project_wiki,
                                               parent_wiki_title=project_parent_wiki)
             return is_wiki
 
 
 class RedmineTest:
     @staticmethod
-    def export(test: Test, project: str, project_wiki: str, project_parent_wiki: str, configs=False, images=False,
+    def export(test: Test, project: str, project_wiki: str, configs=False, images=False,
                files=False, links=False, comments=False):
         r = RedmineProject()
         is_project = r.check_project(project=project)
@@ -408,8 +408,7 @@ class RedmineTest:
         else:
             wiki = RedmineTest.build_wiki(test=test, configs=configs, images=images, files=files, links=links,
                                           comments=comments)
-            is_wiki = r.create_or_update_wiki(project=project, wiki_title=project_wiki, wiki_text=wiki,
-                                              parent_wiki_title=project_parent_wiki)
+            is_wiki = r.create_or_update_wiki(project=project, wiki_text=wiki, wiki_title=project_wiki)
             return is_wiki
 
     @staticmethod
@@ -530,4 +529,34 @@ class RedmineTest:
                         else:
                             wiki += '\n' + str(test_comment.text) + '\r\n\r'
 
+        return wiki
+
+
+class RedmineTestplan:
+    @staticmethod
+    def export(testplan: TestPlan, project: str, test_list=False, test_details_wiki=False):
+        r = RedmineProject()
+        is_project = r.check_project(project=project)
+        if is_project[0] != 200:
+            return [False, is_project[1]]
+        else:
+            wiki = RedmineTestplan.build_wiki(testplan=testplan, test_list=test_list)
+            is_wiki = r.create_or_update_wiki(project=project, wiki_text=wiki)
+            return is_wiki
+
+    @staticmethod
+    def build_wiki(testplan: TestPlan, test_list=False):
+        wiki = 'h1. ' + str(_('Testplan')) + ' ' + testplan.name + ' (' + testplan.version + ')\r\n\r'
+        if test_list:
+            wiki += '\nh2. ' + str(_('Test list')) + '\r\n\r'
+            categories = Category.objects.filter(testplan=testplan).order_by('priority')
+            for category in categories:
+                wiki += '\nh3. ' + category.name + '\r\n\r'
+                tests = Test.objects.filter(cat=category).order_by('priority')
+                for test in tests:
+                    if test.redmine_wiki:
+                        wiki += '\n* [[' + test.redmine_wiki + '|' + test.name + ']]\r'
+                    else:
+                        wiki += '\n* ' + test.name + '\r'
+                wiki += '\n\r'
         return wiki

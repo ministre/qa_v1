@@ -48,8 +48,4 @@ urlpatterns = [
     path('test/comment/create/<int:test_id>/', views.TestCommentCreate.as_view(), name='test_comment_create'),
     path('test/comment/update/<int:pk>/', views.TestCommentUpdate.as_view(), name='test_comment_update'),
     path('test/comment/delete/<int:pk>/', views.TestCommentDelete.as_view(), name='test_comment_delete'),
-
-    # Testplans Redmine
-    path('import/<int:testplan_id>/', views.testplan_import, name='testplan_import'),
-    path('test/import/', views.test_import_details, name='test_import_details'),
 ]

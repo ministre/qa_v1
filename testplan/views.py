@@ -1,17 +1,12 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from qa_v1 import settings
-from redminelib import Redmine
-from redminelib.exceptions import ResourceNotFoundError
-import re
 from .models import TestPlan, Category, Test, TestConfig, TestImage, TestFile, TestLink, TestComment
-from device.models import DeviceType
 from .forms import TestPlanForm, CategoryForm, TestForm, TestConfigForm, TestAddConfigForm, TestImageForm, \
     TestAddImageForm, TestFileForm, TestAddFileForm, TestLinkForm, TestAddLinkForm, TestCommentForm, TestAddCommentForm
 from docx_builder.forms import BuildDocxTestplanForm
-from redmine.forms import RedmineTestExportForm
+from redmine.forms import RedmineTestExportForm, RedmineTestplanExportForm
 from django.shortcuts import get_object_or_404
-from django.db.models import Q
 from django.utils.decorators import method_decorator
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.urls import reverse
@@ -90,9 +85,13 @@ def testplan_details(request, pk, tab_id):
     tests_count = testplan.tests_count()
     protocols = testplan.get_protocols()
     build_testplan_form = BuildDocxTestplanForm(initial={'testplan_id': testplan.id})
+    export_form = RedmineTestplanExportForm(initial={'testplan_id': testplan.id,
+                                                     'redmine_project': testplan.redmine_project})
     return render(request, 'testplan/testplan_details.html', {'testplan': testplan, 'tests_count': tests_count,
                                                               'protocols': protocols,
                                                               'build_testplan_form': build_testplan_form,
+                                                              'redmine_url': settings.REDMINE_URL,
+                                                              'export_form': export_form,
                                                               'tab_id': tab_id})
 
 
@@ -325,8 +324,7 @@ def test_details(request, pk, tab_id):
     add_comment_form = TestAddCommentForm(test_id=test.id)
     export_form = RedmineTestExportForm(initial={'test_id': test.id,
                                                  'redmine_project': test.cat.testplan.redmine_project,
-                                                 'redmine_wiki': test.redmine_wiki,
-                                                 'redmine_parent_wiki': 'Wiki'})
+                                                 'redmine_wiki': test.redmine_wiki})
     return render(request, 'testplan/test_details.html', {'test': test, 'num': num, 'procedure': procedure,
                                                           'expected': expected,
                                                           'add_config_form': add_config_form,
@@ -729,6 +727,7 @@ class TestCommentDelete(DeleteView):
         return reverse('test_details', kwargs={'pk': self.object.test.id, 'tab_id': 7})
 
 
+'''
 @login_required
 def test_import_details(request):
     if request.method == 'POST':
@@ -740,7 +739,6 @@ def test_import_details(request):
         Test.objects.filter(id=test_id).update(name=test_details[0], procedure=test_details[1],
                                                expected=test_details[2])
         return HttpResponseRedirect('/testplan/test/' + str(test_id) + '/')
-
 
 def get_numbers_of_tests(tests):
     # генерируем нумерованный список тестов
@@ -759,7 +757,6 @@ def get_numbers_of_tests(tests):
             numbers_of_tests.append(str(i) + '.' + str(j))
             category = test.category
     return numbers_of_tests
-
 
 @login_required
 def testplan_import(request, testplan_id):
@@ -868,3 +865,4 @@ def collapse_filter(ctx, tag):
                 blocks[i] = blocks[i] + '}}'
     ctx = ''.join(blocks)
     return ctx
+'''

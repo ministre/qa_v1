@@ -1,8 +1,8 @@
 from django.contrib.auth.decorators import login_required
 from device.models import DeviceType, Device
-from testplan.models import Test
+from testplan.models import Test, TestPlan
 from protocol.models import Protocol, TestResult
-from .models import RedmineDeviceType, RedmineDevice, RedmineTest, RedmineProtocol, RedmineResult
+from .models import RedmineDeviceType, RedmineDevice, RedmineTest, RedmineTestplan, RedmineProtocol, RedmineResult
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render
 from django.utils.translation import gettext_lazy as _
@@ -159,13 +159,36 @@ def redmine_test_export(request):
         message = RedmineTest.export(test=test,
                                      project=request.POST['redmine_project'],
                                      project_wiki=request.POST['redmine_wiki'],
-                                     project_parent_wiki=request.POST['redmine_parent_wiki'],
                                      configs=configs,
                                      images=images,
                                      files=files,
                                      links=links,
                                      comments=comments)
         back_url = reverse('test_details', kwargs={'pk': test.id, 'tab_id': 8})
+        return render(request, 'redmine/message.html', {'message': message, 'back_url': back_url})
+    else:
+        return render(request, 'device/message.html', {'message': [False, _('Page not found')]})
+
+
+@login_required
+def redmine_testplan_export(request):
+    if request.method == "POST":
+        testplan = get_object_or_404(TestPlan, id=request.POST['testplan_id'])
+        test_list = test_details_wiki = False
+        try:
+            if request.POST['test_list']:
+                test_list = True
+        except MultiValueDictKeyError:
+            pass
+        try:
+            if request.POST['test_details_wiki']:
+                test_details_wiki = True
+        except MultiValueDictKeyError:
+            pass
+        message = RedmineTestplan.export(testplan=testplan, project=request.POST['redmine_project'],
+                                         test_list=test_list,
+                                         test_details_wiki=test_details_wiki)
+        back_url = reverse('testplan_details', kwargs={'pk': testplan.id, 'tab_id': 4})
         return render(request, 'redmine/message.html', {'message': message, 'back_url': back_url})
     else:
         return render(request, 'device/message.html', {'message': [False, _('Page not found')]})
