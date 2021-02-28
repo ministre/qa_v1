@@ -43,22 +43,6 @@ class RedmineProtocolExportForm(forms.Form):
         self.fields['protocol_id'].widget = forms.HiddenInput()
 
 
-class RedmineResultExportForm(forms.Form):
-    result_id = forms.IntegerField()
-    redmine_project = forms.CharField(label=_('Project ID'), max_length=100)
-    redmine_wiki = forms.CharField(label='Wiki', max_length=100)
-    redmine_parent_wiki = forms.CharField(label=_('Parent Wiki'), max_length=100)
-    test_desc = forms.BooleanField(label=_('Test Description'), required=False, initial=True)
-    result_notes = forms.BooleanField(label=_('Notes'), required=False, initial=True)
-    result_configs = forms.BooleanField(label=_('Configurations'), required=False, initial=True)
-    result_images = forms.BooleanField(label=_('Images'), required=False, initial=True)
-    result_summary = forms.BooleanField(label=_('Result'), required=False, initial=True)
-
-    def __init__(self, *args, **kwargs):
-        super(RedmineResultExportForm, self).__init__(*args, **kwargs)
-        self.fields['result_id'].widget = forms.HiddenInput()
-
-
 class RedmineTestExportForm(forms.Form):
     test_id = forms.IntegerField()
     redmine_project = forms.CharField(label=_('Project ID'), max_length=100)
@@ -86,3 +70,20 @@ class RedmineTestplanExportForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super(RedmineTestplanExportForm, self).__init__(*args, **kwargs)
         self.fields['testplan_id'].widget = forms.HiddenInput()
+
+
+class RedmineResultExportForm(forms.Form):
+    result_id = forms.IntegerField()
+    redmine_project = forms.CharField(label=_('Project ID'), max_length=100)
+    redmine_wiki = forms.CharField(label='Wiki', max_length=100)
+    redmine_parent_wiki = forms.CharField(label=_('Parent Wiki'), max_length=100)
+    test_desc = forms.BooleanField(label=_('Test Description'), required=False, initial=True)
+    result_notes = forms.BooleanField(label=_('Notes'), required=False, initial=True)
+    result_configs = forms.BooleanField(label=_('Configurations'), required=False, initial=True)
+    result_images = forms.BooleanField(label=_('Images'), required=False, initial=True)
+    result_files = forms.BooleanField(label=_('Files'), required=False, initial=True)
+    result_summary = forms.BooleanField(label=_('Result'), required=False, initial=True)
+
+    def __init__(self, *args, **kwargs):
+        super(RedmineResultExportForm, self).__init__(*args, **kwargs)
+        self.fields['result_id'].widget = forms.HiddenInput()

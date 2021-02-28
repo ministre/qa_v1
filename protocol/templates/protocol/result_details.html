@@ -264,9 +264,11 @@
                     <div class="card-section">
                         <h5>{% trans "Export to" %} Redmine</h5>
                         <form action="{% url 'redmine_result_export' %}" method="post">
-                            {% csrf_token %}
-                            {{ export_form.as_p }}
                             <input type="submit" value='{% trans "Export" %}' class="button small success" />
+                            <table class="unstriped" style="text-align: left; width: 600px;">
+                                {% csrf_token %}
+                                {{ export_form.as_table }}
+                            </table>
                         </form>
                     </div>
                 </div>

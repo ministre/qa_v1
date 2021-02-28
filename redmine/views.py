@@ -94,39 +94,6 @@ def redmine_protocol_export(request):
 
 
 @login_required
-def redmine_result_export(request):
-    if request.method == "POST":
-        result = get_object_or_404(TestResult, id=request.POST['result_id'])
-        back_url = reverse('result_details', kwargs={'pk': result.id, 'tab_id': 7})
-        test_desc = result_notes = result_configs = result_images = result_summary = False
-        try:
-            if request.POST['test_desc']:
-                test_desc = True
-            if request.POST['result_notes']:
-                result_notes = True
-            if request.POST['result_configs']:
-                result_configs = True
-            if request.POST['result_images']:
-                result_images = True
-            if request.POST['result_summary']:
-                result_summary = True
-        except MultiValueDictKeyError:
-            pass
-        message = RedmineResult.export(result=result, project=request.POST['redmine_project'],
-                                       project_wiki=request.POST['redmine_wiki'],
-                                       project_parent_wiki=request.POST['redmine_parent_wiki'],
-                                       test_desc=test_desc,
-                                       result_notes=result_notes,
-                                       result_configs=result_configs,
-                                       result_images=result_images,
-                                       result_summary=result_summary)
-    else:
-        message = [False, _('Page not found')]
-        back_url = reverse('protocols')
-    return render(request, 'redmine/message.html', {'message': message, 'back_url': back_url})
-
-
-@login_required
 def redmine_test_export(request):
     if request.method == "POST":
         test = get_object_or_404(Test, id=request.POST['test_id'])
@@ -195,3 +162,54 @@ def redmine_testplan_export(request):
         return render(request, 'redmine/message.html', {'message': message, 'back_url': back_url})
     else:
         return render(request, 'device/message.html', {'message': [False, _('Page not found')]})
+
+
+@login_required
+def redmine_result_export(request):
+    if request.method == "POST":
+        result = get_object_or_404(TestResult, id=request.POST['result_id'])
+        back_url = reverse('result_details', kwargs={'pk': result.id, 'tab_id': 8})
+        test_desc = result_notes = result_configs = result_images = result_files = result_summary = False
+        try:
+            if request.POST['test_desc']:
+                test_desc = True
+        except MultiValueDictKeyError:
+            pass
+        try:
+            if request.POST['result_notes']:
+                result_notes = True
+        except MultiValueDictKeyError:
+            pass
+        try:
+            if request.POST['result_configs']:
+                result_configs = True
+        except MultiValueDictKeyError:
+            pass
+        try:
+            if request.POST['result_images']:
+                result_images = True
+        except MultiValueDictKeyError:
+            pass
+        try:
+            if request.POST['result_files']:
+                result_files = True
+        except MultiValueDictKeyError:
+            pass
+        try:
+            if request.POST['result_summary']:
+                result_summary = True
+        except MultiValueDictKeyError:
+            pass
+        message = RedmineResult.export(result=result, project=request.POST['redmine_project'],
+                                       project_wiki=request.POST['redmine_wiki'],
+                                       project_parent_wiki=request.POST['redmine_parent_wiki'],
+                                       test_desc=test_desc,
+                                       result_notes=result_notes,
+                                       result_configs=result_configs,
+                                       result_images=result_images,
+                                       result_files=result_files,
+                                       result_summary=result_summary)
+    else:
+        message = [False, _('Page not found')]
+        back_url = reverse('protocols')
+    return render(request, 'redmine/message.html', {'message': message, 'back_url': back_url})
