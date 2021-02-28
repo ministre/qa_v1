@@ -29,7 +29,7 @@ def redmine_device_type_export(request):
     else:
         message = [False, _('Page not found')]
         back_url = reverse('device_types')
-    return render(request, 'redmine/message.html', {'message': message, 'back_url': back_url})
+    return render(request, 'device/message.html', {'message': message, 'back_url': back_url})
 
 
 @login_required
@@ -66,31 +66,7 @@ def redmine_device_export(request):
     else:
         message = [False, _('Page not found')]
         back_url = reverse('devices')
-    return render(request, 'redmine/message.html', {'message': message, 'back_url': back_url})
-
-
-@login_required
-def redmine_protocol_export(request):
-    if request.method == "POST":
-        protocol = get_object_or_404(Protocol, id=request.POST['protocol_id'])
-        back_url = reverse('protocol_details', kwargs={'pk': protocol.id, 'tab_id': 5})
-        general = results = False
-        try:
-            if request.POST['general']:
-                general = True
-        except MultiValueDictKeyError:
-            pass
-        try:
-            if request.POST['results']:
-                results = True
-        except MultiValueDictKeyError:
-            pass
-        message = RedmineProtocol.export(protocol=protocol, project=request.POST['redmine_project'],
-                                         project_wiki=request.POST['redmine_wiki'], general=general, results=results)
-    else:
-        message = [False, _('Page not found')]
-        back_url = reverse('protocols')
-    return render(request, 'redmine/message.html', {'message': message, 'back_url': back_url})
+    return render(request, 'device/message.html', {'message': message, 'back_url': back_url})
 
 
 @login_required
@@ -132,7 +108,7 @@ def redmine_test_export(request):
                                      links=links,
                                      comments=comments)
         back_url = reverse('test_details', kwargs={'pk': test.id, 'tab_id': 8})
-        return render(request, 'redmine/message.html', {'message': message, 'back_url': back_url})
+        return render(request, 'device/message.html', {'message': message, 'back_url': back_url})
     else:
         return render(request, 'device/message.html', {'message': [False, _('Page not found')]})
 
@@ -159,7 +135,7 @@ def redmine_testplan_export(request):
                                          test_list=test_list,
                                          test_details_wiki=test_details_wiki)
         back_url = reverse('testplan_details', kwargs={'pk': testplan.id, 'tab_id': 4})
-        return render(request, 'redmine/message.html', {'message': message, 'back_url': back_url})
+        return render(request, 'device/message.html', {'message': message, 'back_url': back_url})
     else:
         return render(request, 'device/message.html', {'message': [False, _('Page not found')]})
 
@@ -212,4 +188,36 @@ def redmine_result_export(request):
     else:
         message = [False, _('Page not found')]
         back_url = reverse('protocols')
-    return render(request, 'redmine/message.html', {'message': message, 'back_url': back_url})
+    return render(request, 'device/message.html', {'message': message, 'back_url': back_url})
+
+
+@login_required
+def redmine_protocol_export(request):
+    if request.method == "POST":
+        protocol = get_object_or_404(Protocol, id=request.POST['protocol_id'])
+        back_url = reverse('protocol_details', kwargs={'pk': protocol.id, 'tab_id': 5})
+        general = results_list = results_wiki = False
+        try:
+            if request.POST['general']:
+                general = True
+        except MultiValueDictKeyError:
+            pass
+        try:
+            if request.POST['results_list']:
+                results_list = True
+        except MultiValueDictKeyError:
+            pass
+        try:
+            if request.POST['results_wiki']:
+                results_wiki = True
+        except MultiValueDictKeyError:
+            pass
+        message = RedmineProtocol.export(protocol=protocol, project=request.POST['redmine_project'],
+                                         project_wiki=request.POST['redmine_wiki'],
+                                         general=general,
+                                         results_list=results_list,
+                                         results_wiki=results_wiki)
+    else:
+        message = [False, _('Page not found')]
+        back_url = reverse('protocols')
+    return render(request, 'device/message.html', {'message': message, 'back_url': back_url})

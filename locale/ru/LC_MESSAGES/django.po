@@ -992,3 +992,6 @@ msgstr "Заметки"
 
 msgid "Detailed test results"
 msgstr "Детализированные результаты испытаний"
+
+msgid "Result Description"
+msgstr "Описание результатов"

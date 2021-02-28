@@ -31,18 +31,6 @@ class RedmineDeviceExportForm(forms.Form):
         self.fields['device_id'].widget = forms.HiddenInput()
 
 
-class RedmineProtocolExportForm(forms.Form):
-    protocol_id = forms.IntegerField()
-    redmine_project = forms.CharField(label=_('Project ID'), max_length=100)
-    redmine_wiki = forms.CharField(label='Wiki', max_length=100)
-    general = forms.BooleanField(label=_('Device information'), required=False)
-    results = forms.BooleanField(label=_('Test results'), required=False)
-
-    def __init__(self, *args, **kwargs):
-        super(RedmineProtocolExportForm, self).__init__(*args, **kwargs)
-        self.fields['protocol_id'].widget = forms.HiddenInput()
-
-
 class RedmineTestExportForm(forms.Form):
     test_id = forms.IntegerField()
     redmine_project = forms.CharField(label=_('Project ID'), max_length=100)
@@ -87,3 +75,16 @@ class RedmineResultExportForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super(RedmineResultExportForm, self).__init__(*args, **kwargs)
         self.fields['result_id'].widget = forms.HiddenInput()
+
+
+class RedmineProtocolExportForm(forms.Form):
+    protocol_id = forms.IntegerField()
+    redmine_project = forms.CharField(label=_('Project ID'), max_length=100)
+    redmine_wiki = forms.CharField(label='Wiki', max_length=100)
+    general = forms.BooleanField(label=_('Device information'), required=False, initial=True)
+    results_list = forms.BooleanField(label=_('Test results list'), required=False, initial=True)
+    results_wiki = forms.BooleanField(label=_('Test results wiki'), required=False, initial=True)
+
+    def __init__(self, *args, **kwargs):
+        super(RedmineProtocolExportForm, self).__init__(*args, **kwargs)
+        self.fields['protocol_id'].widget = forms.HiddenInput()

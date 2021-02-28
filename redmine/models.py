@@ -216,83 +216,6 @@ class RedmineDevice:
                 return [True, message]
 
 
-class RedmineProtocol:
-    @staticmethod
-    def build_wiki(protocol: Protocol, project_name: str, general=False, results=False):
-        wiki = 'h1. ' + project_name + '\r\n\r'
-        if general:
-            wiki += '\nh2. ' + str(_('General')) + '\r\n\r' \
-                    '\n| ' + str(_('Device')) + ': | ' + protocol.device.vendor.name + ' ' + str(protocol.device) + \
-                    ' |\r' \
-                    '\n| ' + str(_('Testplan')) + ': | ' + str(_('Testplan')) + ' ' + str(protocol.testplan) + ' |\r' \
-                    '\n| ' + str(_('Software Version')) + ': | ' + protocol.sw + ' |\r'
-            if protocol.sw_checksum:
-                wiki += '\n| ' + str(_('Checksum')) + ': | ' + protocol.sw_checksum + ' |\r'
-            wiki += '\n| ' + str(_('Started')) + ': | ' + protocol.date_of_start.strftime('%d.%m.%Y') + '|\r'
-            if protocol.date_of_finish:
-                wiki += '\n| ' + str(_('Completed')) + ': | ' + protocol.date_of_finish.strftime('%d.%m.%Y') + '|\r'
-            if protocol.engineer_login:
-                wiki += '\n| ' + str(_('Engineer Login')) + ': | ' + protocol.engineer_login + ' |\r'
-            if protocol.engineer_password:
-                wiki += '\n| ' + str(_('Engineer Password')) + ': | ' + protocol.engineer_password + ' |\r'
-            if protocol.sysinfo:
-                wiki += '\n\r\n{{collapse(' + str(_('System Information')) + ')\r\n<pre>' + protocol.sysinfo + \
-                        '</pre>\r\n}}\r'
-            if protocol.console:
-                wiki += '\n\r\n{{collapse(' + str(_('Console port parameters')) + ')\r\n' + protocol.console + \
-                        '\r\n}}\r'
-            wiki += '\n\r\nh2. ' + str(_('Test Results')) + '\r\n\r' \
-                    '\n|_. № |_. ' + str(_('Names')) + ': |_. ' + str(_('Results')) + ': |_. ' + str(_('Issues')) + \
-                    ': |_. ' + str(_('Comments')) + ': |\r'
-        if results:
-            results = protocol.get_results(headers=True)
-            for result in results:
-                if result['header']:
-                    wiki += '\n|_. ' + str(result['num']) + '|\\5. *' + result['category_name'] + '* |\r'
-                else:
-                    wiki += '\n| ' + str(result['num'][0]) + '.' + str(result['num'][1]) + ' | '
-                    if result['result_id']:
-                        if result['result_redmine_wiki']:
-                            wiki += '[[' + str(result['result_redmine_wiki']) + '|' + str(result['test_name']) + ']]'
-                        else:
-                            wiki += str(result['test_name'])
-                        if result['configs']:
-                            wiki += ' ' + u'\u2699'
-                    else:
-                        wiki += str(result['test_name'])
-                    wiki += ' |_. '
-                    if not result['result'] or result['result'] == 0:
-                        wiki += '{{checkbox(?)}}'
-                    if result['result'] == 1:
-                        wiki += '{{checkbox(0)}}'
-                    elif result['result'] == 2:
-                        wiki += u'\u00b1'
-                    elif result['result'] == 3:
-                        wiki += '{{checkbox(1)}}'
-                    wiki += ' | '
-                    for issue in result['issues']:
-                        wiki += str(issue) + ' '
-                    wiki += ' | '
-                    if result['comment']:
-                        wiki += str(result['comment'])
-                    wiki += ' |\r'
-        return wiki
-
-    @staticmethod
-    def export(protocol: Protocol, project: str, project_wiki: str, general=False, results=False):
-        r = RedmineProject()
-        is_project = r.check_project(project=project)
-        if is_project[0] != 200:
-            return [False, is_project[1]]
-        else:
-            project_name = str(_('Protocol')) + ' ' + protocol.device.vendor.name + ' ' + str(protocol.device)
-            wiki = RedmineProtocol.build_wiki(protocol=protocol, project_name=project_name, general=general,
-                                              results=results)
-            is_wiki = r.create_or_update_wiki(project=project, wiki_text=wiki, wiki_title=project_wiki,
-                                              parent_wiki_title='wiki')
-            return is_wiki
-
-
 class RedmineTest:
     @staticmethod
     def export(test: Test, project: str, project_wiki: str, configs=False, images=False,
@@ -572,3 +495,96 @@ class RedmineResult:
                 for issue in issues:
                     wiki += '\n# ' + issue.text + '\r'
         return wiki
+
+
+class RedmineProtocol:
+    @staticmethod
+    def export(protocol: Protocol, project: str, project_wiki: str, general=False, results_list=False,
+               results_wiki=False):
+        r = RedmineProject()
+        is_project = r.check_project(project=project)
+        if is_project[0] != 200:
+            return [False, is_project[1]]
+        else:
+            project_name = str(_('Protocol')) + ' ' + protocol.device.vendor.name + ' ' + str(protocol.device)
+            wiki = RedmineProtocol.build_wiki(protocol=protocol, project_name=project_name, general=general,
+                                              results_list=results_list)
+            is_wiki = r.create_or_update_wiki(project=project, wiki_text=wiki, wiki_title=project_wiki,
+                                              parent_wiki_title='wiki')
+
+            if results_wiki:
+                if is_wiki[0]:
+                    RedmineProtocol.create_or_update_results_wiki(protocol=protocol, project=project,
+                                                                  project_parent_wiki=project_wiki)
+
+            return is_wiki
+
+    @staticmethod
+    def build_wiki(protocol: Protocol, project_name: str, general=False, results_list=False):
+        wiki = 'h1. ' + project_name + '\r\n\r'
+        if general:
+            wiki += '\nh2. ' + str(_('General')) + '\r\n\r' \
+                    '\n| ' + str(_('Device')) + ': | ' + protocol.device.vendor.name + ' ' + str(protocol.device) + \
+                    ' |\r' \
+                    '\n| ' + str(_('Testplan')) + ': | ' + str(_('Testplan')) + ' ' + str(protocol.testplan) + ' |\r' \
+                    '\n| ' + str(_('Software Version')) + ': | ' + protocol.sw + ' |\r'
+            if protocol.sw_checksum:
+                wiki += '\n| ' + str(_('Checksum')) + ': | ' + protocol.sw_checksum + ' |\r'
+            wiki += '\n| ' + str(_('Started')) + ': | ' + protocol.date_of_start.strftime('%d.%m.%Y') + '|\r'
+            if protocol.date_of_finish:
+                wiki += '\n| ' + str(_('Completed')) + ': | ' + protocol.date_of_finish.strftime('%d.%m.%Y') + '|\r'
+            if protocol.engineer_login:
+                wiki += '\n| ' + str(_('Engineer Login')) + ': | ' + protocol.engineer_login + ' |\r'
+            if protocol.engineer_password:
+                wiki += '\n| ' + str(_('Engineer Password')) + ': | ' + protocol.engineer_password + ' |\r'
+            if protocol.sysinfo:
+                wiki += '\n\r\n{{collapse(' + str(_('System Information')) + ')\r\n<pre>' + protocol.sysinfo + \
+                        '</pre>\r\n}}\r'
+            if protocol.console:
+                wiki += '\n\r\n{{collapse(' + str(_('Console port parameters')) + ')\r\n' + protocol.console + \
+                        '\r\n}}\r'
+            wiki += '\n\r\nh2. ' + str(_('Test Results')) + '\r\n\r' \
+                    '\n|_. № |_. ' + str(_('Names')) + ': |_. ' + str(_('Results')) + ': |_. ' + str(_('Issues')) + \
+                    ': |_. ' + str(_('Comments')) + ': |\r'
+        if results_list:
+            results = protocol.get_results(headers=True)
+            for result in results:
+                if result['header']:
+                    wiki += '\n|_. ' + str(result['num']) + '|\\5. *' + result['category_name'] + '* |\r'
+                else:
+                    wiki += '\n| ' + str(result['num'][0]) + '.' + str(result['num'][1]) + ' | '
+                    if result['result_id']:
+                        if result['result_redmine_wiki']:
+                            wiki += '[[' + str(result['result_redmine_wiki']) + '|' + str(result['test_name']) + ']]'
+                        else:
+                            wiki += str(result['test_name'])
+                        if result['configs']:
+                            wiki += ' ' + u'\u2699'
+                    else:
+                        wiki += str(result['test_name'])
+                    wiki += ' |_. '
+                    if not result['result'] or result['result'] == 0:
+                        wiki += '{{checkbox(?)}}'
+                    if result['result'] == 1:
+                        wiki += '{{checkbox(0)}}'
+                    elif result['result'] == 2:
+                        wiki += u'\u00b1'
+                    elif result['result'] == 3:
+                        wiki += '{{checkbox(1)}}'
+                    wiki += ' | '
+                    for issue in result['issues']:
+                        wiki += str(issue) + ' '
+                    wiki += ' | '
+                    if result['comment']:
+                        wiki += str(result['comment'])
+                    wiki += ' |\r'
+        return wiki
+
+    @staticmethod
+    def create_or_update_results_wiki(protocol: Protocol, project: str, project_parent_wiki: str):
+        results = TestResult.objects.filter(protocol=protocol).order_by('id')
+        for result in results:
+            if result.redmine_wiki:
+                RedmineResult.export(result=result, project=project, project_wiki=result.redmine_wiki,
+                                     project_parent_wiki=project_parent_wiki, test_desc=True, result_notes=True,
+                                     result_configs=True, result_images=True, result_files=True, result_summary=True)
