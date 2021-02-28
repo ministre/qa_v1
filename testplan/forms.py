@@ -171,7 +171,7 @@ class TestCommentForm(ModelForm):
 
 class TestAddConfigForm(forms.Form):
     test_id = forms.IntegerField()
-    parent_config = forms.ModelChoiceField(queryset=TestPatternConfig.objects.all(), label=_('Pattern'),
+    parent_config = forms.ModelChoiceField(queryset=TestPatternConfig.objects.all(), label=_('Inherit'),
                                            required=False)
 
     def __init__(self, *args, **kwargs):
@@ -185,7 +185,7 @@ class TestAddConfigForm(forms.Form):
 
 class TestAddImageForm(forms.Form):
     test_id = forms.IntegerField()
-    parent_image = forms.ModelChoiceField(queryset=TestPatternImage.objects.all(), label=_('Pattern'),
+    parent_image = forms.ModelChoiceField(queryset=TestPatternImage.objects.all(), label=_('Inherit'),
                                           required=False)
 
     def __init__(self, *args, **kwargs):
@@ -199,7 +199,7 @@ class TestAddImageForm(forms.Form):
 
 class TestAddFileForm(forms.Form):
     test_id = forms.IntegerField()
-    parent_file = forms.ModelChoiceField(queryset=TestPatternFile.objects.all(), label=_('Pattern'),
+    parent_file = forms.ModelChoiceField(queryset=TestPatternFile.objects.all(), label=_('Inherit'),
                                          required=False)
 
     def __init__(self, *args, **kwargs):
@@ -213,7 +213,7 @@ class TestAddFileForm(forms.Form):
 
 class TestAddLinkForm(forms.Form):
     test_id = forms.IntegerField()
-    parent_link = forms.ModelChoiceField(queryset=TestPatternLink.objects.all(), label=_('Pattern'),
+    parent_link = forms.ModelChoiceField(queryset=TestPatternLink.objects.all(), label=_('Inherit'),
                                          required=False)
 
     def __init__(self, *args, **kwargs):
@@ -227,7 +227,7 @@ class TestAddLinkForm(forms.Form):
 
 class TestAddCommentForm(forms.Form):
     test_id = forms.IntegerField()
-    parent_comment = forms.ModelChoiceField(queryset=TestPatternComment.objects.all(), label=_('Pattern'),
+    parent_comment = forms.ModelChoiceField(queryset=TestPatternComment.objects.all(), label=_('Inherit'),
                                             required=False)
 
     def __init__(self, *args, **kwargs):

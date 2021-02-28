@@ -1007,3 +1007,66 @@ msgstr "Список тестов"
 
 msgid "Test details wiki"
 msgstr "Wiki-страницы тестов"
+
+msgid "Images"
+msgstr "Изображения"
+
+msgid "Links"
+msgstr "Ссылки"
+
+msgid "Inherit"
+msgstr "Наследовать"
+
+msgid "Test parent"
+msgstr "Родительский тест"
+
+msgid "Docx Profile"
+msgstr "Docx профиль"
+
+msgid "Title Page"
+msgstr "Титульная страница"
+
+msgid "Header"
+msgstr "Шапка страниц"
+
+msgid "Device Information"
+msgstr "Информация о тестируемом оборудовании"
+
+msgid "Performance"
+msgstr "Производительность"
+
+msgid "Testing Team"
+msgstr "Состав рабочей группы"
+
+msgid "Test Purpose"
+msgstr "Цель теста"
+
+msgid "Test Procedure"
+msgstr "Процедура"
+
+msgid "Test Expected Result"
+msgstr "Ожидаемый результат"
+
+msgid "Test Images"
+msgstr "Изображения"
+
+msgid "Test Configurations"
+msgstr "Конфигурации"
+
+msgid "Test Links"
+msgstr "Ссылки"
+
+msgid "Result Configurations"
+msgstr "Конфигурации результатов"
+
+msgid "Result Images"
+msgstr "Изображения результатов"
+
+msgid "Result Notes"
+msgstr "Заметки результатов"
+
+msgid "Result Status"
+msgstr "Результаты тестов"
+
+msgid "Dependencies"
+msgstr "Зависимости"
