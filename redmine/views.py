@@ -186,6 +186,9 @@ def redmine_testplan_export(request):
         except MultiValueDictKeyError:
             pass
         message = RedmineTestplan.export(testplan=testplan, project=request.POST['redmine_project'],
+                                         project_name=request.POST['redmine_project_name'],
+                                         project_desc=request.POST['redmine_project_desc'],
+                                         project_parent=request.POST['redmine_parent'],
                                          test_list=test_list,
                                          test_details_wiki=test_details_wiki)
         back_url = reverse('testplan_details', kwargs={'pk': testplan.id, 'tab_id': 4})

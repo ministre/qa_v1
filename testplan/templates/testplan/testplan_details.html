@@ -188,7 +188,7 @@
                         <h5>{% trans "Export to" %} Redmine</h5>
                         <form action="{% url 'redmine_testplan_export' %}" method="post">
                             <input type="submit" value='{% trans "Export" %}' class="button small success" />
-                            <table class="unstriped" style="text-align: left; width: 600px;">
+                            <table class="unstriped" style="text-align: left; width: 900px;">
                             {% csrf_token %}
                             {{ export_form.as_table }}
                             </table>

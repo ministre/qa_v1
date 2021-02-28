@@ -86,7 +86,10 @@ def testplan_details(request, pk, tab_id):
     protocols = testplan.get_protocols()
     build_testplan_form = BuildDocxTestplanForm(initial={'testplan_id': testplan.id})
     export_form = RedmineTestplanExportForm(initial={'testplan_id': testplan.id,
-                                                     'redmine_project': testplan.redmine_project})
+                                                     'redmine_project': testplan.redmine_project,
+                                                     'redmine_project_name': testplan.redmine_project_name,
+                                                     'redmine_project_desc': testplan.redmine_project_desc,
+                                                     'redmine_parent': testplan.redmine_parent})
     return render(request, 'testplan/testplan_details.html', {'testplan': testplan, 'tests_count': tests_count,
                                                               'protocols': protocols,
                                                               'build_testplan_form': build_testplan_form,

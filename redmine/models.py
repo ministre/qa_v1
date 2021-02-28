@@ -532,11 +532,13 @@ class RedmineTest:
 
 class RedmineTestplan:
     @staticmethod
-    def export(testplan: TestPlan, project: str, test_list=False, test_details_wiki=False):
+    def export(testplan: TestPlan, project: str, project_name: str, project_desc: str, project_parent: str,
+               test_list=False, test_details_wiki=False):
         r = RedmineProject()
-        is_project = r.check_project(project=project)
-        if is_project[0] != 200:
-            return [False, is_project[1]]
+        redmine_project = r.create_or_update_project(project=project, project_name=project_name,
+                                                     project_desc=project_desc, project_parent=project_parent)
+        if not redmine_project[0]:
+            return redmine_project
         else:
             wiki = RedmineTestplan.build_wiki(testplan=testplan, test_list=test_list)
             is_wiki = r.create_or_update_wiki(project=project, wiki_text=wiki)
