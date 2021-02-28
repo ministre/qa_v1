@@ -52,8 +52,8 @@ class RedmineTestplanExportForm(forms.Form):
     redmine_project_name = forms.CharField(label=_('Project Name'), max_length=100)
     redmine_project_desc = forms.CharField(label=_('Project Description'), max_length=100)
     redmine_parent = forms.CharField(label=_('Parent Project ID'), max_length=100)
-    test_list = forms.BooleanField(label=_('Test List'), required=False, initial=True)
-    test_details_wiki = forms.BooleanField(label=_('Test Details Wiki'), required=False, initial=True)
+    test_list = forms.BooleanField(label=_('Test list'), required=False, initial=True)
+    test_details_wiki = forms.BooleanField(label=_('Test details wiki'), required=False, initial=True)
 
     def __init__(self, *args, **kwargs):
         super(RedmineTestplanExportForm, self).__init__(*args, **kwargs)

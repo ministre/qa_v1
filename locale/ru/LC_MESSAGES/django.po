@@ -1001,3 +1001,9 @@ msgstr "Список тестов"
 
 msgid "Test results wiki"
 msgstr "Wiki-страницы тестов"
+
+msgid "Test list"
+msgstr "Список тестов"
+
+msgid "Test details wiki"
+msgstr "Wiki-страницы тестов"
