@@ -187,3 +187,16 @@ class TestResultIssue(models.Model):
     updated_by = models.ForeignKey(User, models.SET_NULL, related_name='result_issue_u', blank=True, null=True)
     updated_at = models.DateTimeField(default=timezone.now)
 
+
+class ProtocolFile(models.Model):
+    protocol = models.ForeignKey(Protocol, related_name='protocol_file', on_delete=models.CASCADE)
+    type = models.IntegerField(default=0)
+    desc = models.CharField(max_length=1000, blank=True, null=True)
+    file = models.FileField(upload_to="protocol/files/")
+    created_by = models.ForeignKey(User, models.SET_NULL, related_name='protocol_file_c', blank=True, null=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_by = models.ForeignKey(User, models.SET_NULL, related_name='protocol_file_u', blank=True, null=True)
+    updated_at = models.DateTimeField(default=timezone.now)
+
+    def filename(self):
+        return os.path.basename(self.file.name)
