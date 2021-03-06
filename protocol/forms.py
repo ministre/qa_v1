@@ -1,6 +1,6 @@
 from django.forms import ModelForm, HiddenInput
 from protocol.models import Protocol, TestResult, TestResultNote, TestResultConfig, TestResultImage, TestResultFile,\
-    TestResultIssue
+    TestResultIssue, ProtocolFile
 from django.utils.translation import gettext_lazy as _
 from django import forms
 from django.db.models import Q
@@ -179,3 +179,25 @@ class ProtocolCopyResultsForm(forms.Form):
         self.fields['dst_protocol'].widget = forms.HiddenInput()
         if device_id:
             self.fields['src_protocol'].queryset = Protocol.objects.filter(Q(device=device_id) & ~Q(id=dst_protocol))
+
+
+class ProtocolFileForm(ModelForm):
+    class Meta:
+        model = ProtocolFile
+        labels = {
+            'type': _('Type'),
+            'desc': _('Description'),
+            'file': _('File'),
+        }
+        fields = '__all__'
+        TYPE = (
+            (0, _('Firmware')),
+            (1, _('Docx Protocol')),
+            (2, _('Scan-copy Protocol')),
+        )
+        widgets = {
+            'protocol': HiddenInput(),
+            'type': forms.Select(choices=TYPE, attrs={'class': 'form-control'}),
+            'created_by': HiddenInput(), 'created_at': HiddenInput(),
+            'updated_by': HiddenInput(), 'updated_at': HiddenInput()
+        }

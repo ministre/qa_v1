@@ -4,7 +4,8 @@
 
 {% block content %}
 
-<p><a href="{% url 'protocols' %}">{% trans "Protocols" %}</a> &raquo; {{ protocol.device.vendor }} {{ protocol.device.model }}
+<p>
+    <a href="{% url 'protocols' %}">{% trans "Protocols" %}</a> &raquo; {{ protocol.device.vendor }} {{ protocol.device.model }}
     {% if protocol.device.hw %}({{ protocol.device.hw }}){% endif %}
 </p>
 
@@ -21,19 +22,22 @@
         <a data-tabs-target="statistics" href="#statistics">{% trans "Statistics" %}</a>
     </li>
     <li class="tabs-title {% if tab_id == 4 %} is-active{% endif %}">
-        <a data-tabs-target="docx" href="#docx">Docx</a>
+        <a data-tabs-target="files" href="#files">{% trans "Files" %}
+            {% if protocol.protocol_file.all|length > 0 %} ({{ protocol.protocol_file.all|length }}){% endif %}
+        </a>
     </li>
     <li class="tabs-title {% if tab_id == 5 %} is-active{% endif %}">
+        <a data-tabs-target="docx" href="#docx">Docx</a>
+    </li>
+    <li class="tabs-title {% if tab_id == 6 %} is-active{% endif %}">
         <a data-tabs-target="redmine" href="#redmine">Redmine</a>
     </li>
 </ul>
 
 <div class="tabs-content" data-tabs-content="protocol-tabs">
-
     <div class="tabs-panel {% if tab_id == 1 %}is-active{% endif %}" id="general">
         <a href="{% url 'protocol_update' pk=protocol.id %}" class="button small">{% trans "Update" %}</a>
         <a href="{% url 'protocol_delete' pk=protocol.id %}" class="button alert small">{% trans "Delete" %}</a>
-
         <div class="grid-x grid-margin-x">
             <div class="cell">
                 <div class="card">
@@ -226,7 +230,42 @@
         </div>
     </div>
 
-    <div class="tabs-panel {% if tab_id == 4 %}is-active{% endif %}" id="docx">
+    <div class="tabs-panel {% if tab_id == 4 %}is-active{% endif %}" id="files">
+        <a href="{% url 'protocol_file_create' protocol_id=protocol.id %}" class="button small">{% trans "Add" %}</a>
+        {% if protocol.protocol_file.all %}
+        <table>
+            <thead>
+            <tr>
+                <th width="10%">ID</th>
+                <th width="20%">{% trans "Type" %}</th>
+                <th width="30%">{% trans "Description" %}</th>
+                <th width="30%">{% trans "File" %}</th>
+                <th width="10%"></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for file in protocol.protocol_file.all|dictsort:"id" %}
+            <tr>
+                <td>{{ file.id }}</td>
+                <td>
+                    {% if file.type == 0 %}{% trans "Firmware" %}{% endif %}
+                    {% if file.type == 1 %}{% trans "Docx Protocol" %}{% endif %}
+                    {% if file.type == 2 %}{% trans "Scan-copy Protocol" %}{% endif %}
+                </td>
+                <td>{{ file.desc }}</td>
+                <td><a href="{{ file.file.url }}">{{ file.filename }}</a></td>
+                <td>
+                    <a href="{% url 'protocol_file_update' pk=file.id %}"><i class="step fi-pencil" style="color: #7700ff"></i></a>
+                    <a href="{% url 'protocol_file_delete' pk=file.id %}"><i class="step fi-minus" style="color: red"></i></a>
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+    </div>
+
+    <div class="tabs-panel {% if tab_id == 5 %}is-active{% endif %}" id="docx">
         <div class="grid-x grid-margin-x small-up-2 medium-up-2">
             <div class="cell">
                 <div class="card">
@@ -259,7 +298,7 @@
         </div>
     </div>
 
-    <div class="tabs-panel{% if tab_id == 5 %} is-active{% endif %}" id="redmine">
+    <div class="tabs-panel{% if tab_id == 6 %} is-active{% endif %}" id="redmine">
         {% if protocol.device.redmine_project and protocol.redmine_wiki %}
         <div class="grid-x grid-margin-x">
             <div class="cell">

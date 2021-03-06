@@ -3,10 +3,10 @@ from django.contrib.auth.decorators import login_required
 from device.models import Device
 from testplan.models import TestPlan, Test
 from .models import Protocol, TestResult, TestResultNote, TestResultConfig, TestResultImage, TestResultFile, \
-    TestResultIssue
+    TestResultIssue, ProtocolFile
 from django.http import HttpResponseRedirect
 from .forms import ProtocolForm, ResultForm, ResultNoteForm, ResultConfigForm, ResultImageForm, ResultIssueForm, \
-    ResultFileForm, ProtocolCopyResultsForm
+    ResultFileForm, ProtocolCopyResultsForm, ProtocolFileForm
 from redmine.forms import RedmineProtocolExportForm, RedmineResultExportForm
 from docx_builder.forms import BuildDocxProtocolForm, BuildDocxProtocolDetailedForm
 from qa_v1 import settings
@@ -499,6 +499,79 @@ class ResultIssueDelete(DeleteView):
         return reverse('result_details', kwargs={'pk': self.object.result.id, 'tab_id': 7})
 
 
+@method_decorator(login_required, name='dispatch')
+class ProtocolFileCreate(CreateView):
+    model = ProtocolFile
+    form_class = ProtocolFileForm
+    template_name = 'device/create.html'
+
+    def get_initial(self):
+        return {'protocol': self.kwargs.get('protocol_id'),
+                'created_by': self.request.user, 'updated_by': self.request.user}
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('protocol_details', kwargs={'pk': self.kwargs.get('protocol_id'), 'tab_id': 4})
+        return context
+
+    def get_success_url(self):
+        return reverse('protocol_details', kwargs={'pk': self.object.protocol.id, 'tab_id': 4})
+
+
+@method_decorator(login_required, name='dispatch')
+class ProtocolFileUpdate(UpdateView):
+    model = ProtocolFile
+    form_class = ProtocolFileForm
+    template_name = 'device/update.html'
+
+    def get_initial(self):
+        return {'updated_by': self.request.user, 'updated_at': timezone.now()}
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('protocol_details', kwargs={'pk': self.object.protocol.id, 'tab_id': 4})
+        return context
+
+    def get_success_url(self):
+        return reverse('protocol_details', kwargs={'pk': self.object.protocol.id, 'tab_id': 4})
+
+
+@method_decorator(login_required, name='dispatch')
+class ProtocolFileDelete(DeleteView):
+    model = ProtocolFile
+    template_name = 'device/delete.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('protocol_details', kwargs={'pk': self.object.protocol.id, 'tab_id': 4})
+        return context
+
+    def get_success_url(self):
+        return reverse('protocol_details', kwargs={'pk': self.object.protocol.id, 'tab_id': 4})
+
+
+@login_required
+def protocol_copy_results(request):
+    if request.method == 'POST':
+        src_protocol = get_object_or_404(Protocol, id=request.POST['src_protocol'])
+        dst_protocol = get_object_or_404(Protocol, id=request.POST['dst_protocol'])
+        dst_results = TestResult.objects.filter(protocol=dst_protocol)
+        for dst_result in dst_results:
+            src_results = TestResult.objects.filter(protocol=src_protocol)
+            for src_result in src_results:
+                if src_result.test.name == dst_result.test.name:
+                    dst_result.result = src_result.result
+                    dst_result.config = src_result.config
+                    dst_result.info = src_result.info
+                    dst_result.comment = src_result.comment
+                    dst_result.save()
+        return HttpResponseRedirect(reverse('protocol_details', kwargs={'pk': dst_protocol.id, 'tab_id': 2}))
+    else:
+        message = [False, _('Page not found')]
+        return render(request, 'docx_generator/message.html', {'message': message})
+
+
+'''
 @login_required
 def protocol_import(request):
     if request.method == 'POST':
@@ -611,24 +684,4 @@ def protocol_import(request):
     else:
         devices = Device.objects.all()
         return render(request, 'protocol/protocol_import.html', {'devices': devices})
-
-
-@login_required
-def protocol_copy_results(request):
-    if request.method == 'POST':
-        src_protocol = get_object_or_404(Protocol, id=request.POST['src_protocol'])
-        dst_protocol = get_object_or_404(Protocol, id=request.POST['dst_protocol'])
-        dst_results = TestResult.objects.filter(protocol=dst_protocol)
-        for dst_result in dst_results:
-            src_results = TestResult.objects.filter(protocol=src_protocol)
-            for src_result in src_results:
-                if src_result.test.name == dst_result.test.name:
-                    dst_result.result = src_result.result
-                    dst_result.config = src_result.config
-                    dst_result.info = src_result.info
-                    dst_result.comment = src_result.comment
-                    dst_result.save()
-        return HttpResponseRedirect(reverse('protocol_details', kwargs={'pk': dst_protocol.id, 'tab_id': 2}))
-    else:
-        message = [False, _('Page not found')]
-        return render(request, 'docx_generator/message.html', {'message': message})
+'''

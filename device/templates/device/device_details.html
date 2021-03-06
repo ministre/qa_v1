@@ -4,7 +4,9 @@
 
 {% block content %}
 
-<p><a href="{% url 'devices' %}">{% trans "Devices" %}</a> &raquo; {{ device.vendor }} {{ device }}</p>
+<p>
+    <a href="{% url 'devices' %}">{% trans "Devices" %}</a> &raquo; {{ device.vendor }} {{ device }}
+</p>
 
 <ul class="tabs" data-tabs id="device-tabs">
     <li class="tabs-title {% if tab_id == 1 %} is-active{% endif %}">

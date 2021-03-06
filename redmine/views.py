@@ -195,7 +195,7 @@ def redmine_result_export(request):
 def redmine_protocol_export(request):
     if request.method == "POST":
         protocol = get_object_or_404(Protocol, id=request.POST['protocol_id'])
-        back_url = reverse('protocol_details', kwargs={'pk': protocol.id, 'tab_id': 5})
+        back_url = reverse('protocol_details', kwargs={'pk': protocol.id, 'tab_id': 6})
         general = results_list = results_wiki = False
         try:
             if request.POST['general']:
