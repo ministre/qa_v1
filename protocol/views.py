@@ -100,19 +100,7 @@ class ProtocolDelete(DeleteView):
 @login_required
 def protocol_details(request, pk, tab_id):
     protocol = get_object_or_404(Protocol, id=pk)
-    results = TestResult.objects.filter(protocol=pk).order_by("id")
-
-    tests_all = results.count()
-    tests_completed = TestResult.objects.filter(Q(protocol=pk) & ~Q(result=0)).count()
-    if tests_all > 0:
-        tests_completed_percent = round(tests_completed * 100 / tests_all, 1)
-    else:
-        tests_completed_percent = 0
-    tests_left = tests_all - tests_completed
-    tests_success = TestResult.objects.filter(Q(protocol=pk) & Q(result=3)).count()
-    tests_warn = TestResult.objects.filter(Q(protocol=pk) & Q(result=2)).count()
-    tests_fail = TestResult.objects.filter(Q(protocol=pk) & Q(result=1)).count()
-
+    stats = protocol.get_stats()
     build_protocol_form = BuildDocxProtocolForm(initial={'protocol_id': protocol.id})
     build_protocol_detailed_form = BuildDocxProtocolDetailedForm(initial={'protocol_id': protocol.id})
 
@@ -122,15 +110,11 @@ def protocol_details(request, pk, tab_id):
                                                      'redmine_project': protocol.device.redmine_project,
                                                      'redmine_wiki': protocol.redmine_wiki})
     results = protocol.get_results()
+    issues = protocol.get_issues()
     return render(request, 'protocol/protocol_details.html', {'protocol': protocol,
                                                               'results': results,
-                                                              'tests_all': tests_all,
-                                                              'tests_completed': tests_completed,
-                                                              'tests_completed_percent': tests_completed_percent,
-                                                              'tests_left': tests_left,
-                                                              'tests_success': tests_success,
-                                                              'tests_warn': tests_warn,
-                                                              'tests_fail': tests_fail,
+                                                              'issues': issues,
+                                                              'stats': stats,
                                                               'build_protocol_form': build_protocol_form,
                                                               'build_protocol_detailed_form':
                                                                   build_protocol_detailed_form,

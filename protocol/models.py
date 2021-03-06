@@ -118,6 +118,36 @@ class Protocol(models.Model):
                     pass
         return issues
 
+    def get_stats(self):
+        tests_count = failed = failed_pct = warn = warn_pct = passed = passed_pct = tested_pct = untested_pct = 0
+        categories = Category.objects.filter(testplan=self.testplan)
+        for category in categories:
+            tests = Test.objects.filter(cat=category)
+            tests_count += tests.count()
+        results = TestResult.objects.filter(protocol=self)
+        for result in results:
+            if result.result == 1:
+                failed += 1
+            elif result.result == 2:
+                warn += 1
+            elif result.result == 3:
+                passed += 1
+        tested = failed + warn + passed
+        untested = tests_count - tested
+        if tests_count > 0:
+            failed_pct = round(failed * 100 / tests_count, 1)
+            warn_pct = round(warn * 100 / tests_count, 1)
+            passed_pct = round(passed * 100 / tests_count, 1)
+            tested_pct = round(tested * 100 / tests_count, 1)
+            untested_pct = round(untested * 100 / tests_count, 1)
+
+        return {'tests_count': tests_count,
+                'failed': failed, 'failed_pct': failed_pct,
+                'warn': warn, 'warn_pct': warn_pct,
+                'passed': passed, 'passed_pct': passed_pct,
+                'tested': tested, 'tested_pct': tested_pct,
+                'untested': untested, 'untested_pct': untested_pct}
+
 
 class TestResult(models.Model):
     test = models.ForeignKey(Test, on_delete=models.CASCADE)

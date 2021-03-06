@@ -15,11 +15,11 @@
     </li>
     <li class="tabs-title {% if tab_id == 2 %} is-active{% endif %}">
         <a data-tabs-target="test_results" href="#test_results">{% trans "Tests" %}
-            ({{ tests_completed }}/{{ results|length }})
+            ({{ stats.tested }}/{{ stats.tests_count }})
         </a>
     </li>
     <li class="tabs-title {% if tab_id == 3 %} is-active{% endif %}">
-        <a data-tabs-target="statistics" href="#statistics">{% trans "Statistics" %}</a>
+        <a data-tabs-target="summary" href="#summary">{% trans "Summary" %}</a>
     </li>
     <li class="tabs-title {% if tab_id == 4 %} is-active{% endif %}">
         <a data-tabs-target="files" href="#files">{% trans "Files" %}
@@ -105,10 +105,10 @@
                                 <td>{{ protocol.updated_at }} {% if protocol.updated_by %}({{ protocol.updated_by }}){% endif %}</td>
                             </tr>
                             <tr>
-                                <td>{% trans "Result" %}:</td>
+                                <td>{% trans "Status" %}:</td>
                                 <td>
                                     {% if protocol.result == 0 %}
-                                    <span class="label" style="width:125px; text-align: center; background-color: gray; color: white">{% trans "Testing" %}</span>
+                                    <span class="label" style="width:125px; text-align: center; background-color: gray; color: white">{% trans "Testing" %} ({{ stats.tested_pct }}%)</span>
                                     {% endif %}
                                     {% if protocol.result == 1 %}
                                     <span class="label alert" style="width:125px; text-align: center">{% trans "Not recommended" %}</span>
@@ -224,9 +224,64 @@
         </table>
     </div>
 
-    <div class="tabs-panel {% if tab_id == 3 %}is-active{% endif %}" id="statistics">
-        <div class="cell small-6">
-            <div id="donutchart"></div>
+    <div class="tabs-panel {% if tab_id == 3 %}is-active{% endif %}" id="summary">
+        <div class="grid-x grid-margin-x">
+            <div class="cell">
+                <div class="card">
+                    <div class="card-section">
+                        <h5>{% trans "Status" %}</h5>
+                        <p>
+                            <span class="label" style="background-color: gray; color: white">{% trans "Testing" %} ({{ stats.tested_pct }}%)</span>
+                            <a href="{# url 'protocol_file_update' pk=file.id #}"><i class="step fi-pencil" style="color: #7700ff"></i></a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="cell">
+                <div class="card">
+                    <div class="card-section">
+                        <h5>{% trans "Issues" %} ({{ issues|length }})</h5>
+                        {% if issues %}
+                        <table class="unstriped">
+                            <thead>
+                            <tr>
+                                <th>№</th>
+                                <th>{% trans "Description" %}</th>
+                                <th>{% trans "Test" %}</th>
+                                <th>{% trans "Ticket" %}</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for issue in issues %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ issue.text }}</td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="cell">
+                <div class="card">
+                    <div class="card-section">
+                        <h5>{% trans "Additional Issues" %}</h5>
+                        <a href="{# url 'protocol_update' pk=protocol.id #}" class="button small">{% trans "Add" %}</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="cell">
+            <div class="card">
+                <div class="card-section">
+                    <h5>{% trans "Statistics" %}</h5>
+                    <div id="piechart_3d"></div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -304,7 +359,7 @@
             <div class="cell">
                 <div class="card">
                     <div class="card-section">
-                        <h5>Redmine Project Wiki</h5>
+                        <h5>Wiki</h5>
                         <p>
                             <a href="{{ redmine_url }}/projects/{{ protocol.device.redmine_project }}/wiki/{{ protocol.redmine_wiki }}/">
                                 {{ redmine_url }}/projects/{{ protocol.device.redmine_project }}/wiki/{{ protocol.redmine_wiki }}/
@@ -319,7 +374,6 @@
             <div class="cell">
                 <div class="card">
                     <div class="card-section">
-                        <h5>{% trans "Export to" %} Redmine</h5>
                         <form action="{% url 'redmine_protocol_export' %}" method="post">
                             <input type="submit" value='{% trans "Export" %}' class="button small success" />
                             <table class="unstriped" style="text-align: left; width: 600px;">
@@ -342,19 +396,17 @@
     function drawChart() {
       var data = google.visualization.arrayToDataTable([
         ['Results', 'Percents'],
-        ['Пройдено',     {{ tests_success }}],
-        ['Пройдено с замечанием',      {{ tests_warn }}],
-        ['Не пройдено',  {{ tests_fail }}],
-		['Не тестировалось',  {{ tests_left }}],
+        ['{% trans "Passed" %}: {{ stats.passed }} ({{ stats.passed_pct }}%)',  {{ stats.passed }}],
+        ['{% trans "Warning" %}: {{ stats.warn }} ({{ stats.warn_pct }}%)',  {{ stats.warn }}],
+        ['{% trans "Failed" %}: {{ stats.failed }} ({{ stats.failed_pct }}%)',  {{ stats.failed }}],
+        ['{% trans "Untested" %}: {{ stats.untested }} ({{ stats.untested_pct }}%)',  {{ stats.untested }}],
       ]);
-
-      var chart = new google.visualization.PieChart(document.getElementById('donutchart'));
-
+      var chart = new google.visualization.PieChart(document.getElementById('piechart_3d'));
       chart.draw(data, {
-		title: 'Протестировано {{ tests_completed }} ({{ tests_completed_percent }}%) из {{ tests_all }}. Осталось: {{ tests_left }}',
-		width: 900,
-		height: 500,
-		pieHole: 0.4,
+		is3D: true,
+		pieSliceText: 'none',
+		width: 700,
+		height: 350,
 		colors: ['green', 'orange', 'red', 'gray'],
 	  });
     }
