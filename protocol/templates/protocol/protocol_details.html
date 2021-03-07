@@ -251,7 +251,7 @@
                                 <td>{{ forloop.counter }}</td>
                                 <td>{{ issue.text }}</td>
                                 <td></td>
-                                <td></td>
+                                <td>{% if issue.ticket %}<a href="{{ issue.ticket }}">{{ issue.ticket }}</a>{% endif %}</td>
                             </tr>
                             {% endfor %}
                             </tbody>

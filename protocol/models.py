@@ -113,7 +113,7 @@ class Protocol(models.Model):
                     test_issues = TestResultIssue.objects.filter(result=result).order_by('id')
                     for issue in test_issues:
                         issues.append({'issue_id': issue.id, 'result_id': result.id, 'test_id': test.id,
-                                       'text': issue.text})
+                                       'text': issue.text, 'ticket': issue.ticket})
                 except TestResult.DoesNotExist:
                     pass
         return issues
