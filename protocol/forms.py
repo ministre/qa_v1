@@ -213,6 +213,7 @@ class ProtocolAdditionalIssueForm(ModelForm):
         fields = '__all__'
         widgets = {
             'protocol': HiddenInput(),
+            'priority': HiddenInput(),
             'created_by': HiddenInput(), 'created_at': HiddenInput(),
             'updated_by': HiddenInput(), 'updated_at': HiddenInput()
         }

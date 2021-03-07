@@ -579,6 +579,10 @@ class ProtocolAdditionalIssueCreate(CreateView):
         return context
 
     def get_success_url(self):
+        issue = ProtocolAdditionalIssue.objects.filter(protocol=self.object.protocol).latest('priority')
+        priority = issue.priority + 1
+        self.object.priority = priority
+        self.object.save()
         return reverse('protocol_details', kwargs={'pk': self.object.protocol.id, 'tab_id': 3})
 
 
