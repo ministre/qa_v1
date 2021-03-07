@@ -104,23 +104,6 @@
                                 <td>{% trans "Last Update" %}:</td>
                                 <td>{{ protocol.updated_at }} {% if protocol.updated_by %}({{ protocol.updated_by }}){% endif %}</td>
                             </tr>
-                            <tr>
-                                <td>{% trans "Status" %}:</td>
-                                <td>
-                                    {% if protocol.result == 0 %}
-                                    <span class="label" style="width:125px; text-align: center; background-color: gray; color: white">{% trans "Testing" %} ({{ stats.tested_pct }}%)</span>
-                                    {% endif %}
-                                    {% if protocol.result == 1 %}
-                                    <span class="label alert" style="width:125px; text-align: center">{% trans "Not recommended" %}</span>
-                                    {% endif %}
-                                    {% if protocol.result == 2 %}
-                                    <span class="label warning" style="width:125px; text-align: center">{% trans "Limited" %}</span>
-                                    {% endif %}
-                                    {% if protocol.result == 3 %}
-                                    <span class="label success" style="width:125px; text-align: center; background-color: green; color: white">{% trans "Recommended" %}</span>
-                                    {% endif %}
-                                </td>
-                            </tr>
                         </table>
 
                         {% if protocol.sysinfo %}
@@ -231,8 +214,19 @@
                     <div class="card-section">
                         <h5>{% trans "Status" %}</h5>
                         <p>
+                            {% if protocol.result == 0 %}
                             <span class="label" style="background-color: gray; color: white">{% trans "Testing" %} ({{ stats.tested_pct }}%)</span>
-                            <a href="{# url 'protocol_file_update' pk=file.id #}"><i class="step fi-pencil" style="color: #7700ff"></i></a>
+                            {% endif %}
+                            {% if protocol.result == 1 %}
+                            <span class="label alert">{% trans "Not recommended" %}</span>
+                            {% endif %}
+                            {% if protocol.result == 2 %}
+                            <span class="label warning">{% trans "Limited" %}</span>
+                            {% endif %}
+                            {% if protocol.result == 3 %}
+                            <span class="label success" style="background-color: green; color: white">{% trans "Recommended" %}</span>
+                            {% endif %}
+                            <a href="{% url 'protocol_status_update' pk=protocol.id %}"><i class="step fi-pencil" style="color: #7700ff"></i></a>
                         </p>
                     </div>
                 </div>
@@ -270,7 +264,7 @@
                 <div class="card">
                     <div class="card-section">
                         <h5>{% trans "Additional Issues" %}</h5>
-                        <a href="{# url 'protocol_update' pk=protocol.id #}" class="button small">{% trans "Add" %}</a>
+                        <a href="{% url 'protocol_issue_create' protocol_id=protocol.id %}" class="button small">{% trans "Add" %}</a>
                     </div>
                 </div>
             </div>

@@ -1,6 +1,6 @@
 from django.forms import ModelForm, HiddenInput
 from protocol.models import Protocol, TestResult, TestResultNote, TestResultConfig, TestResultImage, TestResultFile,\
-    TestResultIssue, ProtocolFile
+    TestResultIssue, ProtocolFile, ProtocolAdditionalIssue
 from django.utils.translation import gettext_lazy as _
 from django import forms
 from django.db.models import Q
@@ -18,9 +18,9 @@ class ProtocolForm(ModelForm):
             'engineer_password': _('Engineer Password'),
             'sysinfo': _('System Information'),
             'console': _('Console port parameters'),
+            'result': _('Result'),
             'date_of_start': _('Started'),
             'date_of_finish': _('Completed'),
-            'result': _('Result'),
         }
         fields = '__all__'
         RESULT = (
@@ -198,6 +198,21 @@ class ProtocolFileForm(ModelForm):
         widgets = {
             'protocol': HiddenInput(),
             'type': forms.Select(choices=TYPE, attrs={'class': 'form-control'}),
+            'created_by': HiddenInput(), 'created_at': HiddenInput(),
+            'updated_by': HiddenInput(), 'updated_at': HiddenInput()
+        }
+
+
+class ProtocolAdditionalIssueForm(ModelForm):
+    class Meta:
+        model = ProtocolAdditionalIssue
+        labels = {
+            'text': _('Text'),
+            'ticket': _('Ticket'),
+        }
+        fields = '__all__'
+        widgets = {
+            'protocol': HiddenInput(),
             'created_by': HiddenInput(), 'created_at': HiddenInput(),
             'updated_by': HiddenInput(), 'updated_at': HiddenInput()
         }

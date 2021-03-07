@@ -5,6 +5,7 @@ urlpatterns = [
     path('', views.ProtocolListView.as_view(), name='protocols'),
     path('create/', views.ProtocolCreate.as_view(), name='protocol_create'),
     path('update/<int:pk>/', views.ProtocolUpdate.as_view(), name='protocol_update'),
+    path('status_update/<int:pk>/', views.ProtocolStatusUpdate.as_view(), name='protocol_status_update'),
     path('delete/<int:pk>/', views.ProtocolDelete.as_view(), name='protocol_delete'),
     path('<int:pk>/<int:tab_id>/', views.protocol_details, name='protocol_details'),
     # test results
@@ -36,6 +37,10 @@ urlpatterns = [
     path('file/create/<int:protocol_id>/', views.ProtocolFileCreate.as_view(), name='protocol_file_create'),
     path('file/update/<int:pk>/', views.ProtocolFileUpdate.as_view(), name='protocol_file_update'),
     path('file/delete/<int:pk>/', views.ProtocolFileDelete.as_view(), name='protocol_file_delete'),
+    # additional issues
+    path('issue/create/<int:protocol_id>/', views.ProtocolAdditionalIssueCreate.as_view(), name='protocol_issue_create'),
+    path('issue/update/<int:pk>/', views.ProtocolAdditionalIssueUpdate.as_view(), name='protocol_issue_update'),
+    path('issue/delete/<int:pk>/', views.ProtocolAdditionalIssueDelete.as_view(), name='protocol_issue_delete'),
 
     path('copy_results/', views.protocol_copy_results, name='protocol_copy_results'),
 ]

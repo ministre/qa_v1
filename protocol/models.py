@@ -230,3 +230,14 @@ class ProtocolFile(models.Model):
 
     def filename(self):
         return os.path.basename(self.file.name)
+
+
+class ProtocolAdditionalIssue(models.Model):
+    protocol = models.ForeignKey(Protocol, related_name='protocol_add_issue', on_delete=models.CASCADE)
+    text = models.TextField()
+    ticket = models.CharField(max_length=1000, blank=True, null=True)
+    priority = models.IntegerField(default=0)
+    created_by = models.ForeignKey(User, models.SET_NULL, related_name='protocol_add_issue_c', blank=True, null=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_by = models.ForeignKey(User, models.SET_NULL, related_name='protocol_add_issue_u', blank=True, null=True)
+    updated_at = models.DateTimeField(default=timezone.now)

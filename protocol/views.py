@@ -1,19 +1,14 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from device.models import Device
-from testplan.models import TestPlan, Test
+from testplan.models import Test
 from .models import Protocol, TestResult, TestResultNote, TestResultConfig, TestResultImage, TestResultFile, \
-    TestResultIssue, ProtocolFile
+    TestResultIssue, ProtocolFile, ProtocolAdditionalIssue
 from django.http import HttpResponseRedirect
 from .forms import ProtocolForm, ResultForm, ResultNoteForm, ResultConfigForm, ResultImageForm, ResultIssueForm, \
-    ResultFileForm, ProtocolCopyResultsForm, ProtocolFileForm
+    ResultFileForm, ProtocolCopyResultsForm, ProtocolFileForm, ProtocolAdditionalIssueForm
 from redmine.forms import RedmineProtocolExportForm, RedmineResultExportForm
 from docx_builder.forms import BuildDocxProtocolForm, BuildDocxProtocolDetailedForm
 from qa_v1 import settings
-from redminelib import Redmine
-from redminelib.exceptions import ResourceNotFoundError
-import re
-from django.db.models import Q
 import textile
 from django.utils.decorators import method_decorator
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
@@ -72,6 +67,8 @@ class ProtocolUpdate(UpdateView):
         form = super(ProtocolUpdate, self).get_form(form_class)
         form.fields['device'].widget = forms.HiddenInput()
         form.fields['testplan'].widget = forms.HiddenInput()
+        form.fields['result'].widget = forms.HiddenInput()
+        form.fields['date_of_finish'].widget = forms.HiddenInput()
         return form
 
     def get_context_data(self, **kwargs):
@@ -81,6 +78,38 @@ class ProtocolUpdate(UpdateView):
 
     def get_success_url(self):
         return reverse('protocol_details', kwargs={'pk': self.object.id, 'tab_id': 1})
+
+
+@method_decorator(login_required, name='dispatch')
+class ProtocolStatusUpdate(UpdateView):
+    model = Protocol
+    form_class = ProtocolForm
+    template_name = 'protocol/update.html'
+
+    def get_initial(self):
+        return {'updated_by': self.request.user, 'updated_at': timezone.now, 'date_of_finish': timezone.now}
+
+    def get_form(self, form_class=ProtocolForm):
+        form = super(ProtocolStatusUpdate, self).get_form(form_class)
+        form.fields['device'].widget = forms.HiddenInput()
+        form.fields['testplan'].widget = forms.HiddenInput()
+        form.fields['sw'].widget = forms.HiddenInput()
+        form.fields['sw_checksum'].widget = forms.HiddenInput()
+        form.fields['engineer_login'].widget = forms.HiddenInput()
+        form.fields['engineer_password'].widget = forms.HiddenInput()
+        form.fields['sysinfo'].widget = forms.HiddenInput()
+        form.fields['console'].widget = forms.HiddenInput()
+        form.fields['date_of_start'].widget = forms.HiddenInput()
+        form.fields['redmine_wiki'].widget = forms.HiddenInput()
+        return form
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('protocol_details', kwargs={'pk': self.object.id, 'tab_id': 3})
+        return context
+
+    def get_success_url(self):
+        return reverse('protocol_details', kwargs={'pk': self.object.id, 'tab_id': 3})
 
 
 @method_decorator(login_required, name='dispatch')
@@ -532,6 +561,57 @@ class ProtocolFileDelete(DeleteView):
 
     def get_success_url(self):
         return reverse('protocol_details', kwargs={'pk': self.object.protocol.id, 'tab_id': 4})
+
+
+@method_decorator(login_required, name='dispatch')
+class ProtocolAdditionalIssueCreate(CreateView):
+    model = ProtocolAdditionalIssue
+    form_class = ProtocolAdditionalIssueForm
+    template_name = 'device/create.html'
+
+    def get_initial(self):
+        return {'protocol': self.kwargs.get('protocol_id'),
+                'created_by': self.request.user, 'updated_by': self.request.user}
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('protocol_details', kwargs={'pk': self.kwargs.get('protocol_id'), 'tab_id': 3})
+        return context
+
+    def get_success_url(self):
+        return reverse('protocol_details', kwargs={'pk': self.object.protocol.id, 'tab_id': 3})
+
+
+@method_decorator(login_required, name='dispatch')
+class ProtocolAdditionalIssueUpdate(UpdateView):
+    model = ProtocolAdditionalIssue
+    form_class = ProtocolAdditionalIssueForm
+    template_name = 'device/update.html'
+
+    def get_initial(self):
+        return {'updated_by': self.request.user, 'updated_at': timezone.now()}
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('protocol_details', kwargs={'pk': self.object.protocol.id, 'tab_id': 3})
+        return context
+
+    def get_success_url(self):
+        return reverse('protocol_details', kwargs={'pk': self.object.protocol.id, 'tab_id': 3})
+
+
+@method_decorator(login_required, name='dispatch')
+class ProtocolAdditionalIssueDelete(DeleteView):
+    model = ProtocolAdditionalIssue
+    template_name = 'device/delete.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('protocol_details', kwargs={'pk': self.object.protocol.id, 'tab_id': 3})
+        return context
+
+    def get_success_url(self):
+        return reverse('protocol_details', kwargs={'pk': self.object.protocol.id, 'tab_id': 3})
 
 
 @login_required
