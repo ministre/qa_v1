@@ -239,10 +239,10 @@
                         <table class="unstriped">
                             <thead>
                             <tr>
-                                <th>№</th>
+                                <th width="50px">№</th>
                                 <th>{% trans "Description" %}</th>
-                                <th>{% trans "Test" %}</th>
-                                <th>{% trans "Ticket" %}</th>
+                                <th width="100px">{% trans "Test" %}</th>
+                                <th width="10%">{% trans "Ticket" %}</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -250,7 +250,7 @@
                             <tr>
                                 <td>{{ forloop.counter }}</td>
                                 <td>{{ issue.text }}</td>
-                                <td></td>
+                                <td>{{ issue.test_num.0 }}.{{ issue.test_num.1 }}</td>
                                 <td>{% if issue.ticket %}<a href="{{ issue.ticket }}">{{ issue.ticket }}</a>{% endif %}</td>
                             </tr>
                             {% endfor %}
@@ -269,9 +269,9 @@
                         <table class="unstriped">
                             <thead>
                             <tr>
-                                <th>№</th>
+                                <th width="50px">№</th>
                                 <th>{% trans "Description" %}</th>
-                                <th>{% trans "Ticket" %}</th>
+                                <th width="10%">{% trans "Ticket" %}</th>
                                 <th width="100px"></th>
                             </tr>
                             </thead>

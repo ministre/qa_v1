@@ -108,12 +108,13 @@ class Protocol(models.Model):
         for category in categories:
             tests = Test.objects.filter(cat=category).order_by('priority')
             for test in tests:
+                test_num = test.get_num()
                 try:
                     result = TestResult.objects.get(protocol=self, test=test)
                     test_issues = TestResultIssue.objects.filter(result=result).order_by('id')
                     for issue in test_issues:
                         issues.append({'issue_id': issue.id, 'result_id': result.id, 'test_id': test.id,
-                                       'text': issue.text, 'ticket': issue.ticket})
+                                       'test_num': test_num, 'text': issue.text, 'ticket': issue.ticket})
                 except TestResult.DoesNotExist:
                     pass
         return issues
