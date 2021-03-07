@@ -282,6 +282,13 @@
                                 <td>{{ add_issue.text }}</td>
                                 <td>{% if add_issue.ticket %}<a href="{{ add_issue.ticket }}">{{ add_issue.ticket }}</a>{% endif %}</td>
                                 <td>
+                                    {% if forloop.counter != 1 %}
+                                    <a href="{# url 'category_up' pk=category.id #}"><i class="step fi-arrow-up" style="color: #ff4f12"></i></a>
+                                    {% endif %}
+                                    {% if forloop.counter != protocol.protocol_add_issue.all.count %}
+                                    <a href="{# url 'category_down' pk=category.id #}"><i class="step fi-arrow-down" style="color: #ff4f12"></i></a>
+                                    {% endif %}
+
                                     <a href="{% url 'protocol_issue_update' pk=add_issue.id %}"><i class="step fi-pencil" style="color: #7700ff"></i></a>
                                     <a href="{% url 'protocol_issue_delete' pk=add_issue.id %}"><i class="step fi-minus" style="color: red"></i></a>
                                 </td>
