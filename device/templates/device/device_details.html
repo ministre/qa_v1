@@ -36,6 +36,11 @@
         </a>
     </li>
     <li class="tabs-title {% if tab_id == 7 %} is-active{% endif %}">
+        <a data-tabs-target="contacts" href="#contacts">{% trans "Contacts" %}
+            {% if device.device_contact.all|length > 0 %} ({{ device.device_contact.all|length }}){% endif %}
+        </a>
+    </li>
+    <li class="tabs-title {% if tab_id == 8 %} is-active{% endif %}">
         <a data-tabs-target="redmine" href="#redmine">Redmine</a>
     </li>
 </ul>
@@ -321,7 +326,10 @@
         {% endfor %}
     </div>
 
-    <div class="tabs-panel{% if tab_id == 7 %} is-active{% endif %}" id="redmine">
+    <div class="tabs-panel{% if tab_id == 7 %} is-active{% endif %}" id="contact">
+    </div>
+
+    <div class="tabs-panel{% if tab_id == 8 %} is-active{% endif %}" id="redmine">
         {% if device.redmine_project %}
         <div class="grid-x grid-margin-x">
             <div class="cell">
