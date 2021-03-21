@@ -21,9 +21,9 @@
     {% for contact in contacts %}
     <tr data-href="{% url 'contact_update' pk=contact.id %}">
         <td>{{ contact }}
-            {% if contact.post %}
+            {% if contact.position %}
             <br>
-            <span style="color: #7700ff; font-style: italic">{{ contact.post }}</span>
+            <span style="color: #7700ff; font-style: italic">{{ contact.position }}</span>
             {% endif %}
         </td>
         <td>{% if contact.vendor %}{{ contact.vendor }}{% endif %}</td>
