@@ -2,9 +2,10 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from qa_v1 import settings
 from device.models import Vendor, Device, DeviceType, DevicePhoto, DeviceSample, DeviceSampleAccount, DeviceFile, \
-    DeviceNote
+    DeviceNote, DeviceContact
+from contact.models import Contact
 from .forms import VendorForm, DeviceTypeForm, DeviceForm, DevicePhotoForm, DeviceSampleForm, DeviceSampleAccountForm, \
-    DeviceFileForm, DeviceNoteForm
+    DeviceFileForm, DeviceNoteForm, DeviceContactForm
 from redmine.forms import RedmineDeviceTypeExportForm, RedmineDeviceExportForm
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
@@ -517,6 +518,44 @@ class DeviceNoteDelete(DeleteView):
 
     def get_success_url(self):
         return reverse('device_details', kwargs={'pk': self.object.device.id, 'tab_id': 6})
+
+
+@method_decorator(login_required, name='dispatch')
+class DeviceContactCreate(CreateView):
+    model = DeviceContact
+    form_class = DeviceContactForm
+    template_name = 'device/create.html'
+
+    def get_initial(self):
+        return {'device': self.kwargs.get('device_id'),
+                'created_by': self.request.user, 'updated_by': self.request.user}
+
+    def get_form(self, form_class=DeviceContactForm):
+        form = super(DeviceContactCreate, self).get_form(form_class)
+        form.fields['contact'].queryset = Contact.objects.exclude(vendor__isnull=True).order_by('last_name')
+        return form
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('device_details', kwargs={'pk': self.kwargs.get('device_id'), 'tab_id': 7})
+        return context
+
+    def get_success_url(self):
+        return reverse('device_details', kwargs={'pk': self.object.device.id, 'tab_id': 7})
+
+
+@method_decorator(login_required, name='dispatch')
+class DeviceContactDelete(DeleteView):
+    model = DeviceContact
+    template_name = 'device/delete.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('device_details', kwargs={'pk': self.object.device.id, 'tab_id': 7})
+        return context
+
+    def get_success_url(self):
+        return reverse('device_details', kwargs={'pk': self.object.device.id, 'tab_id': 7})
 
 
 '''

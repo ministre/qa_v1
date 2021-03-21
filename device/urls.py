@@ -40,4 +40,7 @@ urlpatterns = [
     path('note/create/<int:device_id>', views.DeviceNoteCreate.as_view(), name='note_create'),
     path('note/update/<int:pk>/', views.DeviceNoteUpdate.as_view(), name='note_update'),
     path('note/delete/<int:pk>/', views.DeviceNoteDelete.as_view(), name='note_delete'),
+    # contacts
+    path('contact/create/<int:device_id>/', views.DeviceContactCreate.as_view(), name='d_contact_create'),
+    path('contact/delete/<int:pk>/', views.DeviceContactDelete.as_view(), name='d_contact_delete')
 ]

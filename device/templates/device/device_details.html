@@ -326,7 +326,36 @@
         {% endfor %}
     </div>
 
-    <div class="tabs-panel{% if tab_id == 7 %} is-active{% endif %}" id="contact">
+    <div class="tabs-panel{% if tab_id == 7 %} is-active{% endif %}" id="contacts">
+        <a href="{% url 'd_contact_create' device_id=device.id %}" class="button small">{% trans "Add" %}</a>
+        {% if device.device_contact.all %}
+        <table class="unstriped" style="width:100%">
+            <thead>
+            <tr>
+                <th>{% trans "Full Name" %}</th>
+                <th>{% trans "Vendor" %}</th>
+                <th>E-Mail</th>
+                <th>{% trans "Phone" %}</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for contact in device.device_contact.all %}
+            <tr>
+                <td>{{ contact.contact }}
+                    <a href="{% url 'd_contact_delete' pk=contact.id %}"><i class="step fi-minus" style="color: #bc104b"></i></a>
+                    {% if contact.contact.position %}
+                    <br>
+                    <span style="color: #7700ff; font-style: italic">{{ contact.contact.position }}</span>
+                    {% endif %}
+                </td>
+                <td>{{ contact.contact.vendor }}</td>
+                <td>{% if contact.contact.email %}{{ contact.contact.email }}{% endif %}</td>
+                <td>{% if contact.contact.phone %}{{ contact.contact.phone }}{% endif %}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
     </div>
 
     <div class="tabs-panel{% if tab_id == 8 %} is-active{% endif %}" id="redmine">

@@ -1,6 +1,6 @@
 from django.forms import ModelForm, HiddenInput
 from device.models import Vendor, DeviceType, Device, DevicePhoto, DeviceSample, DeviceSampleAccount, DeviceFile, \
-    DeviceNote
+    DeviceNote, DeviceContact
 from django.utils.translation import gettext_lazy as _
 from django import forms
 
@@ -135,6 +135,20 @@ class DeviceNoteForm(ModelForm):
             'device': HiddenInput(),
             'text': forms.Textarea(attrs={'rows': '15'}),
             'format': forms.Select(choices=FORMAT, attrs={'class': 'form-control'}),
+            'created_by': HiddenInput(), 'created_at': HiddenInput(),
+            'updated_by': HiddenInput(), 'updated_at': HiddenInput()
+        }
+
+
+class DeviceContactForm(ModelForm):
+    class Meta:
+        model = DeviceContact
+        labels = {
+            'contact': _('Contact'),
+        }
+        fields = '__all__'
+        widgets = {
+            'device': HiddenInput(),
             'created_by': HiddenInput(), 'created_at': HiddenInput(),
             'updated_by': HiddenInput(), 'updated_at': HiddenInput()
         }
