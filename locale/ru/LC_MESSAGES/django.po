@@ -1070,3 +1070,24 @@ msgstr "Результаты тестов"
 
 msgid "Dependencies"
 msgstr "Зависимости"
+
+msgid "Contacts"
+msgstr "Контакты"
+
+msgid "Full Name"
+msgstr "ФИО"
+
+msgid "Phone"
+msgstr "Телефонный номер"
+
+msgid "Last Name"
+msgstr "Фамилия"
+
+msgid "First Name"
+msgstr "Имя"
+
+msgid "Middle Name"
+msgstr "Отчество"
+
+msgid "Position"
+msgstr "Позиция"
