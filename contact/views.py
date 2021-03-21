@@ -36,7 +36,7 @@ class ContactCreate(CreateView):
 class ContactUpdate(UpdateView):
     model = Contact
     form_class = ContactForm
-    template_name = 'device/update.html'
+    template_name = 'contact/update.html'
 
     def get_initial(self):
         return {'updated_by': self.request.user, 'updated_at': timezone.now()}
