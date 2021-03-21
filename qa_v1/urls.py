@@ -23,6 +23,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('device.urls')),
     path('auth/', include('django.contrib.auth.urls')),
+    path('contact/', include('contact.urls')),
     path('device/', include('device.urls')),
     path('docx_builder/', include('docx_builder.urls')),
     path('docx/', include('docx_generator.urls')),
