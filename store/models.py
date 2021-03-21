@@ -9,6 +9,5 @@ class Item(models.Model):
     comment = models.CharField(max_length=500, blank=True, null=True)
     date_of_received = models.DateTimeField(default=timezone.now)
     date_of_returned = models.DateTimeField(default=None, blank=True, null=True)
-    received_by = models.ForeignKey(User, related_name='received_by_user', on_delete=models.CASCADE)
-    returned_by = models.ForeignKey(User, related_name='returned_by_user', on_delete=models.CASCADE, blank=True,
-                                    null=True)
+    received_by = models.ForeignKey(User, models.SET_NULL, related_name='received_by_user', blank=True, null=True)
+    returned_by = models.ForeignKey(User, models.SET_NULL, related_name='returned_by_user', blank=True, null=True)
