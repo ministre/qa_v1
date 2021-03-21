@@ -10,7 +10,7 @@ from django.utils import timezone
 @method_decorator(login_required, name='dispatch')
 class ContactListView(ListView):
     context_object_name = 'contacts'
-    queryset = Contact.objects.all().order_by('surname')
+    queryset = Contact.objects.all().order_by('last_name')
     template_name = 'contact/contacts.html'
 
 
