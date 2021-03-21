@@ -144,3 +144,12 @@ class DeviceNote(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
     updated_by = models.ForeignKey(User, models.SET_NULL, related_name='note_u', blank=True, null=True)
     updated_at = models.DateTimeField(default=timezone.now)
+
+
+class DeviceContact(models.Model):
+    device = models.ForeignKey(Device, on_delete=models.CASCADE)
+    contact = models.ForeignKey('contact.Contact', on_delete=models.CASCADE)
+    created_by = models.ForeignKey(User, models.SET_NULL, related_name='d_contact_c', blank=True, null=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_by = models.ForeignKey(User, models.SET_NULL, related_name='d_contact_u', blank=True, null=True)
+    updated_at = models.DateTimeField(default=timezone.now)
