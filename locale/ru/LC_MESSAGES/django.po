@@ -1090,4 +1090,4 @@ msgid "Middle Name"
 msgstr "Отчество"
 
 msgid "Position"
-msgstr "Позиция"
+msgstr "Должность"
