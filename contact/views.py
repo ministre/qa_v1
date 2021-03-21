@@ -23,6 +23,11 @@ class ContactCreate(CreateView):
     def get_initial(self):
         return {'created_by': self.request.user, 'updated_by': self.request.user}
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('contacts')
+        return context
+
     def get_success_url(self):
         return reverse('contacts')
 
@@ -36,6 +41,11 @@ class ContactUpdate(UpdateView):
     def get_initial(self):
         return {'updated_by': self.request.user, 'updated_at': timezone.now()}
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('contacts')
+        return context
+
     def get_success_url(self):
         return reverse('contacts')
 
@@ -44,6 +54,11 @@ class ContactUpdate(UpdateView):
 class ContactDelete(DeleteView):
     model = Contact
     template_name = 'device/delete.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('contacts')
+        return context
 
     def get_success_url(self):
         return reverse('contacts')

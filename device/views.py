@@ -1,17 +1,12 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from qa_v1 import settings
-# from redminelib import Redmine
-# from redminelib.exceptions import ResourceNotFoundError
-# import re
 from device.models import Vendor, Device, DeviceType, DevicePhoto, DeviceSample, DeviceSampleAccount, DeviceFile, \
     DeviceNote
-# from django.http import HttpResponseRedirect
 from .forms import VendorForm, DeviceTypeForm, DeviceForm, DevicePhotoForm, DeviceSampleForm, DeviceSampleAccountForm, \
     DeviceFileForm, DeviceNoteForm
 from redmine.forms import RedmineDeviceTypeExportForm, RedmineDeviceExportForm
 from django.shortcuts import get_object_or_404
-# from django.db.models import Q
 from django.utils.decorators import method_decorator
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.urls import reverse
