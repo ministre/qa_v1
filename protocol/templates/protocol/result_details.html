@@ -126,6 +126,27 @@
             </div>
         </div>
         {% endif %}
+
+        {% if result.test.test_image.all %}
+        <div class="grid-x grid-margin-x">
+            <div class="cell">
+                <div class="card">
+                    <div class="card-section">
+                        <h5>{% trans "Images" %}</h5>
+                        {% for image in result.test.test_image.all|dictsort:"id" %}
+                        {% if image.parent %}
+                        {% if image.parent.desc %}<p>{{ image.parent.desc }}</p>{% endif %}
+                        <img src="{{ image.parent.image.url }}"{% if image.parent.width %} width="{{ image.parent.width }}"{% endif %}{% if image.parent.height %} height="{{ image.parent.height }}"{% endif %}>
+                        {% else %}
+                        {% if image.desc %}<p>{{ image.desc }}</p>{% endif %}
+                        <img src="{{ image.image.url }}"{% if image.width %} width="{{ image.width }}"{% endif %}{% if image.height %} height="{{ image.height }}"{% endif %}>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
     </div>
 
     <div class="tabs-panel{% if tab_id == 3 %} is-active{% endif %}" id="notes">
