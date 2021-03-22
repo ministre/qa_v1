@@ -883,10 +883,6 @@ msgstr "Названия"
 msgid "Test description"
 msgstr "Описание теста"
 
-#: .\redmine\models.py:287
-msgid "Test details"
-msgstr "Детали теста"
-
 #: .\redmine\models.py:303
 msgid "Not passed"
 msgstr "Не пройден"
@@ -1091,6 +1087,3 @@ msgstr "Отчество"
 
 msgid "Position"
 msgstr "Должность"
-
-msgid "Test Details"
-msgstr "Описание теста"
