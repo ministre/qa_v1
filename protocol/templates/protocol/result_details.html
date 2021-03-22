@@ -17,7 +17,7 @@
         <a data-tabs-target="general" href="#general">{% trans "General" %}</a>
     </li>
     <li class="tabs-title {% if tab_id == 2 %} is-active{% endif %}">
-        <a data-tabs-target="test" href="#test">{% trans "Test" %}</a>
+        <a data-tabs-target="test" href="#test">{% trans "Test Details" %}</a>
     </li>
     <li class="tabs-title{% if tab_id == 3 %} is-active{% endif %}">
         <a data-tabs-target="notes" href="#notes">{% trans "Notes" %}
@@ -105,6 +105,27 @@
                 </div>
             </div>
         </div>
+
+        {% if result.test.test_config.all %}
+        <div class="grid-x grid-margin-x">
+            <div class="cell">
+                <div class="card">
+                    <div class="card-section">
+                        <h5>{% trans "Configurations" %}</h5>
+                        {% for config in result.test.test_config.all|dictsort:"id" %}
+                        {% if config.parent %}
+                        {% if config.parent.desc %}<p>{{ config.parent.desc }}</p>{% endif %}
+                        <pre><code data-language="{{ config.parent.lang }}">{{ config.parent.config }}</code></pre>
+                        {% else %}
+                        {% if config.desc %}<p>{{ config.desc }}</p>{% endif %}
+                        <pre><code data-language="{{ config.lang }}">{{ config.config }}</code></pre>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
     </div>
 
     <div class="tabs-panel{% if tab_id == 3 %} is-active{% endif %}" id="notes">

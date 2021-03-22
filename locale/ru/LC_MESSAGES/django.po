@@ -1091,3 +1091,6 @@ msgstr "Отчество"
 
 msgid "Position"
 msgstr "Должность"
+
+msgid "Test Details"
+msgstr "Описание теста"
