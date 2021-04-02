@@ -50,6 +50,7 @@ class Device(models.Model):
     vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE)
     model = models.CharField(max_length=300)
     hw = models.CharField(max_length=50, blank=True, null=True)
+    eol = models.BooleanField(blank=True, null=True, default=False)
     redmine_project = models.CharField(max_length=100, blank=True, null=True)
     redmine_project_name = models.CharField(max_length=1000, blank=True, null=True)
     redmine_project_desc = models.CharField(max_length=1000, blank=True, null=True)
