@@ -40,6 +40,7 @@ class DeviceForm(ModelForm):
             'vendor': _('Vendor'),
             'model': _('Model'),
             'hw': _('Hardware Version'),
+            'eol': _('EoL'),
             'redmine_project': _('Redmine Project'),
             'redmine_project_name': _('Redmine Project Name (leave blank to set Vendor + Model)'),
             'redmine_project_desc': _('Redmine Project Description'),
