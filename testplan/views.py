@@ -1,9 +1,10 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from qa_v1 import settings
-from .models import TestPlan, Category, Test, TestConfig, TestImage, TestFile, TestLink, TestComment
+from .models import TestPlan, Category, Test, TestConfig, TestImage, TestFile, TestLink, TestComment, TestplanFile
 from .forms import TestPlanForm, CategoryForm, TestForm, TestConfigForm, TestAddConfigForm, TestImageForm, \
-    TestAddImageForm, TestFileForm, TestAddFileForm, TestLinkForm, TestAddLinkForm, TestCommentForm, TestAddCommentForm
+    TestAddImageForm, TestFileForm, TestAddFileForm, TestLinkForm, TestAddLinkForm, TestCommentForm, \
+    TestAddCommentForm, TestplanFileForm
 from docx_builder.forms import BuildDocxTestplanForm
 from redmine.forms import RedmineTestExportForm, RedmineTestplanExportForm
 from django.shortcuts import get_object_or_404
@@ -728,6 +729,57 @@ class TestCommentDelete(DeleteView):
         Item.update_timestamp(foo=self.object.test, user=self.request.user)
         Item.update_timestamp(foo=self.object.test.cat.testplan, user=self.request.user)
         return reverse('test_details', kwargs={'pk': self.object.test.id, 'tab_id': 7})
+
+
+@method_decorator(login_required, name='dispatch')
+class TestplanFileCreate(CreateView):
+    model = TestplanFile
+    form_class = TestplanFileForm
+    template_name = 'device/create.html'
+
+    def get_initial(self):
+        return {'testplan': self.kwargs.get('testplan_id'),
+                'created_by': self.request.user, 'updated_by': self.request.user}
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('testplan_details', kwargs={'pk': self.kwargs.get('testplan_id'), 'tab_id': 3})
+        return context
+
+    def get_success_url(self):
+        return reverse('testplan_details', kwargs={'pk': self.object.testplan.id, 'tab_id': 3})
+
+
+@method_decorator(login_required, name='dispatch')
+class TestplanFileUpdate(UpdateView):
+    model = TestplanFile
+    form_class = TestplanFileForm
+    template_name = 'device/update.html'
+
+    def get_initial(self):
+        return {'updated_by': self.request.user, 'updated_at': timezone.now()}
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('testplan_details', kwargs={'pk': self.object.testplan.id, 'tab_id': 3})
+        return context
+
+    def get_success_url(self):
+        return reverse('testplan_details', kwargs={'pk': self.object.testplan.id, 'tab_id': 3})
+
+
+@method_decorator(login_required, name='dispatch')
+class TestplanFileDelete(DeleteView):
+    model = TestplanFile
+    template_name = 'device/delete.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('testplan_details', kwargs={'pk': self.object.testplan.id, 'tab_id': 3})
+        return context
+
+    def get_success_url(self):
+        return reverse('testplan_details', kwargs={'pk': self.object.testplan.id, 'tab_id': 3})
 
 
 '''

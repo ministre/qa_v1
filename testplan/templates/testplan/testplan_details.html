@@ -16,9 +16,14 @@
         </a>
     </li>
     <li class="tabs-title {% if tab_id == 3 %} is-active{% endif %}">
-        <a data-tabs-target="docx" href="#docx">Docx</a>
+        <a data-tabs-target="files" href="#files">{% trans "Files" %}
+            {% if testplan.testplan_file.all|length > 0 %} ({{ testplan.testplan_file.all|length }}){% endif %}
+        </a>
     </li>
     <li class="tabs-title {% if tab_id == 4 %} is-active{% endif %}">
+        <a data-tabs-target="docx" href="#docx">Docx</a>
+    </li>
+    <li class="tabs-title {% if tab_id == 5 %} is-active{% endif %}">
         <a data-tabs-target="redmine" href="#redmine">Redmine</a>
     </li>
 </ul>
@@ -147,7 +152,26 @@
         </div>
     </div>
 
-    <div class="tabs-panel {% if tab_id == 3 %}is-active{% endif %}" id="docx">
+    <div class="tabs-panel {% if tab_id == 3 %}is-active{% endif %}" id="files">
+        <a href="{% url 'testplan_file_create' testplan_id=testplan.id %}" class="button small">{% trans "Add" %}</a>
+        {% for file in testplan.testplan_file.all|dictsort:"id" %}
+        <div class="cell">
+            <div class="card">
+                <div class="card-section">
+                    <p>
+                        {% if file.desc %}{{ file.desc }}{% endif %}
+                        <a href="{% url 'testplan_file_update' pk=file.id %}"><i class="step fi-pencil" style="color: #7700ff"></i></a>
+                        <a href="{% url 'testplan_file_delete' pk=file.id %}"><i class="step fi-minus" style="color: red"></i></a>
+                        <br>
+                        <a href="{{ file.file.url }}">{{ file.filename }}</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="tabs-panel {% if tab_id == 4 %}is-active{% endif %}" id="docx">
         <div class="cell">
             <div class="card">
                 <div class="card-section">
@@ -164,7 +188,7 @@
         </div>
     </div>
 
-    <div class="tabs-panel {% if tab_id == 4 %}is-active{% endif %}" id="redmine">
+    <div class="tabs-panel {% if tab_id == 5 %}is-active{% endif %}" id="redmine">
         {% if testplan.redmine_project %}
         <div class="grid-x grid-margin-x">
             <div class="cell">

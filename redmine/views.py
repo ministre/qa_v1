@@ -134,7 +134,7 @@ def redmine_testplan_export(request):
                                          project_parent=request.POST['redmine_parent'],
                                          test_list=test_list,
                                          test_details_wiki=test_details_wiki)
-        back_url = reverse('testplan_details', kwargs={'pk': testplan.id, 'tab_id': 4})
+        back_url = reverse('testplan_details', kwargs={'pk': testplan.id, 'tab_id': 5})
         return render(request, 'device/message.html', {'message': message, 'back_url': back_url})
     else:
         return render(request, 'device/message.html', {'message': [False, _('Page not found')]})

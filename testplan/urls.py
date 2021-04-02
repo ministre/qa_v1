@@ -23,29 +23,33 @@ urlpatterns = [
     path('test/<int:pk>/<int:tab_id>/', views.test_details, name='test_details'),
     path('test/up/<int:pk>/', views.test_up, name='test_up'),
     path('test/down/<int:pk>/', views.test_down, name='test_down'),
-    # configs
+    # test configs
     path('test/config/add/', views.test_config_add, name='test_config_add'),
     path('test/config/create/<int:test_id>/', views.TestConfigCreate.as_view(), name='test_config_create'),
     path('test/config/update/<int:pk>/', views.TestConfigUpdate.as_view(), name='test_config_update'),
     path('test/config/delete/<int:pk>/', views.TestConfigDelete.as_view(), name='test_config_delete'),
-    # images
+    # test images
     path('test/image/add/', views.test_image_add, name='test_image_add'),
     path('test/image/create/<int:test_id>/', views.TestImageCreate.as_view(), name='test_image_create'),
     path('test/image/update/<int:pk>/', views.TestImageUpdate.as_view(), name='test_image_update'),
     path('test/image/delete/<int:pk>/', views.TestImageDelete.as_view(), name='test_image_delete'),
-    # files
+    # test files
     path('test/file/add/', views.test_file_add, name='test_file_add'),
     path('test/file/create/<int:test_id>/', views.TestFileCreate.as_view(), name='test_file_create'),
     path('test/file/update/<int:pk>/', views.TestFileUpdate.as_view(), name='test_file_update'),
     path('test/file/delete/<int:pk>/', views.TestFileDelete.as_view(), name='test_file_delete'),
-    # links
+    # test links
     path('test/link/add/', views.test_link_add, name='test_link_add'),
     path('test/link/create/<int:test_id>/', views.TestLinkCreate.as_view(), name='test_link_create'),
     path('test/link/update/<int:pk>/', views.TestLinkUpdate.as_view(), name='test_link_update'),
     path('test/link/delete/<int:pk>/', views.TestLinkDelete.as_view(), name='test_link_delete'),
-    # comments
+    # test comments
     path('test/comment/add/', views.test_comment_add, name='test_comment_add'),
     path('test/comment/create/<int:test_id>/', views.TestCommentCreate.as_view(), name='test_comment_create'),
     path('test/comment/update/<int:pk>/', views.TestCommentUpdate.as_view(), name='test_comment_update'),
     path('test/comment/delete/<int:pk>/', views.TestCommentDelete.as_view(), name='test_comment_delete'),
+    # files
+    path('file/create/<int:testplan_id>', views.TestplanFileCreate.as_view(), name='testplan_file_create'),
+    path('file/update/<int:pk>/', views.TestplanFileUpdate.as_view(), name='testplan_file_update'),
+    path('file/delete/<int:pk>/', views.TestplanFileDelete.as_view(), name='testplan_file_delete'),
 ]

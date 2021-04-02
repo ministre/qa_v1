@@ -1,5 +1,5 @@
 from django.forms import ModelForm, HiddenInput
-from .models import TestPlan, Category, Test, TestConfig, TestImage, TestFile, TestLink, TestComment
+from .models import TestPlan, Category, Test, TestConfig, TestImage, TestFile, TestLink, TestComment, TestplanFile
 from testplan_pattern.models import TestPatternConfig, TestPatternImage, TestPatternFile, TestPatternLink, \
     TestPatternComment
 from django.utils.translation import gettext_lazy as _
@@ -237,3 +237,18 @@ class TestAddCommentForm(forms.Form):
         test = get_object_or_404(Test, id=test_id)
         self.fields['parent_comment'].queryset = TestPatternComment.objects.filter(test_pattern=test.parent).order_by('id')
         self.fields['test_id'].widget = forms.HiddenInput()
+
+
+class TestplanFileForm(ModelForm):
+    class Meta:
+        model = TestplanFile
+        labels = {
+            'desc': _('Description'),
+            'file': _('File'),
+        }
+        fields = '__all__'
+        widgets = {
+            'testplan': HiddenInput(),
+            'created_by': HiddenInput(), 'created_at': HiddenInput(),
+            'updated_by': HiddenInput(), 'updated_at': HiddenInput()
+        }
