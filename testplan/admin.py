@@ -1,5 +1,6 @@
 from django.contrib import admin
-from testplan.models import TestPlan, Category, Test, TestConfig, TestImage, TestFile, TestLink, TestComment
+from testplan.models import TestPlan, Category, Test, TestConfig, TestImage, TestFile, TestLink, TestComment, \
+    TestplanFile
 
 admin.site.register(TestPlan)
 admin.site.register(Category)
@@ -9,3 +10,4 @@ admin.site.register(TestImage)
 admin.site.register(TestFile)
 admin.site.register(TestLink)
 admin.site.register(TestComment)
+admin.site.register(TestplanFile)

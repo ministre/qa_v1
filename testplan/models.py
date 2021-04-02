@@ -153,3 +153,16 @@ class TestComment(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
     updated_by = models.ForeignKey(User, models.SET_NULL, related_name='test_comment_u', blank=True, null=True)
     updated_at = models.DateTimeField(default=timezone.now)
+
+
+class TestplanFile(models.Model):
+    testplan = models.ForeignKey(TestPlan, related_name='testplan_file', on_delete=models.CASCADE)
+    desc = models.CharField(max_length=1000, blank=True, null=True)
+    file = models.FileField(upload_to="testplan/files/")
+    created_by = models.ForeignKey(User, models.SET_NULL, related_name='testplan_file_c', blank=True, null=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_by = models.ForeignKey(User, models.SET_NULL, related_name='testplan_file_u', blank=True, null=True)
+    updated_at = models.DateTimeField(default=timezone.now)
+
+    def filename(self):
+        return os.path.basename(self.file.name)
