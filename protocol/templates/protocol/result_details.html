@@ -4,13 +4,20 @@
 
 {% block content %}
 
-<p>
-    <a href="{% url 'testplan_details' pk=result.test.cat.testplan.id tab_id=2 %}">{% trans "Testplan" %} {{ result.test.cat.testplan }}</a> &raquo;
-    {{ result.test.cat }} &raquo; <a href="{% url 'test_details' pk=result.test.id tab_id=1 %}">{{ num.0 }}.{{ num.1 }} {{ result.test.name }}</a>
-    <br>
-    <a href="{% url 'protocol_details' pk=result.protocol.id tab_id=2 %}">{% trans "Protocol" %} {{ result.protocol.device.vendor }} {{ result.protocol.device.model }}
-    {% if result.protocol.device.hw %}({{result.protocol.device.hw }}){% endif %}</a>
-</p>
+<nav aria-label="Testplan:" role="navigation">
+    <ul class="breadcrumbs">
+        <li><a href="{% url 'testplan_details' pk=result.test.cat.testplan.id tab_id=2 %}">{% trans "Testplan" %} {{ result.test.cat.testplan }}</a></li>
+        <li>{{ result.test.cat }}</li>
+        <li><a href="{% url 'test_details' pk=result.test.id tab_id=1 %}">{{ num.0 }}.{{ num.1 }} {{ result.test.name }}</a></li>
+    </ul>
+</nav>
+
+<nav aria-label="Protocol:" role="navigation">
+  <ul class="breadcrumbs">
+    <li><a href="{% url 'protocol_details' pk=result.protocol.id tab_id=2 %}">{% trans "Protocol" %} {{ result.protocol.device.vendor }} {{ result.protocol.device.model }}
+    {% if result.protocol.device.hw %}({{result.protocol.device.hw }}){% endif %}</a></li>
+  </ul>
+</nav>
 
 <div class="row">
     <div class="columns">
@@ -141,181 +148,143 @@
 
             <!-- Notes -->
             <div class="tabs-panel{% if tab_id == 3 %} is-active{% endif %}" id="notes">
-                <div class="grid-x grid-margin-x">
-                    <div class="cell">
-                        <div class="card">
-                            <div class="card-section">
-                                <a href="{% url 'result_note_create' result=result.id %}" class="button small">{% trans "Add" %}</a>
-                                {% for note in notes %}
-                                <p>
-                                    {% if note.desc %}{{ note.desc }}{% endif %}
-                                    <a href="{% url 'result_note_update' pk=note.id %}"><i class="step fi-pencil" style="color: #7700ff"></i></a>
-                                    <a href="{% url 'result_note_delete' pk=note.id %}"><i class="step fi-minus" style="color: red"></i></a>
-                                </p>
-
-                                {% if note.format == 0 %}
-                                <div class="grid-x grid-margin-x">
-                                    <div class="cell">
-                                        <div class="card">
-                                            <div class="card-section">
-                                                {{ note.text|safe }}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                {% else %}
-                                <pre><code>{{ note.text }}</code></pre>
-                                {% endif %}
-                                {% endfor %}
-                            </div>
-                        </div>
+                <div class="callout">
+                    <a href="{% url 'result_note_create' result=result.id %}" class="button small">{% trans "Add" %}</a>
+                    {% for note in notes %}
+                    <p>
+                        {% if note.desc %}{{ note.desc }}{% endif %}
+                        <a href="{% url 'result_note_update' pk=note.id %}"><i class="step fi-pencil" style="color: #7700ff"></i></a>
+                        <a href="{% url 'result_note_delete' pk=note.id %}"><i class="step fi-minus" style="color: red"></i></a>
+                    </p>
+                    {% if note.format == 0 %}
+                    <div class="callout">
+                        {{ note.text|safe }}
                     </div>
+                    {% else %}
+                    <pre><code>{{ note.text }}</code></pre>
+                    {% endif %}
+                    {% endfor %}
                 </div>
             </div>
             <!-- ... -->
 
             <!-- Configs -->
-
-
-    <div class="tabs-panel{% if tab_id == 4 %} is-active{% endif %}" id="configs">
-        <div class="grid-x grid-margin-x">
-            <div class="cell">
-                <div class="card">
-                    <div class="card-section">
-                        <a href="{% url 'result_config_create' result=result.id %}" class="button small">{% trans "Add" %}</a>
+            <div class="tabs-panel{% if tab_id == 4 %} is-active{% endif %}" id="configs">
+                <div class="callout">
+                    <a href="{% url 'result_config_create' result=result.id %}" class="button small">{% trans "Add" %}</a>
+                    {% if result.result_config.all %}
+                    <ul class="accordion" data-responsive-accordion-tabs="accordion medium-tabs large-accordion" data-allow-all-closed="true">
                         {% for config in result.result_config.all|dictsort:"id" %}
-                        <p>
-                            {% if config.desc %}{{ config.desc }}{% endif %}
-                            <a href="{% url 'result_config_update' pk=config.id %}"><i class="step fi-pencil" style="color: #7700ff"></i></a>
-                            <a href="{% url 'result_config_delete' pk=config.id %}"><i class="step fi-minus" style="color: red"></i></a>
-                        </p>
-                        <pre><code data-language="{{ config.lang }}">{{ config.config }}</code></pre>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="tabs-panel{% if tab_id == 5 %} is-active{% endif %}" id="images">
-        <div class="grid-x grid-margin-x">
-            <div class="cell">
-                <div class="card">
-                    <div class="card-section">
-                        <a href="{% url 'result_image_create' result=result.id %}" class="button small">{% trans "Add" %}</a>
-                        {% for image in result.result_image.all|dictsort:"id" %}
-                        <p>
-                            {% if image.desc %}{{ image.desc }}{% endif %}
-                            <a href="{% url 'result_image_update' pk=image.id %}"><i class="step fi-pencil" style="color: #7700ff"></i></a>
-                            <a href="{% url 'result_image_delete' pk=image.id %}"><i class="step fi-minus" style="color: red"></i></a>
-                        </p>
-                        <p>
-                            <img src="{{ image.image.url }}"{% if image.width %} width="{{ image.width }}"{% endif %}{% if image.height %} height="{{ image.height }}"{% endif %}>
-                        </p>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="tabs-panel{% if tab_id == 6 %} is-active{% endif %}" id="files">
-        <div class="grid-x grid-margin-x">
-            <div class="cell">
-                <div class="card">
-                    <div class="card-section">
-                        <a href="{% url 'result_file_create' result=result.id %}" class="button small">{% trans "Add" %}</a>
-                        <ul>
-                        {% for file in result.result_file.all|dictsort:"id" %}
-                            <li>{% if file.desc %}{{ file.desc }}<br>{% endif %}
-                                <a href="{% url 'result_file_update' pk=file.id %}">{{ file.filename }}</a>
-                                <a href="{% url 'result_file_delete' pk=file.id %}"><i class="step fi-minus" style="color: red"></i></a>
-                            </li>
-                        {% endfor %}
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="tabs-panel{% if tab_id == 7 %} is-active{% endif %}" id="result">
-        <div class="grid-x grid-margin-x">
-            <div class="cell">
-                <div class="card">
-                    <div class="card-section">
-                        <form method="post" action="">
-                            {% csrf_token %}
-                            {{ result_form }}
-                            <input type="submit" value='{% trans "Apply" %}' class="button success small" />
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="grid-x grid-margin-x">
-            <div class="cell">
-                <div class="card">
-                    <div class="card-section">
-                        <h4>{% trans "Issues" %}</h4>
-                        <p><a href="{% url 'result_issue_create' result=result.id %}" class="button small">{% trans "Add" %}</a></p>
-                        <ol>
-                            {% for issue in result.result_issue.all|dictsort:"id" %}
-                            <li>
-                                {{ issue.text }}
-                                <a href="{% url 'result_issue_update' pk=issue.id %}"><i class="step fi-pencil" style="color: #7700ff"></i></a>
-                                <a href="{% url 'result_issue_delete' pk=issue.id %}"><i class="step fi-minus" style="color: red"></i></a>
-                                {% if issue.ticket %}
-                                <br><i><a href="{{ issue.ticket }}">{{ issue.ticket }}</a></i><br/>
-                                {% endif %}
-                            </li>
-                            {% endfor %}
-                        </ol>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="tabs-panel{% if tab_id == 8 %} is-active{% endif %}" id="redmine">
-        {% if result.redmine_wiki %}
-        <div class="grid-x grid-margin-x">
-            <div class="cell">
-                <div class="card">
-                    <div class="card-section">
-                        <h5>Redmine Project Wiki</h5>
-                        <p>
-                            <a href="{{ redmine_url }}/projects/{{ result.protocol.device.redmine_project }}/wiki/{{ result.redmine_wiki }}?parent={{ result.protocol.redmine_wiki }}">
-                                {{ redmine_url }}/projects/{{ result.protocol.device.redmine_project }}/wiki/{{ result.redmine_wiki }}?parent={{ result.protocol.redmine_wiki }}
+                        <li class="accordion-item is-active" data-accordion-item>
+                            <a href="#" class="accordion-title">
+                                {% if config.desc %} {{ config.desc }}{% else %}{% trans "Config" %} #{{ forloop.counter }}{% endif %}
                             </a>
-                        </p>
-                    </div>
+                            <div class="accordion-content" data-tab-content>
+                                <p>
+                                    <a href="{% url 'result_config_update' pk=config.id %}"><i class="step fi-pencil" style="color: #7700ff"></i></a>
+                                    <a href="{% url 'result_config_delete' pk=config.id %}"><i class="step fi-minus" style="color: red"></i></a>
+                                </p>
+                                <pre><code data-language="{{ config.lang }}">{{ config.config }}</code></pre>
+                            </div>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
                 </div>
             </div>
-        </div>
-        {% endif %}
-        <div class="grid-x grid-margin-x">
-            <div class="cell">
-                <div class="card">
-                    <div class="card-section">
-                        <h5>{% trans "Export to" %} Redmine</h5>
-                        <form action="{% url 'redmine_result_export' %}" method="post">
-                            <input type="submit" value='{% trans "Export" %}' class="button small success" />
+            <!-- ... -->
+
+            <!-- Images -->
+            <div class="tabs-panel{% if tab_id == 5 %} is-active{% endif %}" id="images">
+                <div class="callout">
+                    <a href="{% url 'result_image_create' result=result.id %}" class="button small">{% trans "Add" %}</a>
+                    {% for image in result.result_image.all|dictsort:"id" %}
+                    <p>
+                        {% if image.desc %}{{ image.desc }}{% endif %}
+                        <a href="{% url 'result_image_update' pk=image.id %}"><i class="step fi-pencil" style="color: #7700ff"></i></a>
+                        <a href="{% url 'result_image_delete' pk=image.id %}"><i class="step fi-minus" style="color: red"></i></a>
+                    </p>
+                    <p>
+                        <img src="{{ image.image.url }}"{% if image.width %} width="{{ image.width }}"{% endif %}{% if image.height %} height="{{ image.height }}"{% endif %}>
+                    </p>
+                    {% endfor %}
+                </div>
+            </div>
+            <!-- ... -->
+
+            <!-- Files -->
+            <div class="tabs-panel{% if tab_id == 6 %} is-active{% endif %}" id="files">
+                <div class="callout">
+                    <a href="{% url 'result_file_create' result=result.id %}" class="button small">{% trans "Add" %}</a>
+                    <ul>
+                        {% for file in result.result_file.all|dictsort:"id" %}
+                        <li>{% if file.desc %}{{ file.desc }}<br>{% endif %}
+                            <a href="{% url 'result_file_update' pk=file.id %}">{{ file.filename }}</a>
+                            <a href="{% url 'result_file_delete' pk=file.id %}"><i class="step fi-minus" style="color: red"></i></a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            <!-- ... -->
+
+            <!-- Result -->
+            <div class="tabs-panel{% if tab_id == 7 %} is-active{% endif %}" id="result">
+                <div class="callout">
+                    <form method="post" action="">
+                        {% csrf_token %}
+                        {{ result_form }}
+                        <input type="submit" value='{% trans "Apply" %}' class="button success small" />
+                    </form>
+                </div>
+
+                <div class="callout">
+                    <h4>{% trans "Issues" %}</h4>
+                    <p><a href="{% url 'result_issue_create' result=result.id %}" class="button small">{% trans "Add" %}</a></p>
+                    <ol>
+                        {% for issue in result.result_issue.all|dictsort:"id" %}
+                        <li>
+                            {{ issue.text }}
+                            <a href="{% url 'result_issue_update' pk=issue.id %}"><i class="step fi-pencil" style="color: #7700ff"></i></a>
+                            <a href="{% url 'result_issue_delete' pk=issue.id %}"><i class="step fi-minus" style="color: red"></i></a>
+                            {% if issue.ticket %}
+                            <br><i><a href="{{ issue.ticket }}">{{ issue.ticket }}</a></i><br/>
+                            {% endif %}
+                        </li>
+                        {% endfor %}
+                    </ol>
+                </div>
+            </div>
+            <!-- ... -->
+
+            <!-- Redmine -->
+            <div class="tabs-panel{% if tab_id == 8 %} is-active{% endif %}" id="redmine">
+                {% if result.redmine_wiki %}
+                <div class="callout">
+                    <h5>Redmine Project Wiki</h5>
+                    <p>
+                        <a href="{{ redmine_url }}/projects/{{ result.protocol.device.redmine_project }}/wiki/{{ result.redmine_wiki }}?parent={{ result.protocol.redmine_wiki }}">
+                            {{ redmine_url }}/projects/{{ result.protocol.device.redmine_project }}/wiki/{{ result.redmine_wiki }}?parent={{ result.protocol.redmine_wiki }}
+                        </a>
+                    </p>
+                </div>
+                {% endif %}
+                <div class="callout">
+                    <h5>{% trans "Export to" %} Redmine</h5>
+                    <form action="{% url 'redmine_result_export' %}" method="post">
+                        <input type="submit" value='{% trans "Export" %}' class="button small success" />
                             <table class="unstriped" style="text-align: left; width: 600px;">
                                 {% csrf_token %}
                                 {{ export_form.as_table }}
                             </table>
-                        </form>
-                    </div>
+                    </form>
                 </div>
             </div>
+            <!-- ... -->
+
         </div>
     </div>
-
 </div>
-
-        </div>
-
 
 <script src="{% static 'rainbow/rainbow-custom.min.js' %}"></script>
 
