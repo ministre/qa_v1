@@ -94,24 +94,36 @@
                 {% endif %}
 
                 {% if result.test.purpose %}
-                <div class="callout">
+                <div class="callout" data-closable>
+                    <button class="close-button" aria-label="Close alert" type="button" data-close>
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                     <h5>{% trans "Purpose" %}</h5>
                     <p>{{ result.test.purpose }}</p>
                 </div>
                 {% endif %}
 
-                <div class="callout">
+                <div class="callout" data-closable>
+                    <button class="close-button" aria-label="Close alert" type="button" data-close>
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                     <h5>{% trans "Procedure" %}</h5>
                     <p>{{ procedure|safe }}</p>
                 </div>
 
-                <div class="callout">
+                <div class="callout" data-closable>
+                    <button class="close-button" aria-label="Close alert" type="button" data-close>
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                     <h5>{% trans "Expected result" %}</h5>
                     <p>{{ expected|safe }}</p>
                 </div>
 
                 {% if result.test.test_config.all %}
-                <div class="callout">
+                <div class="callout" data-closable>
+                    <button class="close-button" aria-label="Close alert" type="button" data-close>
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                     <h5>{% trans "Configurations" %} ({{ result.test.test_config.all.count }})</h5>
                     <ul class="accordion" data-responsive-accordion-tabs="accordion medium-tabs large-accordion" data-allow-all-closed="true">
                         {% for config in result.test.test_config.all|dictsort:"id" %}
