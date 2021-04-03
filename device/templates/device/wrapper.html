@@ -15,105 +15,88 @@
 </head>
 
 <body>
-  <div class="top-bar">
-      <div class="top-bar-left">
-          <ul class="menu dropdown" data-dropdown-menu>
-              <li class="menu-text">Quality Assurance</li>
-              {% if user.is_authenticated %}
-              <li>
-                  <a href="{% url 'devices' %}">{% trans "Devices" %}</a>
-                  <ul class="menu vertical">
-                      <li><a href="{% url 'device_types' %}">{% trans "Device Types" %}</a></li>
-                      <li><a href="{% url 'vendors' %}">{% trans "Vendors" %}</a></li>
-                  </ul>
-              </li>
-              <li>
-                  <a href="{% url 'testplans' %}">{% trans "Testplans" %}</a>
-                  <ul class="menu vertical">
-                      <li>
-                          <a href="{% url 'testplan_patterns' %}">{% trans "Testplan Patterns" %}</a>
-                      </li>
-                  </ul>
-              </li>
-              <li>
-                  <a href="{% url 'protocols' %}">{% trans "Protocols" %}</a>
-              </li>
-              <li>
-                  <a href="{% url 'tech_reqs' %}">{% trans "Technical reqs" %}</a>
-              </li>
-              <li>
-                  <a href="#">{% trans "Others" %}</a>
-                  <ul class="menu vertical">
-                      <li>
-                          <a href="{% url 'docx_profiles' %}">{% trans "Docx profiles" %}</a>
-                      </li>
-                      <li>
-                          <a href="{% url 'docx_templates' %}">{% trans "Docx templates" %}</a>
-                      </li>
-                      <li>
-                          <a href="{% url 'shipments' %}">{% trans "Shipment" %}</a>
-                      </li>
-                      <li>
-                          <a href="{% url 'items' %}">{% trans "Store" %}</a>
-                      </li>
-                  </ul>
-              </li>
-              <li>
-                  <a href="#">{% trans "Tools" %}</a>
-                  <ul class="menu vertical">
-                      <li>
-                          <a href="{% url 'tcp_udp_check' %}">{% trans "Port Forwarding Check" %}</a>
-                      </li>
-                      <li>
-                          <a href="{% url 'sip_invite' %}">{% trans "Fake SIP Invite" %}</a>
-                      </li>
-                  </ul>
-              </li>
-              <li>
-                  <a href="{% url 'contacts' %}">{% trans "Contacts" %}</a>
-              </li>
-              {% endif %}
-          </ul>
-      </div>
+<div class="title-bar" data-responsive-toggle="example-menu" data-hide-for="medium">
+    <button class="menu-icon" type="button" data-toggle="example-menu"></button>
+    <div class="title-bar-title">Menu</div>
+</div>
 
-      <div class="top-bar-right">
-          <form action="{% url 'set_language' %}" method="post">
-              <ul class="menu">
-                  {% csrf_token %}
-                  <li>
-                      <input type="hidden" name="next" value="{{ redirect_to }}">
-                      <select onchange="this.form.submit()" name="language" id="">
-                          {% get_available_languages as LANGUAGES %}
-                          {% get_language_info_list for LANGUAGES as languages %}
-                          {% for language in languages %}
-                          <option value="{{ language.code }}" {% if language.code == LANGUAGE_CODE %} selected{% endif %}>
-                              {{ language.name_local }}
-                          </option>
-                          {% endfor %}
-                      </select>
-                  </li>
-                  <li>&nbsp;</li>
-                  {% if user.is_authenticated %}
-                  <li>
-                      <a href="{% url 'logout'%}?next={{request.path}}" class="button">{% trans "Sign out" %} ({{ user.get_username }})</a>
-                  </li>
-                  {% endif %}
-              </ul>
-          </form>
-      </div>
-  </div>
+<div class="top-bar" id="example-menu">
+    <div class="top-bar-left">
+        <ul class="dropdown menu" data-dropdown-menu>
+            <li class="menu-text">Quality Assurance</li>
+            {% if user.is_authenticated %}
+            <li class="has-submenu">
+                <a href="{% url 'devices' %}">{% trans "Devices" %}</a>
+                <ul class="submenu menu vertical" data-submenu>
+                    <li><a href="{% url 'device_types' %}">{% trans "Device Types" %}</a></li>
+                    <li><a href="{% url 'vendors' %}">{% trans "Vendors" %}</a></li>
+                </ul>
+            </li>
+            <li class="has-submenu">
+                <a href="{% url 'testplans' %}">{% trans "Testplans" %}</a>
+                <ul class="submenu menu vertical" data-submenu>
+                    <li><a href="{% url 'testplan_patterns' %}">{% trans "Testplan Patterns" %}</a></li>
+                </ul>
+            </li>
+            <li><a href="{% url 'protocols' %}">{% trans "Protocols" %}</a></li>
+            <li><a href="{% url 'tech_reqs' %}">{% trans "Technical reqs" %}</a></li>
+            <li class="has-submenu">
+                <a href="#">{% trans "Others" %}</a>
+                <ul class="submenu menu vertical" data-submenu>
+                    <li><a href="{% url 'docx_profiles' %}">{% trans "Docx profiles" %}</a></li>
+                    <li><a href="{% url 'docx_templates' %}">{% trans "Docx templates" %}</a></li>
+                    <li><a href="{% url 'shipments' %}">{% trans "Shipment" %}</a></li>
+                    <li><a href="{% url 'items' %}">{% trans "Store" %}</a></li>
+                </ul>
+            </li>
+            <li class="has-submenu">
+                <a href="#">{% trans "Tools" %}</a>
+                <ul class="submenu menu vertical" data-submenu>
+                    <li><a href="{% url 'tcp_udp_check' %}">{% trans "Port Forwarding Check" %}</a></li>
+                    <li><a href="{% url 'sip_invite' %}">{% trans "Fake SIP Invite" %}</a></li>
+                </ul>
+            </li>
+            <li><a href="{% url 'contacts' %}">{% trans "Contacts" %}</a></li>
+            {% endif %}
+        </ul>
+    </div>
 
-  <script type="text/javascript" src="{% static 'jquery-3.6.0/jquery-3.6.0.js' %}"></script>
-  <script type="text/javascript" src="{% static 'foundation-6.6.3-custom/assets/js/foundation.js' %}"></script>
+    <div class="top-bar-right">
+        <form action="{% url 'set_language' %}" method="post">
+            <ul class="menu">
+                {% csrf_token %}
+                <li>
+                    <input type="hidden" name="next" value="{{ redirect_to }}">
+                    <select onchange="this.form.submit()" name="language" id="">
+                        {% get_available_languages as LANGUAGES %}
+                        {% get_language_info_list for LANGUAGES as languages %}
+                        {% for language in languages %}
+                        <option value="{{ language.code }}" {% if language.code == LANGUAGE_CODE %} selected{% endif %}>
+                            {{ language.name_local }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </li>
+                <li>&nbsp;</li>
+                {% if user.is_authenticated %}
+                <li><a href="{% url 'logout'%}?next={{request.path}}" class="button">{% trans "Sign out" %} ({{ user.get_username }})</a></li>
+                {% endif %}
+            </ul>
+        </form>
+    </div>
+</div>
 
-  <div class="grid-container fluid" style="padding: 20px;">
-      {% block content %}
-      {% endblock %}
-  </div>
+<script type="text/javascript" src="{% static 'jquery-3.6.0/jquery-3.6.0.js' %}"></script>
+<script type="text/javascript" src="{% static 'foundation-6.6.3-custom/assets/js/foundation.js' %}"></script>
 
-  <script>
-    $(document).foundation();
-  </script>
+<div class="grid-container fluid" style="padding: 20px;">
+    {% block content %}
+    {% endblock %}
+</div>
+
+<script>
+$(document).foundation();
+</script>
 
 </body>
 </html>
