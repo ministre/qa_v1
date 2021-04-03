@@ -12,194 +12,170 @@
     {% if result.protocol.device.hw %}({{result.protocol.device.hw }}){% endif %}</a>
 </p>
 
-<ul class="tabs" data-active-collapse="true" data-tabs id="collapsing-tabs">
-    <li class="tabs-title{% if tab_id == 1 %} is-active{% endif %}">
-        <a href="#general"{% if tab_id == 1 %} aria-selected="true"{% endif %}>{% trans "General" %}</a>
-    </li>
-    <li class="tabs-title{% if tab_id == 2 %} is-active{% endif %}">
-        <a href="#details"{% if tab_id == 2 %} aria-selected="true"{% endif %}>{% trans "Test Details" %}</a>
-    </li>
-    <li class="tabs-title{% if tab_id == 3 %} is-active{% endif %}">
-        <a href="#notes"{% if tab_id == 3 %} aria-selected="true"{% endif %}>{% trans "Notes" %}{% if notes|length > 0 %} ({{ notes|length }}){% endif %}</a>
-    </li>
-    <li class="tabs-title{% if tab_id == 4 %} is-active{% endif %}">
-        <a href="#configs"{% if tab_id == 4 %} aria-selected="true"{% endif %}>{% trans "Configurations" %}{% if result.result_config.all.count > 0 %} ({{ result.result_config.all.count }}){% endif %}</a>
-    </li>
-    <li class="tabs-title{% if tab_id == 5 %} is-active{% endif %}">
-        <a href="#images"{% if tab_id == 5 %} aria-selected="true"{% endif %}>{% trans "Images" %}{% if result.result_image.all.count > 0 %} ({{ result.result_image.all.count }}){% endif %}</a>
-    </li>
-    <li class="tabs-title{% if tab_id == 6 %} is-active{% endif %}">
-        <a href="#files"{% if tab_id == 6 %} aria-selected="true"{% endif %}>{% trans "Files" %}{% if result.result_file.all.count > 0 %} ({{ result.result_file.all.count }}){% endif %}</a>
-    </li>
-    <li class="tabs-title{% if tab_id == 7 %} is-active{% endif %}">
-        <a href="#result"{% if tab_id == 7 %} aria-selected="true"{% endif %}>{% trans "Result" %}</a>
-    </li>
-    <li class="tabs-title{% if tab_id == 8 %} is-active{% endif %}">
-        <a href="#redmine"{% if tab_id == 8 %} aria-selected="true"{% endif %}>Redmine</a>
-    </li>
-</ul>
+<div class="row">
+    <div class="columns">
+        <ul class="tabs" data-responsive-accordion-tabs="tabs medium-accordion large-tabs" id="result-tabs">
+            <li class="tabs-title{% if tab_id == 1 %} is-active{% endif %}">
+                <a href="#general"{% if tab_id == 1 %} aria-selected="true"{% endif %}>{% trans "General" %}</a>
+            </li>
+            <li class="tabs-title{% if tab_id == 2 %} is-active{% endif %}">
+                <a href="#details"{% if tab_id == 2 %} aria-selected="true"{% endif %}>{% trans "Test Details" %}</a>
+            </li>
+            <li class="tabs-title{% if tab_id == 3 %} is-active{% endif %}">
+                <a href="#notes"{% if tab_id == 3 %} aria-selected="true"{% endif %}>{% trans "Notes" %}{% if notes|length > 0 %} ({{ notes|length }}){% endif %}</a>
+            </li>
+            <li class="tabs-title{% if tab_id == 4 %} is-active{% endif %}">
+                <a href="#configs"{% if tab_id == 4 %} aria-selected="true"{% endif %}>{% trans "Configurations" %}{% if result.result_config.all.count > 0 %} ({{ result.result_config.all.count }}){% endif %}</a>
+            </li>
+            <li class="tabs-title{% if tab_id == 5 %} is-active{% endif %}">
+                <a href="#images"{% if tab_id == 5 %} aria-selected="true"{% endif %}>{% trans "Images" %}{% if result.result_image.all.count > 0 %} ({{ result.result_image.all.count }}){% endif %}</a>
+            </li>
+            <li class="tabs-title{% if tab_id == 6 %} is-active{% endif %}">
+                <a href="#files"{% if tab_id == 6 %} aria-selected="true"{% endif %}>{% trans "Files" %}{% if result.result_file.all.count > 0 %} ({{ result.result_file.all.count }}){% endif %}</a>
+            </li>
+            <li class="tabs-title{% if tab_id == 7 %} is-active{% endif %}">
+                <a href="#result"{% if tab_id == 7 %} aria-selected="true"{% endif %}>{% trans "Result" %}</a>
+            </li>
+            <li class="tabs-title{% if tab_id == 8 %} is-active{% endif %}">
+                <a href="#redmine"{% if tab_id == 8 %} aria-selected="true"{% endif %}>Redmine</a>
+            </li>
+        </ul>
 
-<div class="tabs-content" data-tabs-content="collapsing-tabs">
-    <div class="tabs-panel{% if tab_id == 1 %} is-active{% endif %}" id="general">
-        <a href="{% url 'result_update' pk=result.id %}" class="button small">{% trans "Update" %}</a>
-        <a href="{% url 'result_delete' pk=result.id %}" class="button alert small">{% trans "Delete" %}</a>
-        <table class="unstriped">
-            <tbody>
-            {% if result.redmine_wiki %}
-            <tr>
-                <td>{% trans "Redmine Wiki" %}:</td>
-                <td>{{ result.redmine_wiki }}</td>
-            </tr>
-            {% endif %}
-            <tr>
-                <td>{% trans "Created" %}:</td>
-                <td>{{ result.created_at }} {% if result.created_by %}({{ result.created_by }}){% endif %}</td>
-            </tr>
-            <tr>
-                <td>{% trans "Last Update" %}:</td>
-                <td>{{ result.updated_at }} {% if result.updated_by %}({{ result.updated_by }}){% endif %}</td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
-
-    <div class="tabs-panel{% if tab_id == 2 %} is-active{% endif %}" id="details">
-        {% if result.test.test_image.all %}
-        <div class="grid-x grid-margin-x">
-            <div class="cell">
-                <div class="card">
-                    <div class="card-section">
-                        <h5>{% trans "Images" %}</h5>
-                        {% for image in result.test.test_image.all|dictsort:"id" %}
-                        {% if image.parent %}
-                        {% if image.parent.desc %}<p>{{ image.parent.desc }}</p>{% endif %}
-                        <img src="{{ image.parent.image.url }}"{% if image.parent.width %} width="{{ image.parent.width }}"{% endif %}{% if image.parent.height %} height="{{ image.parent.height }}"{% endif %}>
-                        {% else %}
-                        {% if image.desc %}<p>{{ image.desc }}</p>{% endif %}
-                        <img src="{{ image.image.url }}"{% if image.width %} width="{{ image.width }}"{% endif %}{% if image.height %} height="{{ image.height }}"{% endif %}>
+        <div class="tabs-content" data-tabs-content="result-tabs">
+            <!-- General -->
+            <div class="tabs-panel{% if tab_id == 1 %} is-active{% endif %}" id="general">
+                <div class="callout">
+                    <a href="{% url 'result_update' pk=result.id %}" class="button small">{% trans "Update" %}</a>
+                    <a href="{% url 'result_delete' pk=result.id %}" class="button alert small">{% trans "Delete" %}</a>
+                    <table class="unstriped">
+                        <tbody>
+                        {% if result.redmine_wiki %}
+                        <tr>
+                            <td>{% trans "Redmine Wiki" %}:</td>
+                            <td>{{ result.redmine_wiki }}</td>
+                        </tr>
                         {% endif %}
-                        {% endfor %}
-                    </div>
+                        <tr>
+                            <td>{% trans "Created" %}:</td>
+                            <td>{{ result.created_at }} {% if result.created_by %}({{ result.created_by }}){% endif %}</td>
+                        </tr>
+                        <tr>
+                            <td>{% trans "Last Update" %}:</td>
+                            <td>{{ result.updated_at }} {% if result.updated_by %}({{ result.updated_by }}){% endif %}</td>
+                        </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
-        </div>
-        {% endif %}
+            <!-- ... -->
 
-        {% if result.test.purpose %}
-        <div class="grid-x grid-margin-x">
-            <div class="cell">
-                <div class="card">
-                    <div class="card-section">
-                        <h5>{% trans "Purpose" %}</h5>
-                        <p>{{ result.test.purpose }}</p>
-                    </div>
+            <!-- Details -->
+            <div class="tabs-panel{% if tab_id == 2 %} is-active{% endif %}" id="details">
+                {% if result.test.test_image.all %}
+                <div class="callout">
+                    <h5>{% trans "Images" %}</h5>
+                    {% for image in result.test.test_image.all|dictsort:"id" %}
+                    {% if image.parent %}
+                    {% if image.parent.desc %}<p>{{ image.parent.desc }}</p>{% endif %}
+                    <img src="{{ image.parent.image.url }}"{% if image.parent.width %} width="{{ image.parent.width }}"{% endif %}{% if image.parent.height %} height="{{ image.parent.height }}"{% endif %}>
+                    {% else %}
+                    {% if image.desc %}<p>{{ image.desc }}</p>{% endif %}
+                    <img src="{{ image.image.url }}"{% if image.width %} width="{{ image.width }}"{% endif %}{% if image.height %} height="{{ image.height }}"{% endif %}>
+                    {% endif %}
+                    {% endfor %}
                 </div>
-            </div>
-        </div>
-        {% endif %}
+                {% endif %}
 
-        <div class="grid-x grid-margin-x">
-            <div class="cell">
-                <div class="card">
-                    <div class="card-section">
-                        <h5>{% trans "Procedure" %}</h5>
-                        <p>{{ procedure|safe }}</p>
-                    </div>
+                {% if result.test.purpose %}
+                <div class="callout">
+                    <h5>{% trans "Purpose" %}</h5>
+                    <p>{{ result.test.purpose }}</p>
                 </div>
-            </div>
-        </div>
-        <div class="grid-x grid-margin-x">
-            <div class="cell">
-                <div class="card">
-                    <div class="card-section">
-                        <h5>{% trans "Expected result" %}</h5>
-                        <p>{{ expected|safe }}</p>
-                    </div>
-                </div>
-            </div>
-        </div>
+                {% endif %}
 
-        {% if result.test.test_config.all %}
-        <div class="grid-x grid-margin-x">
-            <div class="cell">
-                <div class="card">
-                    <div class="card-section">
-                        <h5>{% trans "Configurations" %} ({{ result.test.test_config.all.count }})</h5>
-                        <!-- Accordion -->
-                        <div class="row">
-                            <p class="columns">
-                                <ul class="accordion" data-responsive-accordion-tabs="accordion medium-tabs large-accordion">
-                                    {% for config in result.test.test_config.all|dictsort:"id" %}
-                                    <li class="accordion-item is-active" data-accordion-item>
-                                        <a href="#" class="accordion-title">
-                                            {% if config.parent %}
-                                              {% if config.parent.desc %}
-                                              {{ config.parent.desc }}
-                                              {% else %}
-                                              {% trans "Config" %} #{{ forloop.counter }}
-                                              {% endif %}
-                                            {% else %}
-                                              {% if config.desc %}
-                                              {{ config.desc }}
-                                              {% else %}
-                                              {% trans "Config" %} #{{ forloop.counter }}
-                                              {% endif %}
-                                            {% endif %}
-                                        </a>
-                                        <div class="accordion-content" data-tab-content>
-                                            {% if config.parent %}
-                                            <pre><code data-language="{{ config.parent.lang }}">{{ config.parent.config }}</code></pre>
-                                            {% else %}
-                                            <pre><code data-language="{{ config.lang }}">{{ config.config }}</code></pre>
-                                            {% endif %}
-                                        </div>
-                                    </li>
-                                    {% endfor %}
-                                </ul>
+                <div class="callout">
+                    <h5>{% trans "Procedure" %}</h5>
+                    <p>{{ procedure|safe }}</p>
+                </div>
+
+                <div class="callout">
+                    <h5>{% trans "Expected result" %}</h5>
+                    <p>{{ expected|safe }}</p>
+                </div>
+
+                {% if result.test.test_config.all %}
+                <div class="callout">
+                    <h5>{% trans "Configurations" %} ({{ result.test.test_config.all.count }})</h5>
+                    <ul class="accordion" data-responsive-accordion-tabs="accordion medium-tabs large-accordion" data-allow-all-closed="true">
+                        {% for config in result.test.test_config.all|dictsort:"id" %}
+                        <li class="accordion-item is-active" data-accordion-item>
+                            <a href="#" class="accordion-title">
+                                {% if config.parent %}
+                                  {% if config.parent.desc %}
+                                    {{ config.parent.desc }}
+                                  {% else %}
+                                    {% trans "Config" %} #{{ forloop.counter }}
+                                  {% endif %}
+                                {% else %}
+                                  {% if config.desc %}
+                                    {{ config.desc }}
+                                  {% else %}
+                                    {% trans "Config" %} #{{ forloop.counter }}
+                                  {% endif %}
+                                {% endif %}
+                            </a>
+                            <div class="accordion-content" data-tab-content>
+                                {% if config.parent %}
+                                <pre><code data-language="{{ config.parent.lang }}">{{ config.parent.config }}</code></pre>
+                                {% else %}
+                                <pre><code data-language="{{ config.lang }}">{{ config.config }}</code></pre>
+                                {% endif %}
                             </div>
-                        </div>
-                        <!-- ... -->
-                    </div>
+                        </li>
+                        {% endfor %}
+                    </ul>
                 </div>
+                {% endif %}
             </div>
-        </div>
-        {% endif %}
+            <!-- ... -->
 
-    </div>
+            <!-- Notes -->
+            <div class="tabs-panel{% if tab_id == 3 %} is-active{% endif %}" id="notes">
+                <div class="grid-x grid-margin-x">
+                    <div class="cell">
+                        <div class="card">
+                            <div class="card-section">
+                                <a href="{% url 'result_note_create' result=result.id %}" class="button small">{% trans "Add" %}</a>
+                                {% for note in notes %}
+                                <p>
+                                    {% if note.desc %}{{ note.desc }}{% endif %}
+                                    <a href="{% url 'result_note_update' pk=note.id %}"><i class="step fi-pencil" style="color: #7700ff"></i></a>
+                                    <a href="{% url 'result_note_delete' pk=note.id %}"><i class="step fi-minus" style="color: red"></i></a>
+                                </p>
 
-    <div class="tabs-panel{% if tab_id == 3 %} is-active{% endif %}" id="notes">
-        <div class="grid-x grid-margin-x">
-            <div class="cell">
-                <div class="card">
-                    <div class="card-section">
-                        <a href="{% url 'result_note_create' result=result.id %}" class="button small">{% trans "Add" %}</a>
-                        {% for note in notes %}
-                        <p>
-                            {% if note.desc %}{{ note.desc }}{% endif %}
-                            <a href="{% url 'result_note_update' pk=note.id %}"><i class="step fi-pencil" style="color: #7700ff"></i></a>
-                            <a href="{% url 'result_note_delete' pk=note.id %}"><i class="step fi-minus" style="color: red"></i></a>
-                        </p>
-
-                        {% if note.format == 0 %}
-                        <div class="grid-x grid-margin-x">
-                            <div class="cell">
-                                <div class="card">
-                                    <div class="card-section">
-                                        {{ note.text|safe }}
+                                {% if note.format == 0 %}
+                                <div class="grid-x grid-margin-x">
+                                    <div class="cell">
+                                        <div class="card">
+                                            <div class="card-section">
+                                                {{ note.text|safe }}
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
+                                {% else %}
+                                <pre><code>{{ note.text }}</code></pre>
+                                {% endif %}
+                                {% endfor %}
                             </div>
                         </div>
-                        {% else %}
-                        <pre><code>{{ note.text }}</code></pre>
-                        {% endif %}
-
-                        {% endfor %}
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
+            <!-- ... -->
+
+            <!-- Configs -->
+
 
     <div class="tabs-panel{% if tab_id == 4 %} is-active{% endif %}" id="configs">
         <div class="grid-x grid-margin-x">
@@ -337,6 +313,9 @@
     </div>
 
 </div>
+
+        </div>
+
 
 <script src="{% static 'rainbow/rainbow-custom.min.js' %}"></script>
 
