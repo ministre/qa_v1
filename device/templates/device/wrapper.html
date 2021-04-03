@@ -7,28 +7,17 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Quality Assurance</title>
-    <link rel="stylesheet" href="{% static 'foundation-6.5.1-custom/css/foundation.css' %}" />
+    <link rel="stylesheet" href="{% static 'foundation-6.6.3-custom/assets/css/foundation.css' %}" />
     <link rel="stylesheet" href="{% static 'foundation-icons/foundation-icons.css' %}" />
-    <link rel="stylesheet" href="{% static 'DataTables/datatables.css' %}" />
-    <link rel="stylesheet" href="{% static 'rainbow/themes/css/github.css' %}" type="text/css" media="screen">
-
-    <style type="text/css">
-    .topcorner {
-      position: absolute;
-      top: 10px;
-      right: 15px;
-    }
-    </style>
+    <link rel="stylesheet" type="text/css" href="{% static 'DataTables/datatables.min.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'rainbow/themes/css/github.css' %}" media="screen">
+    <link rel="stylesheet" type="text/css" href="{% static 'topcorner/topcorner.css' %}" />
 </head>
 
 <body>
-  <script src="{% static 'foundation-6.5.1-custom/js/vendor/jquery-3.5.0.js' %}"></script>
-  <script src="{% static 'foundation-6.5.1-custom/js/vendor/what-input.js' %}"></script>
-  <script src="{% static 'foundation-6.5.1-custom/js/vendor/foundation.js' %}"></script>
-
   <div class="top-bar">
       <div class="top-bar-left">
-          <ul class="dropdown menu" data-dropdown-menu>
+          <ul class="menu dropdown" data-dropdown-menu>
               <li class="menu-text">Quality Assurance</li>
               {% if user.is_authenticated %}
               <li>
@@ -38,28 +27,51 @@
                       <li><a href="{% url 'vendors' %}">{% trans "Vendors" %}</a></li>
                   </ul>
               </li>
-              <li><a href="{% url 'testplans' %}">{% trans "Testplans" %}</a>
+              <li>
+                  <a href="{% url 'testplans' %}">{% trans "Testplans" %}</a>
                   <ul class="menu vertical">
-                      <li><a href="{% url 'testplan_patterns' %}">{% trans "Testplan Patterns" %}</a></li>
+                      <li>
+                          <a href="{% url 'testplan_patterns' %}">{% trans "Testplan Patterns" %}</a>
+                      </li>
                   </ul>
               </li>
-              <li><a href="{% url 'protocols' %}">{% trans "Protocols" %}</a></li>
-              <li><a href="{% url 'tech_reqs' %}">{% trans "Technical reqs" %}</a></li>
-              <li><a href="#">{% trans "Others" %}</a>
+              <li>
+                  <a href="{% url 'protocols' %}">{% trans "Protocols" %}</a>
+              </li>
+              <li>
+                  <a href="{% url 'tech_reqs' %}">{% trans "Technical reqs" %}</a>
+              </li>
+              <li>
+                  <a href="#">{% trans "Others" %}</a>
                   <ul class="menu vertical">
-                      <li><a href="{% url 'docx_profiles' %}">{% trans "Docx profiles" %}</a></li>
-                      <li><a href="{% url 'docx_templates' %}">{% trans "Docx templates" %}</a></li>
-                      <li><a href="{% url 'shipments' %}">{% trans "Shipment" %}</a></li>
-                      <li><a href="{% url 'items' %}">{% trans "Store" %}</a></li>
+                      <li>
+                          <a href="{% url 'docx_profiles' %}">{% trans "Docx profiles" %}</a>
+                      </li>
+                      <li>
+                          <a href="{% url 'docx_templates' %}">{% trans "Docx templates" %}</a>
+                      </li>
+                      <li>
+                          <a href="{% url 'shipments' %}">{% trans "Shipment" %}</a>
+                      </li>
+                      <li>
+                          <a href="{% url 'items' %}">{% trans "Store" %}</a>
+                      </li>
                   </ul>
               </li>
-              <li><a href="#">{% trans "Tools" %}</a>
+              <li>
+                  <a href="#">{% trans "Tools" %}</a>
                   <ul class="menu vertical">
-                      <li><a href="{% url 'tcp_udp_check' %}">{% trans "Port Forwarding Check" %}</a></li>
-                      <li><a href="{% url 'sip_invite' %}">{% trans "Fake SIP Invite" %}</a></li>
+                      <li>
+                          <a href="{% url 'tcp_udp_check' %}">{% trans "Port Forwarding Check" %}</a>
+                      </li>
+                      <li>
+                          <a href="{% url 'sip_invite' %}">{% trans "Fake SIP Invite" %}</a>
+                      </li>
                   </ul>
               </li>
-              <li><a href="{% url 'contacts' %}">{% trans "Contacts" %}</a></li>
+              <li>
+                  <a href="{% url 'contacts' %}">{% trans "Contacts" %}</a>
+              </li>
               {% endif %}
           </ul>
       </div>
@@ -82,18 +94,26 @@
                   </li>
                   <li>&nbsp;</li>
                   {% if user.is_authenticated %}
-                  <li><a href="{% url 'logout'%}?next={{request.path}}" class="button">{% trans "Sign out" %} ({{ user.get_username }})</a></li>
+                  <li>
+                      <a href="{% url 'logout'%}?next={{request.path}}" class="button">{% trans "Sign out" %} ({{ user.get_username }})</a>
+                  </li>
                   {% endif %}
               </ul>
           </form>
       </div>
   </div>
 
-  <br>
-  <div class="grid-container fluid">
+  <script type="text/javascript" src="{% static 'jquery-3.6.0/jquery-3.6.0.js' %}"></script>
+  <script type="text/javascript" src="{% static 'foundation-6.6.3-custom/assets/js/foundation.js' %}"></script>
+
+  <div class="grid-container fluid" style="padding: 20px;">
       {% block content %}
+      {% endblock %}
   </div>
-  {% endblock %}
-  <script src="{% static 'foundation-6.5.1-custom/js/app.js' %}"></script>
+
+  <script>
+    $(document).foundation();
+  </script>
+
 </body>
 </html>

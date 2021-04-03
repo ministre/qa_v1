@@ -31,6 +31,7 @@
     </tbody>
 </table>
 
+<script type="text/javascript" src="{% static 'DataTables/datatables.min.js' %}"></script>
 <script>
     $(document).ready(function() {
         var table = $('#devices').DataTable({
@@ -51,7 +52,5 @@
         });
     });
 </script>
-
-<script type="text/javascript" src="{% static 'DataTables/datatables.js' %}"></script>
 
 {% endblock %}
