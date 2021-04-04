@@ -210,6 +210,44 @@
                     </ul>
                 </div>
                 {% endif %}
+
+                {% if result.test.test_link.all %}
+                <div class="callout" data-closable>
+                    <button class="close-button" aria-label="Close alert" type="button" data-close>
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h5>{% trans "Links" %} ({{ result.test.test_link.all.count }})</h5>
+                    <ul class="accordion" data-responsive-accordion-tabs="accordion medium-tabs large-accordion" data-allow-all-closed="true">
+                        {% for link in result.test.test_link.all|dictsort:"id" %}
+                        <li class="accordion-item is-active" data-accordion-item>
+                            <a href="#" class="accordion-title">
+                                {% if link.parent %}
+                                  {% if link.parent.desc %}
+                                    {{ link.parent.desc }}
+                                  {% else %}
+                                    {% trans "Link" %} #{{ forloop.counter }}
+                                  {% endif %}
+                                {% else %}
+                                  {% if link.desc %}
+                                    {{ link.desc }}
+                                  {% else %}
+                                    {% trans "Link" %} #{{ forloop.counter }}
+                                  {% endif %}
+                                {% endif %}
+                            </a>
+                            <div class="accordion-content" data-tab-content>
+                                {% if link.parent %}
+                                <p><a href="{{ link.parent.url }}">{{ link.parent.url }}</a></p>
+                                {% else %}
+                                <p><a href="{{ link.url }}">{{ link.url }}</a></p>
+                                {% endif %}
+                            </div>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+
             </div>
             <!-- ... -->
 
