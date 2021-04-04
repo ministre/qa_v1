@@ -4,190 +4,191 @@
 
 {% block content %}
 
-<p>
-    <a href="{% url 'testplan_details' pk=test.cat.testplan.id tab_id=2 %}">{% trans "Testplans" %} {{ test.cat.testplan.name }} ({{ test.cat.testplan.version }})</a>
-    <br>
-    {{ test.cat }} &raquo; {{ num.0 }}.{{ num.1 }} {{ test.name }}
-</p>
+<nav aria-label="Testplan:" role="navigation">
+    <ul class="breadcrumbs">
+        <li><a href="{% url 'testplan_details' pk=test.cat.testplan.id tab_id=2 %}">{% trans "Testplans" %} {{ test.cat.testplan.name }} ({{ test.cat.testplan.version }})</a></li>
+    </ul>
+</nav>
 
-<ul class="tabs" data-tabs id="test-tabs">
-    <li class="tabs-title {% if tab_id == 1 %} is-active{% endif %}">
-        <a data-tabs-target="general" href="#general">{% trans "General" %}</a>
-    </li>
-    <li class="tabs-title {% if tab_id == 2 %} is-active{% endif %}">
-        <a data-tabs-target="desc" href="#desc">{% trans "Description" %}</a>
-    </li>
-    <li class="tabs-title {% if tab_id == 3 %} is-active{% endif %}">
-        <a data-tabs-target="configs" href="#configs">{% trans "Configurations" %}
-            {% if test.test_config.all.count > 0 %}
-            ({{ test.test_config.all.count }})
-            {% endif %}
-        </a>
-    </li>
-    <li class="tabs-title {% if tab_id == 4 %} is-active{% endif %}">
-        <a data-tabs-target="images" href="#images">{% trans "Images" %}
-            {% if test.test_image.all.count > 0 %}
-            ({{ test.test_image.all.count }})
-            {% endif %}
-        </a>
-    </li>
-    <li class="tabs-title {% if tab_id == 5 %} is-active{% endif %}">
-        <a data-tabs-target="files" href="#files">{% trans "Files" %}
-            {% if test.test_file.all.count > 0 %}
-            ({{ test.test_file.all.count }})
-            {% endif %}
-        </a>
-    </li>
-    <li class="tabs-title {% if tab_id == 6 %} is-active{% endif %}">
-        <a data-tabs-target="links" href="#links">{% trans "Links" %}
-            {% if test.test_link.all.count > 0 %}
-            ({{ test.test_link.all.count }})
-            {% endif %}
-        </a>
-    </li>
-    <li class="tabs-title {% if tab_id == 7 %} is-active{% endif %}">
-        <a data-tabs-target="comments" href="#comments">{% trans "Comments" %}
-            {% if test.test_comment.all.count > 0 %}
-            ({{ test.test_comment.all.count }})
-            {% endif %}
-        </a>
-    </li>
-    <li class="tabs-title {% if tab_id == 8 %} is-active{% endif %}">
-        <a data-tabs-target="redmine" href="#redmine">Redmine</a>
-    </li>
-</ul>
+<nav aria-label="Test:" role="navigation">
+    <ul class="breadcrumbs">
+        <li>{{ test.cat }}</li>
+        <li>{{ num.0 }}.{{ num.1 }} {{ test.name }}</li>
+    </ul>
+</nav>
 
-<div class="tabs-content" data-tabs-content="test-tabs">
-    <div class="tabs-panel {% if tab_id == 1 %}is-active{% endif %}" id="general">
-        <a href="{% url 'test_update' pk=test.id %}" class="button small">{% trans "Update" %}</a>
-        <a href="{% url 'test_delete' pk=test.id %}" class="button alert small">{% trans "Delete" %}</a>
-        <div class="grid-x grid-margin-x">
-            <div class="cell">
-                <div class="card">
-                    <div class="card-section">
-                        <table class="unstriped">
-                            <tr>
-                                <td>ID:</td>
-                                <td>{{ test.id }}</td>
-                            </tr>
-                            <tr>
-                                <td>{% trans "Name" %}:</td>
-                                <td>{{ test }}</td>
-                            </tr>
-                            <tr>
-                                <td>{% trans "Test parent" %}:</td>
-                                <td>{% if test.parent %}{{ test.parent }}{% endif %}</td>
-                            </tr>
-                            <tr>
-                                <td>{% trans "Category" %}:</td>
-                                <td>{{ test.cat }}</td>
-                            </tr>
-                            <tr>
-                                <td>{% trans "Redmine Wiki" %}:</td>
-                                <td>{% if test.redmine_wiki %}{{ test.redmine_wiki }}{% endif %}</td>
-                            </tr>
-                            <tr>
-                                <td>{% trans "Created" %}:</td>
-                                <td>{{ test.created_at }} {% if test.created_by %}({{ test.created_by }}){% endif %}</td>
-                            </tr>
-                            <tr>
-                                <td>{% trans "Last Update" %}:</td>
-                                <td>{{ test.updated_at }} {% if test.updated_by %}({{ test.updated_by }}){% endif %}</td>
-                            </tr>
-                        </table>
-                    </div>
+<div class="row">
+    <div class="columns">
+        <ul class="tabs" data-responsive-accordion-tabs="tabs medium-accordion large-tabs" id="test-tabs">
+            <li class="tabs-title{% if tab_id == 1 %} is-active{% endif %}">
+                <a href="#general"{% if tab_id == 1 %} aria-selected="true"{% endif %}>{% trans "General" %}</a>
+            </li>
+            <li class="tabs-title{% if tab_id == 2 %} is-active{% endif %}">
+                <a href="#details"{% if tab_id == 2 %} aria-selected="true"{% endif %}>{% trans "Test Details" %}</a>
+            </li>
+            <li class="tabs-title{% if tab_id == 3 %} is-active{% endif %}">
+                <a href="#configs"{% if tab_id == 3 %} aria-selected="true"{% endif %}>{% trans "Configurations" %}
+                    {% if test.test_config.all.count > 0 %} ({{ test.test_config.all.count }}){% endif %}
+                </a>
+            </li>
+            <li class="tabs-title{% if tab_id == 4 %} is-active{% endif %}">
+                <a href="#images"{% if tab_id == 4 %} aria-selected="true"{% endif %}>{% trans "Images" %}
+                    {% if test.test_image.all.count > 0 %} ({{ test.test_image.all.count }}){% endif %}
+                </a>
+            </li>
+            <li class="tabs-title{% if tab_id == 5 %} is-active{% endif %}">
+                <a href="#files"{% if tab_id == 5 %} aria-selected="true"{% endif %}>{% trans "Files" %}
+                    {% if test.test_file.all.count > 0 %} ({{ test.test_file.all.count }}){% endif %}
+                </a>
+            </li>
+            <li class="tabs-title{% if tab_id == 6 %} is-active{% endif %}">
+                <a href="#links"{% if tab_id == 6 %} aria-selected="true"{% endif %}>{% trans "Links" %}
+                    {% if test.test_link.all.count > 0 %} ({{ test.test_link.all.count }}){% endif %}
+                </a>
+            </li>
+            <li class="tabs-title{% if tab_id == 7 %} is-active{% endif %}">
+                <a href="#comments"{% if tab_id == 7 %} aria-selected="true"{% endif %}>{% trans "Comments" %}
+                    {% if test.test_comment.all.count > 0 %} ({{ test.test_comment.all.count }}){% endif %}
+                </a>
+            </li>
+            <li class="tabs-title{% if tab_id == 8 %} is-active{% endif %}">
+                <a href="#redmine"{% if tab_id == 8 %} aria-selected="true"{% endif %}>Redmine</a>
+            </li>
+        </ul>
+
+        <div class="tabs-content" data-tabs-content="test-tabs">
+            <!-- General -->
+            <div class="tabs-panel{% if tab_id == 1 %} is-active{% endif %}" id="general">
+                <div class="callout">
+                    <a href="{% url 'test_update' pk=test.id %}" class="button small">{% trans "Update" %}</a>
+                    <a href="{% url 'test_delete' pk=test.id %}" class="button alert small">{% trans "Delete" %}</a>
+                    <table class="unstriped">
+                        <tbody>
+                        <tr>
+                            <td>ID:</td>
+                            <td>{{ test.id }}</td>
+                        </tr>
+                        <tr>
+                            <td>{% trans "Name" %}:</td>
+                            <td>{{ test }}</td>
+                        </tr>
+                        <tr>
+                            <td>{% trans "Test parent" %}:</td>
+                            <td>{% if test.parent %}{{ test.parent }}{% endif %}</td>
+                        </tr>
+                        <tr>
+                            <td>{% trans "Category" %}:</td>
+                            <td>{{ test.cat }}</td>
+                        </tr>
+                        <tr>
+                            <td>{% trans "Redmine Wiki" %}:</td>
+                            <td>{% if test.redmine_wiki %}{{ test.redmine_wiki }}{% endif %}</td>
+                        </tr>
+                        <tr>
+                            <td>{% trans "Created" %}:</td>
+                            <td>{{ test.created_at }} {% if test.created_by %}({{ test.created_by }}){% endif %}</td>
+                        </tr>
+                        <tr>
+                            <td>{% trans "Last Update" %}:</td>
+                            <td>{{ test.updated_at }} {% if test.updated_by %}({{ test.updated_by }}){% endif %}</td>
+                        </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
-        </div>
-    </div>
+            <!-- ... -->
 
-    <div class="tabs-panel {% if tab_id == 2 %}is-active{% endif %}" id="desc">
-        {% if test.purpose %}
-        <div class="cell">
-            <div class="card">
-                <div class="card-section">
+            <!-- Details -->
+            <div class="tabs-panel{% if tab_id == 2 %} is-active{% endif %}" id="details">
+                {% if test.purpose %}
+                <div class="callout" data-closable>
+                    <button class="close-button" aria-label="Close alert" type="button" data-close>
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                     <h4>{% trans "Purpose" %}</h4>
                     <p>{{ test.purpose }}</p>
                 </div>
-            </div>
-        </div>
-        {% endif %}
-        <div class="cell">
-            <div class="card">
-                <div class="card-section">
+                {% endif %}
+
+                <div class="callout" data-closable>
+                    <button class="close-button" aria-label="Close alert" type="button" data-close>
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                     <h4>{% trans "Procedure" %}</h4>
                     <p>{{ procedure|safe }}</p>
                 </div>
-            </div>
-        </div>
-        <div class="cell">
-            <div class="card">
-                <div class="card-section">
+
+                <div class="callout" data-closable>
+                    <button class="close-button" aria-label="Close alert" type="button" data-close>
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                     <h4>{% trans "Expected result" %}</h4>
                     <p>{{ expected|safe }}</p>
                 </div>
             </div>
-        </div>
-    </div>
+            <!-- ... -->
 
-    <div class="tabs-panel {% if tab_id == 3 %}is-active{% endif %}" id="configs">
-        <div class="cell">
-            <div class="card">
-                <div class="card-section">
+            <!-- Configs -->
+            <div class="tabs-panel{% if tab_id == 3 %} is-active{% endif %}" id="configs">
+                <div class="callout">
                     <form method="post" action="{% url 'test_config_add' %}">
                         <input type="submit" value='{% trans "Add" %}' class="button small" />
                         {% csrf_token %}
                         {{ add_config_form }}
                     </form>
                 </div>
+
+                {% if test.test_config.all %}
+                <ul class="accordion" data-responsive-accordion-tabs="accordion medium-tabs large-accordion" data-allow-all-closed="true">
+                    {% for config in test.test_config.all|dictsort:"id" %}
+                    <li class="accordion-item is-active" data-accordion-item>
+                        <a href="#" class="accordion-title">
+                            {% if config.parent %}
+                              {% if config.parent.desc %}
+                                {{ config.parent.desc }}
+                              {% else %}
+                                {% trans "Config" %} #{{ forloop.counter }}
+                              {% endif %}
+                            {% else %}
+                              {% if config.desc %}
+                                {{ config.desc }}
+                              {% else %}
+                                {% trans "Config" %} #{{ forloop.counter }}
+                              {% endif %}
+                            {% endif %}
+                        </a>
+                        <div class="accordion-content" data-tab-content>
+                            <p>
+                                {% if not config.parent %}
+                                <a href="{% url 'test_config_update' pk=config.id %}"><i class="step fi-pencil" style="color: #7700ff"></i></a>
+                                {% endif %}
+                                <a href="{% url 'test_config_delete' pk=config.id %}"><i class="step fi-minus" style="color: red"></i></a>
+                            </p>
+                            {% if config.parent %}
+                            <pre><code data-language="{{ config.parent.lang }}">{{ config.parent.config }}</code></pre>
+                            {% else %}
+                            <pre><code data-language="{{ config.lang }}">{{ config.config }}</code></pre>
+                            {% endif %}
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
             </div>
-        </div>
+            <!-- ... -->
 
-        {% for config in test.test_config.all|dictsort:"id" %}
-        <div class="cell">
-            <div class="card">
-                <div class="card-section">
-                    <p>
-                        {% if config.parent %}
-                          {% if config.parent.desc %}{{ config.parent.desc }}{% endif %}
-                        {% else %}
-                          {% if config.desc %}{{ config.desc }}{% endif %}
-                        {% endif %}
-
-                        {% if not config.parent %}
-                        <a href="{% url 'test_config_update' pk=config.id %}"><i class="step fi-pencil" style="color: #7700ff"></i></a>
-                        {% endif %}
-                        <a href="{% url 'test_config_delete' pk=config.id %}"><i class="step fi-minus" style="color: red"></i></a>
-                    </p>
-                    {% if config.parent %}
-                    <pre><code data-language="{{ config.parent.lang }}">{{ config.parent.config }}</code></pre>
-                    {% else %}
-                    <pre><code data-language="{{ config.lang }}">{{ config.config }}</code></pre>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-        {% endfor %}
-
-    </div>
-
-    <div class="tabs-panel {% if tab_id == 4 %}is-active{% endif %}" id="images">
-        <div class="cell">
-            <div class="card">
-                <div class="card-section">
+            <!-- Images -->
+            <div class="tabs-panel {% if tab_id == 4 %}is-active{% endif %}" id="images">
+                <div class="callout">
                     <form method="post" action="{% url 'test_image_add' %}">
                         <input type="submit" value='{% trans "Add" %}' class="button small" />
                         {% csrf_token %}
                         {{ add_image_form }}
                     </form>
                 </div>
-            </div>
-        </div>
 
-        {% for image in test.test_image.all|dictsort:"id" %}
-        <div class="cell">
-            <div class="card">
-                <div class="card-section">
+                {% for image in test.test_image.all|dictsort:"id" %}
+                <div class="callout">
                     <p>
                         {% if image.parent %}
                           {% if image.parent.desc %}{{ image.parent.desc }}{% endif %}
@@ -208,28 +209,22 @@
                         {% endif %}
                     </p>
                 </div>
+                {% endfor %}
             </div>
-        </div>
-        {% endfor %}
-    </div>
+            <!-- ... -->
 
-    <div class="tabs-panel {% if tab_id == 5 %}is-active{% endif %}" id="files">
-        <div class="cell">
-            <div class="card">
-                <div class="card-section">
+            <!-- Files -->
+            <div class="tabs-panel{% if tab_id == 5 %} is-active{% endif %}" id="files">
+                <div class="callout">
                     <form method="post" action="{% url 'test_file_add' %}">
                         <input type="submit" value='{% trans "Add" %}' class="button small" />
                         {% csrf_token %}
                         {{ add_file_form }}
                     </form>
                 </div>
-            </div>
-        </div>
 
-        {% for file in test.test_file.all|dictsort:"id" %}
-        <div class="cell">
-            <div class="card">
-                <div class="card-section">
+                {% for file in test.test_file.all|dictsort:"id" %}
+                <div class="callout">
                     <p>
                         {% if file.parent %}
                           {% if file.parent.desc %}{{ file.parent.desc }}{% endif %}
@@ -248,30 +243,23 @@
                         <a href="{{ file.file.url }}">{{ file.filename }}</a>
                         {% endif %}
                     </p>
-
                 </div>
+                {% endfor %}
             </div>
-        </div>
-        {% endfor %}
-    </div>
+            <!-- ... -->
 
-    <div class="tabs-panel {% if tab_id == 6 %}is-active{% endif %}" id="links">
-        <div class="cell">
-            <div class="card">
-                <div class="card-section">
+            <!-- Links -->
+            <div class="tabs-panel{% if tab_id == 6 %} is-active{% endif %}" id="links">
+                <div class="callout">
                     <form method="post" action="{% url 'test_link_add' %}">
                         <input type="submit" value='{% trans "Add" %}' class="button small" />
                         {% csrf_token %}
                         {{ add_link_form }}
                     </form>
                 </div>
-            </div>
-        </div>
 
-        {% for link in test.test_link.all|dictsort:"id" %}
-        <div class="cell">
-            <div class="card">
-                <div class="card-section">
+                {% for link in test.test_link.all|dictsort:"id" %}
+                <div class="callout">
                     <p>
                         {% if link.parent %}
                           {% if link.parent.desc %}{{ link.parent.desc }}{% endif %}
@@ -290,30 +278,23 @@
                         <a href="{{ link.url }}">{{ link.url }}</a>
                         {% endif %}
                     </p>
-
                 </div>
+                {% endfor %}
             </div>
-        </div>
-        {% endfor %}
-    </div>
+            <!-- ... -->
 
-    <div class="tabs-panel {% if tab_id == 7 %}is-active{% endif %}" id="comments">
-        <div class="cell">
-            <div class="card">
-                <div class="card-section">
+            <!-- Comments -->
+            <div class="tabs-panel{% if tab_id == 7 %} is-active{% endif %}" id="comments">
+                <div class="callout">
                     <form method="post" action="{% url 'test_comment_add' %}">
                         <input type="submit" value='{% trans "Add" %}' class="button small" />
                         {% csrf_token %}
                         {{ add_comment_form }}
                     </form>
                 </div>
-            </div>
-        </div>
 
-        {% for comment in test.test_comment.all|dictsort:"id" %}
-        <div class="cell">
-            <div class="card">
-                <div class="card-section">
+                {% for comment in test.test_comment.all|dictsort:"id" %}
+                <div class="callout">
                     <p>
                         {% if comment.parent %}
                           {% if comment.parent.desc %}{{ comment.parent.desc }}{% endif %}
@@ -326,77 +307,55 @@
                         {% endif %}
                         <a href="{% url 'test_comment_delete' pk=comment.id %}"><i class="step fi-minus" style="color: red"></i></a>
                     </p>
-                        {% if comment.parent %}
-                            {% if comment.parent.format == 0 %}
-                            <div class="grid-x grid-margin-x">
-                                <div class="cell">
-                                    <div class="card">
-                                        <div class="card-section">
-                                            {{ comment.parent.text|safe }}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            {% else %}
-                            <pre><code>{{ comment.parent.text }}</code></pre>
-                            {% endif %}
-                        {% else %}
-                            {% if comment.format == 0 %}
-                            <div class="grid-x grid-margin-x">
-                                <div class="cell">
-                                    <div class="card">
-                                        <div class="card-section">
-                                            {{ comment.text|safe }}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            {% else %}
-                            <pre><code>{{ comment.text }}</code></pre>
-                            {% endif %}
-                        {% endif %}
-                </div>
-            </div>
-        </div>
-        {% endfor %}
-    </div>
-
-    <div class="tabs-panel {% if tab_id == 8 %}is-active{% endif %}" id="redmine">
-        {% if test.cat.testplan.redmine_project and test.redmine_wiki %}
-        <div class="grid-x grid-margin-x">
-            <div class="cell">
-                <div class="card">
-                    <div class="card-section">
-                        <h5>Redmine Project Wiki</h5>
-                        <p>
-                            <a href="{{ redmine_url }}/projects/{{ test.cat.testplan.redmine_project }}/wiki/{{ test.redmine_wiki }}/">
-                                {{ redmine_url }}/projects/{{ test.cat.testplan.redmine_project }}/wiki/{{ test.redmine_wiki }}/
-                            </a>
-                        </p>
+                    {% if comment.parent %}
+                    {% if comment.parent.format == 0 %}
+                    <div class="callout">
+                        {{ comment.parent.text|safe }}
                     </div>
+                    {% else %}
+                    <pre><code>{{ comment.parent.text }}</code></pre>
+                    {% endif %}
+                    {% else %}
+                    {% if comment.format == 0 %}
+                    <div class="callout">
+                        {{ comment.text|safe }}
+                    </div>
+                    {% else %}
+                    <pre><code>{{ comment.text }}</code></pre>
+                    {% endif %}
+                    {% endif %}
                 </div>
+                {% endfor %}
             </div>
-        </div>
-        {% endif %}
-        <div class="grid-x grid-margin-x">
-            <div class="cell">
-                <div class="card">
-                    <div class="card-section">
-                        <h5>{% trans "Export to" %} Redmine</h5>
-                        <form action="{% url 'redmine_test_export' %}" method="post">
-                            <input type="submit" value='{% trans "Export" %}' class="button small success" />
-                            <table class="unstriped" style="text-align: left; width: 600px;">
+            <!-- ... -->
+
+            <!-- Redmine -->
+            <div class="tabs-panel{% if tab_id == 8 %} is-active{% endif %}" id="redmine">
+                {% if test.cat.testplan.redmine_project and test.redmine_wiki %}
+                <div class="callout">
+                    <h5>Wiki</h5>
+                    <p>
+                        <a href="{{ redmine_url }}/projects/{{ test.cat.testplan.redmine_project }}/wiki/{{ test.redmine_wiki }}/">
+                            {{ redmine_url }}/projects/{{ test.cat.testplan.redmine_project }}/wiki/{{ test.redmine_wiki }}/
+                        </a>
+                    </p>
+                </div>
+                {% endif %}
+                <div class="callout">
+                    <h5>{% trans "Export to" %} Redmine</h5>
+                    <form action="{% url 'redmine_test_export' %}" method="post">
+                        <input type="submit" value='{% trans "Export" %}' class="button small success" />
+                        <table class="unstriped" style="text-align: left; width: 600px;">
                             {% csrf_token %}
                             {{ export_form.as_table }}
-                            </table>
-                        </form>
-                    </div>
+                        </table>
+                    </form>
                 </div>
             </div>
+            <!-- ... -->
+
         </div>
-
     </div>
-
 </div>
 
 <script src="{% static 'rainbow/rainbow-custom.min.js' %}"></script>
