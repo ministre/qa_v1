@@ -80,16 +80,34 @@
             <div class="tabs-panel{% if tab_id == 2 %} is-active{% endif %}" id="details">
                 {% if result.test.test_image.all %}
                 <div class="callout">
-                    <h5>{% trans "Images" %}</h5>
-                    {% for image in result.test.test_image.all|dictsort:"id" %}
-                    {% if image.parent %}
-                    {% if image.parent.desc %}<p>{{ image.parent.desc }}</p>{% endif %}
-                    <img src="{{ image.parent.image.url }}"{% if image.parent.width %} width="{{ image.parent.width }}"{% endif %}{% if image.parent.height %} height="{{ image.parent.height }}"{% endif %}>
-                    {% else %}
-                    {% if image.desc %}<p>{{ image.desc }}</p>{% endif %}
-                    <img src="{{ image.image.url }}"{% if image.width %} width="{{ image.width }}"{% endif %}{% if image.height %} height="{{ image.height }}"{% endif %}>
-                    {% endif %}
-                    {% endfor %}
+                    <ul class="accordion" data-responsive-accordion-tabs="accordion medium-tabs large-accordion" data-allow-all-closed="true">
+                        {% for image in result.test.test_image.all|dictsort:"id" %}
+                        <li class="accordion-item is-active" data-accordion-item>
+                            <a href="#" class="accordion-title">
+                                {% if image.parent %}
+                                  {% if image.parent.desc %}
+                                    {{ image.parent.desc }}
+                                  {% else %}
+                                    {% trans "Image" %} #{{ forloop.counter }}
+                                  {% endif %}
+                                {% else %}
+                                  {% if image.desc %}
+                                    {{ image.desc }}
+                                  {% else %}
+                                    {% trans "Image" %} #{{ forloop.counter }}
+                                  {% endif %}
+                                {% endif %}
+                            </a>
+                            <div class="accordion-content" data-tab-content>
+                                {% if image.parent %}
+                                <img src="{{ image.parent.image.url }}"{% if image.parent.width %} width="{{ image.parent.width }}"{% endif %}{% if image.parent.height %} height="{{ image.parent.height }}"{% endif %}>
+                                {% else %}
+                                <img src="{{ image.image.url }}"{% if image.width %} width="{{ image.width }}"{% endif %}{% if image.height %} height="{{ image.height }}"{% endif %}>
+                                {% endif %}
+                            </div>
+                        </li>
+                        {% endfor %}
+                    </ul>
                 </div>
                 {% endif %}
 
