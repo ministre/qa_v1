@@ -4,412 +4,382 @@
 
 {% block content %}
 
-<p>
-    <a href="{% url 'protocols' %}">{% trans "Protocols" %}</a> &raquo; {{ protocol.device.vendor }} {{ protocol.device.model }}
-    {% if protocol.device.hw %}({{ protocol.device.hw }}){% endif %}
-</p>
+<nav aria-label="Protocol:" role="navigation">
+    <ul class="breadcrumbs">
+        <li><a href="{% url 'protocols' %}">{% trans "Protocols" %}</a></li>
+        <li>{{ protocol.device.vendor }} {{ protocol.device }}</li>
+    </ul>
+</nav>
 
-<ul class="tabs" data-tabs id="protocol-tabs">
-    <li class="tabs-title {% if tab_id == 1 %} is-active{% endif %}">
-        <a data-tabs-target="general" href="#general">{% trans "General" %}</a>
-    </li>
-    <li class="tabs-title {% if tab_id == 2 %} is-active{% endif %}">
-        <a data-tabs-target="test_results" href="#test_results">{% trans "Tests" %}
-            ({{ stats.tested }}/{{ stats.tests_count }})
-        </a>
-    </li>
-    <li class="tabs-title {% if tab_id == 3 %} is-active{% endif %}">
-        <a data-tabs-target="summary" href="#summary">{% trans "Summary" %}</a>
-    </li>
-    <li class="tabs-title {% if tab_id == 4 %} is-active{% endif %}">
-        <a data-tabs-target="files" href="#files">{% trans "Files" %}
-            {% if protocol.protocol_file.all|length > 0 %} ({{ protocol.protocol_file.all|length }}){% endif %}
-        </a>
-    </li>
-    <li class="tabs-title {% if tab_id == 5 %} is-active{% endif %}">
-        <a data-tabs-target="docx" href="#docx">Docx</a>
-    </li>
-    <li class="tabs-title {% if tab_id == 6 %} is-active{% endif %}">
-        <a data-tabs-target="redmine" href="#redmine">Redmine</a>
-    </li>
-</ul>
+<div class="row">
+    <div class="columns">
+        <ul class="tabs" data-responsive-accordion-tabs="tabs medium-accordion large-tabs" id="protocol-tabs">
+            <li class="tabs-title{% if tab_id == 1 %} is-active{% endif %}">
+                <a href="#general"{% if tab_id == 1 %} aria-selected="true"{% endif %}>{% trans "General" %}</a>
+            </li>
+            <li class="tabs-title{% if tab_id == 2 %} is-active{% endif %}">
+                <a href="#tests"{% if tab_id == 2 %} aria-selected="true"{% endif %}>{% trans "Tests" %} ({{ stats.tested }}/{{ stats.tests_count }})</a>
+            </li>
+            <li class="tabs-title{% if tab_id == 3 %} is-active{% endif %}">
+                <a href="#summary"{% if tab_id == 3 %} aria-selected="true"{% endif %}>{% trans "Summary" %}</a>
+            </li>
+            <li class="tabs-title{% if tab_id == 4 %} is-active{% endif %}">
+                <a href="#files"{% if tab_id == 4 %} aria-selected="true"{% endif %}>{% trans "Files" %}
+                    {% if protocol.protocol_file.all|length > 0 %} ({{ protocol.protocol_file.all|length }}){% endif %}
+                </a>
+            </li>
+            <li class="tabs-title{% if tab_id == 5 %} is-active{% endif %}">
+                <a href="#docx"{% if tab_id == 5 %} aria-selected="true"{% endif %}>Docx</a>
+            </li>
+            <li class="tabs-title {% if tab_id == 6 %} is-active{% endif %}">
+                <a href="#redmine"{% if tab_id == 6 %} aria-selected="true"{% endif %}>Redmine</a>
+            </li>
+        </ul>
 
-<div class="tabs-content" data-tabs-content="protocol-tabs">
-    <div class="tabs-panel {% if tab_id == 1 %}is-active{% endif %}" id="general">
-        <a href="{% url 'protocol_update' pk=protocol.id %}" class="button small">{% trans "Update" %}</a>
-        <a href="{% url 'protocol_delete' pk=protocol.id %}" class="button alert small">{% trans "Delete" %}</a>
-        <div class="grid-x grid-margin-x">
-            <div class="cell">
-                <div class="card">
-                    <div class="card-section">
-                        <table class="unstriped">
-                            <tr>
-                                <td>ID:</td>
-                                <td>{{ protocol.id }}</td>
-                            </tr>
-                            <tr>
-                                <td>{% trans "Testplan" %}:</td>
-                                <td><a href="{% url 'testplan_details' pk=protocol.testplan.id tab_id=2 %}">
-                                    {% trans "Testplan" %} {{ protocol.testplan }}</a>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>{% trans "Device" %}:</td>
-                                <td><a href="{% url 'device_details' pk=protocol.device.id tab_id=1 %}">
-                                    {{ protocol.device.vendor }} {{ protocol.device.model }}
-                                    {% if protocol.device.hw %}({{ protocol.device.hw }}){% endif %}</a>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>{% trans "Software Version" %}:</td>
-                                <td>{{ protocol.sw }}</td>
-                            </tr>
-                            {% if protocol.sw_checksum %}
-                            <tr>
-                                <td>{% trans "Checksum" %}:</td>
-                                <td>{{ protocol.sw_checksum }}</td>
-                            </tr>
-                            {% endif %}
-                            {% if protocol.engineer_login %}
-                            <tr>
-                                <td>{% trans "Engineer Login" %}:</td>
-                                <td>{{ protocol.engineer_login }}</td>
-                            </tr>
-                            {% endif %}
-                            {% if protocol.engineer_password %}
-                            <tr>
-                                <td>{% trans "Engineer Password" %}:</td>
-                                <td>{{ protocol.engineer_password }}</td>
-                            </tr>
-                            {% endif %}
-                            <tr>
-                                <td>{% trans "Started" %}:</td>
-                                <td>{{ protocol.date_of_start }}</td>
-                            </tr>
-                            <tr>
-                                <td>{% trans "Completed" %}:</td>
-                                <td>{% if protocol.date_of_finish %}{{ protocol.date_of_finish }}{% endif %}</td>
-                            </tr>
-                            {% if protocol.redmine_wiki %}
-                            <tr>
-                                <td>Redmine Wiki:</td>
-                                <td>{{ protocol.redmine_wiki }}</td>
-                            </tr>
-                            {% endif %}
-                            <tr>
-                                <td>{% trans "Created" %}:</td>
-                                <td>{{ protocol.created_at }} {% if protocol.created_by %}({{ protocol.created_by }}){% endif %}</td>
-                            </tr>
-                            <tr>
-                                <td>{% trans "Last Update" %}:</td>
-                                <td>{{ protocol.updated_at }} {% if protocol.updated_by %}({{ protocol.updated_by }}){% endif %}</td>
-                            </tr>
-                        </table>
+        <div class="tabs-content" data-tabs-content="protocol-tabs">
+            <!-- General -->
+            <div class="tabs-panel{% if tab_id == 1 %} is-active{% endif %}" id="general">
+                <div class="callout">
+                    <a href="{% url 'protocol_update' pk=protocol.id %}" class="button small">{% trans "Update" %}</a>
+                    <a href="{% url 'protocol_delete' pk=protocol.id %}" class="button alert small">{% trans "Delete" %}</a>
+                    <table class="unstriped">
+                        <tbody>
+                        <tr>
+                            <td>ID:</td>
+                            <td>{{ protocol.id }}</td>
+                        </tr>
+                        <tr>
+                            <td>{% trans "Testplan" %}:</td>
+                            <td>
+                                <a href="{% url 'testplan_details' pk=protocol.testplan.id tab_id=2 %}">{% trans "Testplan" %} {{ protocol.testplan }}</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>{% trans "Device" %}:</td>
+                            <td>
+                                <a href="{% url 'device_details' pk=protocol.device.id tab_id=1 %}">{{ protocol.device.vendor }} {{ protocol.device }}</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>{% trans "Software Version" %}:</td>
+                            <td>{{ protocol.sw }}</td>
+                        </tr>
+                        {% if protocol.sw_checksum %}
+                        <tr>
+                            <td>{% trans "Checksum" %}:</td>
+                            <td>{{ protocol.sw_checksum }}</td>
+                        </tr>
+                        {% endif %}
+                        {% if protocol.engineer_login %}
+                        <tr>
+                            <td>{% trans "Engineer Login" %}:</td>
+                            <td>{{ protocol.engineer_login }}</td>
+                        </tr>
+                        {% endif %}
+                        {% if protocol.engineer_password %}
+                        <tr>
+                            <td>{% trans "Engineer Password" %}:</td>
+                            <td>{{ protocol.engineer_password }}</td>
+                        </tr>
+                        {% endif %}
+                        <tr>
+                            <td>{% trans "Started" %}:</td>
+                            <td>{{ protocol.date_of_start }}</td>
+                        </tr>
+                        <tr>
+                            <td>{% trans "Completed" %}:</td>
+                            <td>{% if protocol.date_of_finish %}{{ protocol.date_of_finish }}{% endif %}</td>
+                        </tr>
+                        {% if protocol.redmine_wiki %}
+                        <tr>
+                            <td>Redmine Wiki:</td>
+                            <td>{{ protocol.redmine_wiki }}</td>
+                        </tr>
+                        {% endif %}
+                        <tr>
+                            <td>{% trans "Created" %}:</td>
+                            <td>{{ protocol.created_at }} {% if protocol.created_by %}({{ protocol.created_by }}){% endif %}</td>
+                        </tr>
+                        <tr>
+                            <td>{% trans "Last Update" %}:</td>
+                            <td>{{ protocol.updated_at }} {% if protocol.updated_by %}({{ protocol.updated_by }}){% endif %}</td>
+                        </tr>
+                        </tbody>
+                    </table>
 
-                        {% if protocol.sysinfo %}
-                        <div class="cell">
-                            <div class="card">
-                                <div class="card-section">
-                                    <h5>{% trans "System Information" %}</h5>
-                                    <pre><code>{{ protocol.sysinfo|safe }}</code></pre>
-                                </div>
+                    {% if protocol.sysinfo %}
+                    <ul class="accordion" data-responsive-accordion-tabs="accordion medium-tabs large-accordion" data-allow-all-closed="true">
+                        <li class="accordion-item is-active" data-accordion-item>
+                            <a href="#" class="accordion-title">{% trans "System Information" %}</a>
+                            <div class="accordion-content" data-tab-content>
+                                <pre><code>{{ protocol.sysinfo|safe }}</code></pre>
                             </div>
-                        </div>
-                        {% endif %}
+                        </li>
+                    </ul>
+                    {% endif %}
 
-                        {% if protocol.console %}
-                        <div class="cell">
-                            <div class="card">
-                                <div class="card-section">
-                                    <h5>{% trans "Console port parameters" %}</h5>
-                                    <p>{{ protocol.console|safe }}</p>
-                                </div>
-                            </div>
-                        </div>
-                        {% endif %}
+                    {% if protocol.console %}
+                    <div class="callout">
+                        <h5>{% trans "Console port parameters" %}</h5>
+                        <p>{{ protocol.console|safe }}</p>
+                    </div>
+                    {% endif %}
 
+                    <div class="callout">
+                        <h5>{% trans "Copy results from another protocol" %}</h5>
+                        <form action="{% url 'protocol_copy_results' %}" method="post">
+                            {% csrf_token %}
+                            {{ copy_test_results_form }}
+                            <input type="submit" value='{% trans "Copy" %}' class="button small success" />
+                        </form>
                     </div>
                 </div>
             </div>
-        </div>
+            <!-- ... -->
 
-        <div class="cell">
-            <div class="card">
-                <div class="card-section">
-                    <h5>{% trans "Copy results from another protocol" %}</h5>
-                    <form action="{% url 'protocol_copy_results' %}" method="post">
-                        {% csrf_token %}
-                        {{ copy_test_results_form }}
-                        <input type="submit" value='{% trans "Copy" %}' class="button small success" />
-                    </form>
-                </div>
+            <!-- Tests -->
+            <div class="tabs-panel{% if tab_id == 2 %} is-active{% endif %}" id="tests">
+
+
+                <table id="results" class="unstriped hover" style="width:100%;">
+                    <thead>
+                    <tr style="background-color: #E8E8E8">
+                        <th>ID</th>
+                        <th width="150px">{% trans "Results" %}</th>
+                        <th>{% trans "Tests" %}</th>
+                        <th>{% trans "Category" %}</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for result in results %}
+                    <tr {% if result.result == None %} data-href="{% url 'result_create' protocol_id=protocol.id test_id=result.test_id %}"{% else %}
+                        data-href="{% url 'result_details' pk=result.result_id tab_id=7 %}"{% endif %}>
+                        <td>{{ forloop.counter }}</td>
+                        <td>
+                            {% if result.result == None or result.result < 1 %}
+                            <span class="label" style="width:140px; text-align: center; background-color: gray; color: white">{% trans "Not tested" %}</span>
+                            {% elif result.result == 1 %}
+                            <span class="label alert" style="width:140px; text-align: center">{% trans "Failed" %}</span>
+                            {% elif result.result == 2 %}
+                            <span class="label warning" style="width:140px; text-align: center">{% trans "Warning" %}</span>
+                            {% elif result.result == 3 %}
+                            <span class="label success" style="width:140px; text-align: center; background-color: green; color: white">{% trans "Success" %}</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <i>{{ result.num.0 }}.{{ result.num.1 }}. {{ result.test_name }}</i>
+                            {% if result.notes %}<i class="step fi-clipboard-notes" style="color: #7700ff"></i>{% endif %}
+                            {% if result.configs %}<i class="step fi-widget" style="color: #7700ff"></i>{% endif %}
+                            {% if result.images %}<i class="step fi-photo" style="color: #7700ff"></i>{% endif %}
+                            {% if result.files %}<i class="step fi-page" style="color: #7700ff"></i>{% endif %}
+
+                            {% if result.comment %}
+                            <ul><li style="color: #7700ff; font-style: italic; list-style-type: none;">{{ result.comment }}</li></ul>
+                            {% endif %}
+                            {% if result.issues %}
+                            <ul>
+                                <li style="color: red; font-style: italic; list-style-type: none;">{% trans "Issues" %}:</li>
+                                {% for issue in result.issues %}
+                                <ul>
+                                    <li style="color: red; font-style: italic; list-style-type: square;">{{ issue }}</li>
+                                </ul>
+                                {% endfor %}
+                            </ul>
+                            {% endif %}
+
+                        </td>
+                        <td>{{ result.category_name }}</td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
             </div>
-        </div>
+            <!-- ... -->
 
-    </div>
-
-    <div class="tabs-panel {% if tab_id == 2 %}is-active{% endif %}" id="test_results">
-        <table id="results" class="unstriped hover" style="width:100%;">
-        <thead>
-            <tr style="background-color: #E8E8E8">
-                <th>ID</th>
-                <th width="130px">{% trans "Results" %}</th>
-                <th  width="35%">{% trans "Tests" %}</th>
-                <th>{% trans "Category" %}</th>
-                <th>{% trans "Issues" %}</th>
-                <th>{% trans "Comments" %}</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for result in results %}
-        <tr {% if result.result == None %}
-                data-href="{% url 'result_create' protocol_id=protocol.id test_id=result.test_id %}"
-                {% else %}
-                data-href="{% url 'result_details' pk=result.result_id tab_id=7 %}"
-                {% endif %}>
-            <td>{{ forloop.counter }}</td>
-            <td>
-                {% if result.result == None %}
-                <span class="label" style="width:120px; text-align: center; background-color: gray; color: white">{% trans "Not tested" %}</span>
-                {% endif %}
-                {% if result.result == 0 %}
-                <span class="label" style="width:120px; text-align: center; background-color: gray; color: white">{% trans "Not tested" %}</span>
-                {% endif %}
-                {% if result.result == 1 %}
-                <span class="label alert" style="width:120px; text-align: center">{% trans "Failed" %}</span>
-                {% endif %}
-                {% if result.result == 2 %}
-                <span class="label warning" style="width:120px; text-align: center">{% trans "Warning" %}</span>
-                {% endif %}
-                {% if result.result == 3 %}
-                <span class="label success" style="width:120px; text-align: center; background-color: green; color: white">{% trans "Success" %}</span>
-                {% endif %}
-            </td>
-            <td>
-                <i>{{ result.num.0 }}.{{ result.num.1 }}. {{ result.test_name }}</i>
-                {% if result.notes %}<i class="step fi-clipboard-notes" style="color: #7700ff"></i>{% endif %}
-                {% if result.configs %}<i class="step fi-widget" style="color: #7700ff"></i>{% endif %}
-                {% if result.images %}<i class="step fi-photo" style="color: #7700ff"></i>{% endif %}
-                {% if result.files %}<i class="step fi-page" style="color: #7700ff"></i>{% endif %}
-            </td>
-            <td>{{ result.category_name }}</td>
-            <td>
-                <ul>
-                {% for issue in result.issues %}
-                    <li>{{ issue }}</li>
-                {% endfor %}
-                </ul>
-            </td>
-            <td>{% if result.comment %}{{ result.comment }}{% endif %}</td>
-        </tr>
-        {% endfor %}
-        </tbody>
-        </table>
-    </div>
-
-    <div class="tabs-panel {% if tab_id == 3 %}is-active{% endif %}" id="summary">
-        <div class="grid-x grid-margin-x">
-            <div class="cell">
-                <div class="card">
-                    <div class="card-section">
-                        <h5>{% trans "Status" %}</h5>
-                        <p>
-                            {% if protocol.result == 0 %}
-                            <span class="label" style="background-color: gray; color: white">{% trans "Testing" %} ({{ stats.tested_pct }}%)</span>
-                            {% endif %}
-                            {% if protocol.result == 1 %}
-                            <span class="label alert">{% trans "Not recommended" %}</span>
-                            {% endif %}
-                            {% if protocol.result == 2 %}
-                            <span class="label warning">{% trans "Limited" %}</span>
-                            {% endif %}
-                            {% if protocol.result == 3 %}
-                            <span class="label success" style="background-color: green; color: white">{% trans "Recommended" %}</span>
-                            {% endif %}
-                            <a href="{% url 'protocol_status_update' pk=protocol.id %}"><i class="step fi-pencil" style="color: #7700ff"></i></a>
-                        </p>
-                    </div>
-                </div>
-            </div>
-            <div class="cell">
-                <div class="card">
-                    <div class="card-section">
-                        <h5>{% trans "Issues" %} ({{ issues|length }})</h5>
-                        {% if issues %}
-                        <table class="unstriped">
-                            <thead>
-                            <tr>
-                                <th width="50px">№</th>
-                                <th>{% trans "Description" %}</th>
-                                <th width="100px">{% trans "Test" %}</th>
-                                <th width="10%">{% trans "Ticket" %}</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {% for issue in issues %}
-                            <tr>
-                                <td>{{ forloop.counter }}</td>
-                                <td>{{ issue.text }}</td>
-                                <td>{{ issue.test_num.0 }}.{{ issue.test_num.1 }}</td>
-                                <td>{% if issue.ticket %}<a href="{{ issue.ticket }}">{{ issue.ticket }}</a>{% endif %}</td>
-                            </tr>
-                            {% endfor %}
-                            </tbody>
-                        </table>
+            <!-- Summary -->
+            <div class="tabs-panel{% if tab_id == 3 %} is-active{% endif %}" id="summary">
+                <div class="callout">
+                    <h5>{% trans "Status" %}</h5>
+                    <p>
+                        {% if protocol.result == 0 %}
+                        <span class="label" style="background-color: gray; color: white">{% trans "Testing" %} ({{ stats.tested_pct }}%)</span>
                         {% endif %}
-                    </div>
-                </div>
-            </div>
-            <div class="cell">
-                <div class="card">
-                    <div class="card-section">
-                        <h5>{% trans "Additional Issues" %}{% if protocol.protocol_add_issue.all %} ({{ protocol.protocol_add_issue.all.count }}){% endif %}</h5>
-                        <a href="{% url 'protocol_issue_create' protocol_id=protocol.id %}" class="button small">{% trans "Add" %}</a>
-                        {% if protocol.protocol_add_issue.all %}
-                        <table class="unstriped">
-                            <thead>
-                            <tr>
-                                <th width="50px">№</th>
-                                <th>{% trans "Description" %}</th>
-                                <th width="10%">{% trans "Ticket" %}</th>
-                                <th width="100px"></th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {% for add_issue in protocol.protocol_add_issue.all|dictsort:"priority" %}
-                            <tr>
-                                <td>{{ forloop.counter }}</td>
-                                <td>{{ add_issue.text }}</td>
-                                <td>{% if add_issue.ticket %}<a href="{{ add_issue.ticket }}">{{ add_issue.ticket }}</a>{% endif %}</td>
-                                <td>
-                                    {% if forloop.counter != 1 %}
-                                    <a href="{# url 'category_up' pk=category.id #}"><i class="step fi-arrow-up" style="color: #ff4f12"></i></a>
-                                    {% endif %}
-                                    {% if forloop.counter != protocol.protocol_add_issue.all.count %}
-                                    <a href="{# url 'category_down' pk=category.id #}"><i class="step fi-arrow-down" style="color: #ff4f12"></i></a>
-                                    {% endif %}
-
-                                    <a href="{% url 'protocol_issue_update' pk=add_issue.id %}"><i class="step fi-pencil" style="color: #7700ff"></i></a>
-                                    <a href="{% url 'protocol_issue_delete' pk=add_issue.id %}"><i class="step fi-minus" style="color: red"></i></a>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                            </tbody>
-                        </table>
+                        {% if protocol.result == 1 %}
+                        <span class="label alert">{% trans "Not recommended" %}</span>
                         {% endif %}
-                    </div>
+                        {% if protocol.result == 2 %}
+                        <span class="label warning">{% trans "Limited" %}</span>
+                        {% endif %}
+                        {% if protocol.result == 3 %}
+                        <span class="label success" style="background-color: green; color: white">{% trans "Recommended" %}</span>
+                        {% endif %}
+                        <a href="{% url 'protocol_status_update' pk=protocol.id %}"><i class="step fi-pencil" style="color: #7700ff"></i></a>
+                    </p>
                 </div>
-            </div>
-        </div>
-        <div class="cell">
-            <div class="card">
-                <div class="card-section">
+                <div class="callout">
+                    <h5>{% trans "Issues" %} ({{ issues|length }})</h5>
+                    {% if issues %}
+                    <table class="unstriped">
+                        <thead>
+                        <tr>
+                            <th width="50px">№</th>
+                            <th>{% trans "Description" %}</th>
+                            <th width="100px">{% trans "Test" %}</th>
+                            <th width="10%">{% trans "Ticket" %}</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for issue in issues %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ issue.text }}</td>
+                            <td>{{ issue.test_num.0 }}.{{ issue.test_num.1 }}</td>
+                            <td>{% if issue.ticket %}<a href="{{ issue.ticket }}">{{ issue.ticket }}</a>{% endif %}</td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    {% endif %}
+                </div>
+                <div class="callout">
+                    <h5>{% trans "Additional Issues" %}{% if protocol.protocol_add_issue.all %} ({{ protocol.protocol_add_issue.all.count }}){% endif %}</h5>
+                    <a href="{% url 'protocol_issue_create' protocol_id=protocol.id %}" class="button small">{% trans "Add" %}</a>
+                    {% if protocol.protocol_add_issue.all %}
+                    <table class="unstriped">
+                        <thead>
+                        <tr>
+                            <th width="50px">№</th>
+                            <th>{% trans "Description" %}</th>
+                            <th width="10%">{% trans "Ticket" %}</th>
+                            <th width="100px"></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for add_issue in protocol.protocol_add_issue.all|dictsort:"priority" %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ add_issue.text }}</td>
+                            <td>{% if add_issue.ticket %}<a href="{{ add_issue.ticket }}">{{ add_issue.ticket }}</a>{% endif %}</td>
+                            <td>
+                                {% if forloop.counter != 1 %}
+                                <a href="{# url 'category_up' pk=category.id #}"><i class="step fi-arrow-up" style="color: #ff4f12"></i></a>
+                                {% endif %}
+                                {% if forloop.counter != protocol.protocol_add_issue.all.count %}
+                                <a href="{# url 'category_down' pk=category.id #}"><i class="step fi-arrow-down" style="color: #ff4f12"></i></a>
+                                {% endif %}
+                                <a href="{% url 'protocol_issue_update' pk=add_issue.id %}"><i class="step fi-pencil" style="color: #7700ff"></i></a>
+                                <a href="{% url 'protocol_issue_delete' pk=add_issue.id %}"><i class="step fi-minus" style="color: red"></i></a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    {% endif %}
+                </div>
+                <div class="callout">
                     <h5>{% trans "Statistics" %}</h5>
                     <div id="piechart_3d"></div>
                 </div>
             </div>
-        </div>
-    </div>
+            <!-- ... -->
 
-    <div class="tabs-panel {% if tab_id == 4 %}is-active{% endif %}" id="files">
-        <a href="{% url 'protocol_file_create' protocol_id=protocol.id %}" class="button small">{% trans "Add" %}</a>
-        {% if protocol.protocol_file.all %}
-        <table>
-            <thead>
-            <tr>
-                <th width="10%">ID</th>
-                <th width="20%">{% trans "Type" %}</th>
-                <th width="30%">{% trans "Description" %}</th>
-                <th width="30%">{% trans "File" %}</th>
-                <th width="10%"></th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for file in protocol.protocol_file.all|dictsort:"id" %}
-            <tr>
-                <td>{{ file.id }}</td>
-                <td>
-                    {% if file.type == 0 %}{% trans "Firmware" %}{% endif %}
-                    {% if file.type == 1 %}{% trans "Docx Protocol" %}{% endif %}
-                    {% if file.type == 2 %}{% trans "Scan-copy Protocol" %}{% endif %}
-                </td>
-                <td>{{ file.desc }}</td>
-                <td><a href="{{ file.file.url }}">{{ file.filename }}</a></td>
-                <td>
-                    <a href="{% url 'protocol_file_update' pk=file.id %}"><i class="step fi-pencil" style="color: #7700ff"></i></a>
-                    <a href="{% url 'protocol_file_delete' pk=file.id %}"><i class="step fi-minus" style="color: red"></i></a>
-                </td>
-            </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-        {% endif %}
-    </div>
+            <!-- Files -->
+            <div class="tabs-panel{% if tab_id == 4 %} is-active{% endif %}" id="files">
+                <div class="callout">
+                    <a href="{% url 'protocol_file_create' protocol_id=protocol.id %}" class="button small">{% trans "Add" %}</a>
+                    {% if protocol.protocol_file.all %}
+                    <table>
+                        <thead>
+                        <tr>
+                            <th width="10%">ID</th>
+                            <th width="20%">{% trans "Type" %}</th>
+                            <th width="30%">{% trans "Description" %}</th>
+                            <th width="30%">{% trans "File" %}</th>
+                            <th width="10%"></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for file in protocol.protocol_file.all|dictsort:"id" %}
+                        <tr>
+                            <td>{{ file.id }}</td>
+                            <td>
+                                {% if file.type == 0 %}{% trans "Firmware" %}{% endif %}
+                                {% if file.type == 1 %}{% trans "Docx Protocol" %}{% endif %}
+                                {% if file.type == 2 %}{% trans "Scan-copy Protocol" %}{% endif %}
+                            </td>
+                            <td>{{ file.desc }}</td>
+                            <td><a href="{{ file.file.url }}">{{ file.filename }}</a></td>
+                            <td>
+                                <a href="{% url 'protocol_file_update' pk=file.id %}"><i class="step fi-pencil" style="color: #7700ff"></i></a>
+                                <a href="{% url 'protocol_file_delete' pk=file.id %}"><i class="step fi-minus" style="color: red"></i></a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    {% endif %}
+                </div>
+            </div>
+            <!-- ... -->
 
-    <div class="tabs-panel {% if tab_id == 5 %}is-active{% endif %}" id="docx">
-        <div class="grid-x grid-margin-x small-up-2 medium-up-2">
-            <div class="cell">
-                <div class="card">
-                    <div class="card-section">
-                        <h4>{% trans "Protocol" %}</h4>
-                        <form action="{% url 'build_protocol' %}" method="post">
-                            <input type="submit" value='{% trans "Build" %}' class="button small success" />
-                            <table class="unstriped" style="text-align: left">
-                                {% csrf_token %}
-                                {{ build_protocol_form.as_table }}
-                            </table>
-                        </form>
+            <!-- Docx -->
+            <div class="tabs-panel{% if tab_id == 5 %} is-active{% endif %}" id="docx">
+                <div class="grid-x grid-margin-x small-up-2 medium-up-2">
+                    <div class="cell">
+                        <div class="card">
+                            <div class="card-section">
+                                <h4>{% trans "Protocol" %}</h4>
+                                <form action="{% url 'build_protocol' %}" method="post">
+                                    <input type="submit" value='{% trans "Build" %}' class="button small success" />
+                                    <table class="unstriped" style="text-align: left">
+                                        {% csrf_token %}
+                                        {{ build_protocol_form.as_table }}
+                                    </table>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="cell">
+                        <div class="card">
+                            <div class="card-section">
+                                <h4>{% trans "Detailed protocol" %}</h4>
+                                <form action="{% url 'build_protocol_detailed' %}" method="post">
+                                    <input type="submit" value='{% trans "Build" %}' class="button small success" />
+                                    <table class="unstriped" style="text-align: left">
+                                        {% csrf_token %}
+                                        {{ build_protocol_detailed_form.as_table }}
+                                    </table>
+                                </form>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="cell">
-                <div class="card">
-                    <div class="card-section">
-                        <h4>{% trans "Detailed protocol" %}</h4>
-                        <form action="{% url 'build_protocol_detailed' %}" method="post">
-                            <input type="submit" value='{% trans "Build" %}' class="button small success" />
-                            <table class="unstriped" style="text-align: left">
-                                {% csrf_token %}
-                                {{ build_protocol_detailed_form.as_table }}
-                            </table>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+            <!-- ... -->
 
-    <div class="tabs-panel{% if tab_id == 6 %} is-active{% endif %}" id="redmine">
-        {% if protocol.device.redmine_project and protocol.redmine_wiki %}
-        <div class="grid-x grid-margin-x">
-            <div class="cell">
-                <div class="card">
-                    <div class="card-section">
-                        <h5>Wiki</h5>
-                        <p>
-                            <a href="{{ redmine_url }}/projects/{{ protocol.device.redmine_project }}/wiki/{{ protocol.redmine_wiki }}/">
-                                {{ redmine_url }}/projects/{{ protocol.device.redmine_project }}/wiki/{{ protocol.redmine_wiki }}/
-                            </a>
-                        </p>
-                    </div>
+            <!-- Redmine -->
+            <div class="tabs-panel{% if tab_id == 6 %} is-active{% endif %}" id="redmine">
+                {% if protocol.device.redmine_project and protocol.redmine_wiki %}
+                <div class="callout">
+                    <h5>Wiki</h5>
+                    <p>
+                        <a href="{{ redmine_url }}/projects/{{ protocol.device.redmine_project }}/wiki/{{ protocol.redmine_wiki }}/">
+                            {{ redmine_url }}/projects/{{ protocol.device.redmine_project }}/wiki/{{ protocol.redmine_wiki }}/
+                        </a>
+                    </p>
+                </div>
+                {% endif %}
+                <div class="callout">
+                    <form action="{% url 'redmine_protocol_export' %}" method="post">
+                        <input type="submit" value='{% trans "Export" %}' class="button small success" />
+                        <table class="unstriped" style="text-align: left; width: 600px;">
+                            {% csrf_token %}
+                            {{ export_form.as_table }}
+                        </table>
+                    </form>
                 </div>
             </div>
-        </div>
-        {% endif %}
-        <div class="grid-x grid-margin-x">
-            <div class="cell">
-                <div class="card">
-                    <div class="card-section">
-                        <form action="{% url 'redmine_protocol_export' %}" method="post">
-                            <input type="submit" value='{% trans "Export" %}' class="button small success" />
-                            <table class="unstriped" style="text-align: left; width: 600px;">
-                                {% csrf_token %}
-                                {{ export_form.as_table }}
-                            </table>
-                        </form>
-                    </div>
-                </div>
-            </div>
+            <!-- ... -->
         </div>
     </div>
 </div>
@@ -447,6 +417,7 @@ $(document).ready(function() {
             { "visible": false, "targets": [ 0 ] },
         ],
         "order": [[ 0, 'asc' ]],
+        "ordering": false,
         "displayLength": 100,
         "drawCallback": function ( settings ) {
             var api = this.api();
@@ -458,23 +429,12 @@ $(document).ready(function() {
                     $(rows).eq( i ).before(
                         '<tr class="group" style="background-color: #F5F5F5; font-weight: bold"><td colspan="5">'+group+'</td></tr>'
                     );
-
                     last = group;
                 }
             } );
         }
     } );
 
-    // Order by the grouping
-    $('#results tbody').on( 'click', 'tr.group', function () {
-        var currentOrder = table.order()[0];
-        if ( currentOrder[0] === groupColumn && currentOrder[1] === 'asc' ) {
-            table.order( [ groupColumn, 'desc' ] ).draw();
-        }
-        else {
-            table.order( [ groupColumn, 'asc' ] ).draw();
-        }
-    } );
 } );
 
 document.addEventListener("DOMContentLoaded", () => {
