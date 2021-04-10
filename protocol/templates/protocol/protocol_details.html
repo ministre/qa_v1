@@ -178,10 +178,10 @@
                             {% endif %}
                             {% if result.issues %}
                             <ul>
-                                <li style="color: red; font-style: italic; list-style-type: none;">{% trans "Issues" %}:</li>
+                                <li style="color: #bc104b; font-style: italic; list-style-type: none;">{% trans "Issues" %}:</li>
                                 {% for issue in result.issues %}
                                 <ul>
-                                    <li style="color: red; font-style: italic; list-style-type: square;">{{ issue }}</li>
+                                    <li style="color: #bc104b; font-style: italic; list-style-type: square;">{{ issue }}</li>
                                 </ul>
                                 {% endfor %}
                             </ul>
