@@ -21,6 +21,7 @@ from django.db.models import Max, Min
 from testplan_pattern.models import CategoryPattern, TestPattern, TestPatternConfig, TestPatternImage, \
     TestPatternFile, TestPatternLink, TestPatternComment
 from django.utils.datastructures import MultiValueDictKeyError
+from testplan_pattern.views import get_converted_comments
 
 
 @method_decorator(login_required, name='dispatch')
@@ -326,6 +327,9 @@ def test_details(request, pk, tab_id):
     add_file_form = TestAddFileForm(test_id=test.id)
     add_link_form = TestAddLinkForm(test_id=test.id)
     add_comment_form = TestAddCommentForm(test_id=test.id)
+
+    comments = get_converted_comments(comments=TestComment.objects.filter(test=test).order_by('id'))
+
     export_form = RedmineTestExportForm(initial={'test_id': test.id,
                                                  'redmine_project': test.cat.testplan.redmine_project,
                                                  'redmine_wiki': test.redmine_wiki})
@@ -336,6 +340,7 @@ def test_details(request, pk, tab_id):
                                                           'add_file_form': add_file_form,
                                                           'add_link_form': add_link_form,
                                                           'add_comment_form': add_comment_form,
+                                                          'comments': comments,
                                                           'redmine_url': settings.REDMINE_URL,
                                                           'export_form': export_form,
                                                           'tab_id': tab_id})

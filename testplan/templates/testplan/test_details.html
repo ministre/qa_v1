@@ -48,7 +48,7 @@
             </li>
             <li class="tabs-title{% if tab_id == 7 %} is-active{% endif %}">
                 <a href="#comments"{% if tab_id == 7 %} aria-selected="true"{% endif %}>{% trans "Comments" %}
-                    {% if test.test_comment.all.count > 0 %} ({{ test.test_comment.all.count }}){% endif %}
+                    {% if comments|length > 0 %} ({{ comments|length }}){% endif %}
                 </a>
             </li>
             <li class="tabs-title{% if tab_id == 8 %} is-active{% endif %}">
@@ -307,37 +307,19 @@
                         {{ add_comment_form }}
                     </form>
                 </div>
-
-                {% for comment in test.test_comment.all|dictsort:"id" %}
+                {% for comment in comments %}
                 <div class="callout">
                     <p>
-                        {% if comment.parent %}
-                          {% if comment.parent.desc %}{{ comment.parent.desc }}{% endif %}
-                        {% else %}
-                          {% if comment.desc %}{{ comment.desc }}{% endif %}
-                        {% endif %}
-
-                        {% if not comment.parent %}
+                        {% if comment.desc %}{{ comment.desc }}{% endif %}
+                        {% if not comment.parent_id %}
                         <a href="{% url 'test_comment_update' pk=comment.id %}"><i class="step fi-pencil" style="color: #7700ff"></i></a>
                         {% endif %}
                         <a href="{% url 'test_comment_delete' pk=comment.id %}"><i class="step fi-minus" style="color: red"></i></a>
                     </p>
-                    {% if comment.parent %}
-                    {% if comment.parent.format == 0 %}
-                    <div class="callout">
-                        {{ comment.parent.text|safe }}
-                    </div>
-                    {% else %}
-                    <pre><code>{{ comment.parent.text }}</code></pre>
-                    {% endif %}
-                    {% else %}
                     {% if comment.format == 0 %}
-                    <div class="callout">
-                        {{ comment.text|safe }}
-                    </div>
+                    <div class="callout">{{ comment.text|safe }}</div>
                     {% else %}
                     <pre><code>{{ comment.text }}</code></pre>
-                    {% endif %}
                     {% endif %}
                 </div>
                 {% endfor %}

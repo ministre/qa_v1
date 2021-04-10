@@ -19,6 +19,8 @@ from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from datetime import datetime
 from device.views import Item
+from testplan_pattern.views import get_converted_comments
+from testplan.models import TestComment
 
 
 @method_decorator(login_required, name='dispatch')
@@ -231,6 +233,7 @@ def result_details(request, pk, tab_id):
                 converted_note = {'id': note.id, 'desc': note.desc, 'text': note.text,
                                   'format': note.format}
             converted_notes.append(converted_note)
+        comments = get_converted_comments(TestComment.objects.filter(test=result.test).order_by('id'))
 
         result_form = ResultForm(instance=result)
         result_form.fields['redmine_wiki'].widget = forms.HiddenInput()
@@ -240,8 +243,11 @@ def result_details(request, pk, tab_id):
                                                        'redmine_parent_wiki': result.protocol.redmine_wiki})
 
         return render(request, 'protocol/result_details.html', {'num': result.test.get_num(),
-                                                                'result': result, 'procedure': procedure,
-                                                                'expected': expected, 'notes': converted_notes,
+                                                                'result': result,
+                                                                'procedure': procedure,
+                                                                'expected': expected,
+                                                                'comments': comments,
+                                                                'notes': converted_notes,
                                                                 'result_form': result_form,
                                                                 'export_form': export_form,
                                                                 'redmine_url': settings.REDMINE_URL, 'tab_id': tab_id})

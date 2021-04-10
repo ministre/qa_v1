@@ -246,22 +246,45 @@ class TestPatternDelete(DeleteView):
                                                            'tab_id': 2})
 
 
+def get_converted_comments(comments):
+    converted_comments = []
+    for comment in comments:
+        try:
+            if comment.parent:
+                parent_id = comment.parent.id
+                f = comment.parent.format
+                desc = comment.parent.desc
+                if f == 0:
+                    text = textile.textile(comment.parent.text)
+                else:
+                    text = comment.parent.text
+            else:
+                parent_id = None
+                f = comment.format
+                desc = comment.desc
+                if f == 0:
+                    text = textile.textile(comment.text)
+                else:
+                    text = comment.text
+        except AttributeError:
+            parent_id = None
+            f = comment.format
+            desc = comment.desc
+            if f == 0:
+                text = textile.textile(comment.text)
+            else:
+                text = comment.text
+        converted_comments.append({'id': comment.id, 'parent_id': parent_id, 'format': f, 'desc': desc, 'text': text})
+    return converted_comments
+
+
 @login_required
 def test_pattern_details(request, pk, tab_id: int):
     test_pattern = get_object_or_404(TestPattern, id=pk)
     num = test_pattern.get_num()
     procedure = textile.textile(test_pattern.procedure)
     expected = textile.textile(test_pattern.expected)
-    comments = TestPatternComment.objects.filter(test_pattern=test_pattern).order_by('id')
-    converted_comments = []
-    for comment in comments:
-        if comment.format == 0:
-            converted_comment = {'id': comment.id, 'desc': comment.desc, 'text': textile.textile(comment.text),
-                                 'format': comment.format}
-        else:
-            converted_comment = {'id': comment.id, 'desc': comment.desc, 'text': comment.text,
-                                 'format': comment.format}
-        converted_comments.append(converted_comment)
+    comments = get_converted_comments(TestPatternComment.objects.filter(test_pattern=test_pattern).order_by('id'))
 
     device_types_update_form = TestPatternForm(instance=test_pattern)
     device_types_update_form.fields['name'].widget = forms.HiddenInput()
@@ -280,7 +303,7 @@ def test_pattern_details(request, pk, tab_id: int):
     test_redmine_wiki_update_form = TestRedmineWikiUpdateForm(initial={'redmine_wiki': test_pattern.redmine_wiki},
                                                               pattern_id=test_pattern.id)
     return render(request, 'testplan_pattern/test_pattern_details.html', {'test_pattern': test_pattern, 'num': num,
-                                                                          'comments': converted_comments,
+                                                                          'comments': comments,
                                                                           'device_types_update_form':
                                                                               device_types_update_form,
                                                                           'test_names_update_form':

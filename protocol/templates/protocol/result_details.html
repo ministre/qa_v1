@@ -248,6 +248,30 @@
                 </div>
                 {% endif %}
 
+                {% if comments %}
+                <div class="callout" data-closable>
+                    <button class="close-button" aria-label="Close alert" type="button" data-close>
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h5>{% trans "Comments" %} ({{ comments|length }})</h5>
+                    <ul class="accordion" data-responsive-accordion-tabs="accordion medium-tabs large-accordion" data-allow-all-closed="true">
+                        {% for comment in comments %}
+                        <li class="accordion-item is-active" data-accordion-item>
+                            <a href="#" class="accordion-title">
+                                {% if comment.desc %}{{ comment.desc }}{% else %}{% trans "Comment" %} #{{ forloop.counter }}{% endif %}
+                            </a>
+                            <div class="accordion-content" data-tab-content>
+                                {% if comment.format == 0 %}
+                                {{ comment.text|safe }}
+                                {% else %}
+                                <pre><code>{{ comment.text }}</code></pre>
+                                {% endif %}
+                            </div>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
             </div>
             <!-- ... -->
 

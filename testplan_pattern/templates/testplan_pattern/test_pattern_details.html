@@ -272,9 +272,8 @@
             <!-- Comments -->
             <div class="tabs-panel{% if tab_id == 11 %} is-active{% endif %}" id="comments">
                 <a href="{% url 'test_pattern_comment_create' test_pattern_id=test_pattern.id %}" class="button small">{% trans "Add" %}</a>
-                {% if comments %}
+                {% for comment in comments %}
                 <div class="callout">
-                    {% for comment in comments %}
                     <p>
                         {% if comment.desc %}{{ comment.desc }}{% endif %}
                         <a href="{% url 'test_pattern_comment_update' pk=comment.id %}"><i class="step fi-pencil" style="color: #7700ff"></i></a>
@@ -287,9 +286,8 @@
                     {% else %}
                     <pre><code>{{ comment.text }}</code></pre>
                     {% endif %}
-                    {% endfor %}
                 </div>
-                {% endif %}
+                {% endfor %}
             </div>
             <!-- ... -->
 
