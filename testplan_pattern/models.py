@@ -196,3 +196,34 @@ class TestPatternValueInteger(models.Model):
 
     def __str__(self):
         return self.desc
+
+
+class TestPatternValueIntegerPair(models.Model):
+    test_pattern = models.ForeignKey(TestPattern, related_name='test_pattern_value_integer_pair',
+                                     on_delete=models.CASCADE)
+    desc = models.CharField(max_length=1000)
+    unit1 = models.CharField(max_length=100, blank=True, null=True)
+    unit2 = models.CharField(max_length=100, blank=True, null=True)
+    created_by = models.ForeignKey(User, models.SET_NULL, related_name='test_pattern_value_integer_pair_c',
+                                   blank=True, null=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_by = models.ForeignKey(User, models.SET_NULL, related_name='test_pattern_value_integer_pair_u',
+                                   blank=True, null=True)
+    updated_at = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return self.desc
+
+
+class TestPatternValueText(models.Model):
+    test_pattern = models.ForeignKey(TestPattern, related_name='test_pattern_value_text', on_delete=models.CASCADE)
+    desc = models.CharField(max_length=1000)
+    created_by = models.ForeignKey(User, models.SET_NULL, related_name='test_pattern_value_text_c',
+                                   blank=True, null=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_by = models.ForeignKey(User, models.SET_NULL, related_name='test_pattern_value_text_u',
+                                   blank=True, null=True)
+    updated_at = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return self.desc
