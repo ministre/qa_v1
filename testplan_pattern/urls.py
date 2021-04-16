@@ -57,4 +57,10 @@ urlpatterns = [
          name='test_pattern_comment_update'),
     path('test/comment/delete/<int:pk>/', views.TestPatternCommentDelete.as_view(),
          name='test_pattern_comment_delete'),
+    path('test/add_value/', views.test_pattern_add_value, name='test_pattern_add_value'),
+    path('test/add_value_integer/', views.test_pattern_add_value_integer, name='test_pattern_add_value_integer'),
+    path('test/value_integer/update/<int:pk>/', views.TestPatternValueIntegerUpdate.as_view(),
+         name='test_pattern_value_integer_update'),
+    path('test/value_integer/delete/<int:pk>/', views.TestPatternValueIntegerDelete.as_view(),
+         name='test_pattern_value_integer_delete'),
 ]

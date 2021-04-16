@@ -167,6 +167,33 @@
                         {{ test_expected_update_form }}
                     </form>
                 </div>
+
+                <div class="callout">
+                    <h4>{% trans "Values" %}</h4>
+                    <div class="callout">
+                        <form method="post" action="{% url 'test_pattern_add_value' %}">
+                            <input type="submit" value='{% trans "Add" %}' class="button small" />
+                            {% csrf_token %}
+                            {{ add_value_form }}
+                        </form>
+                    </div>
+
+                    {% if test_pattern.test_pattern_value_integer.all %}
+                    <div class="callout">
+                        <h5>Integer ({{ test_pattern.test_pattern_value_integer.all.count }})</h5>
+                        <ul>
+                        {% for value_integer in test_pattern.test_pattern_value_integer.all|dictsort:"id" %}
+                            <li>
+                                {{ value_integer.desc }}{% if value_integer.unit %}, {{ value_integer.unit }}{% endif %}
+                                <a href="{% url 'test_pattern_value_integer_update' pk=value_integer.id %}"><i class="step fi-pencil" style="color: #7700ff"></i></a>
+                                <a href="{% url 'test_pattern_value_integer_delete' pk=value_integer.id %}"><i class="step fi-minus" style="color: red"></i></a>
+                            </li>
+                        {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+
+                </div>
             </div>
             <!-- ... -->
 

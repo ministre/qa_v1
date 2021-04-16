@@ -1,0 +1,21 @@
+{% extends "device/wrapper.html" %}
+
+{% load i18n %}
+
+{% block content %}
+
+<nav aria-label="Back" role="navigation">
+    <ul class="breadcrumbs">
+        <li><a href="{{ back_url }}">{% trans "Back" %}</a></li>
+    </ul>
+</nav>
+
+<div class="callout">
+    <form method="post" action="{{ next_url }}">
+        <input type="submit" value='{% trans "Create" %}' class="button success small" />
+        {% csrf_token %}
+        {{ form }}
+    </form>
+</div>
+
+{% endblock %}

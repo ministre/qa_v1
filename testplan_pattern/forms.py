@@ -1,6 +1,6 @@
 from django.forms import ModelForm, HiddenInput
 from .models import TestplanPattern, CategoryPattern, TestPattern, TestPatternConfig, TestPatternImage, \
-    TestPatternFile, TestPatternLink, TestPatternComment
+    TestPatternFile, TestPatternLink, TestPatternComment, TestPatternValueInteger
 from django import forms
 from django.utils.translation import gettext_lazy as _
 from django.shortcuts import get_object_or_404
@@ -244,6 +244,35 @@ class TestPatternCommentForm(ModelForm):
             'test_pattern': HiddenInput(),
             'text': forms.Textarea(attrs={'rows': '15'}),
             'format': forms.Select(choices=FORMAT, attrs={'class': 'form-control'}),
+            'created_by': HiddenInput(), 'created_at': HiddenInput(),
+            'updated_by': HiddenInput(), 'updated_at': HiddenInput()
+        }
+
+
+class TestPatternAddValueForm(forms.Form):
+    pattern_id = forms.IntegerField()
+    desc = forms.CharField(label=_('Description'), max_length=300)
+    type = forms.CharField(label=_('Type'), max_length=300)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        value_types = (
+            (0, 'Integer'),
+        )
+        self.fields['type'].widget = forms.Select(choices=value_types, attrs={'class': 'form-control'})
+        self.fields['pattern_id'].widget = forms.HiddenInput()
+
+
+class TestPatternValueIntegerForm(ModelForm):
+    class Meta:
+        model = TestPatternValueInteger
+        labels = {
+            'desc': _('Description'),
+            'unit': _('Unit'),
+        }
+        fields = '__all__'
+        widgets = {
+            'test_pattern': HiddenInput(),
             'created_by': HiddenInput(), 'created_at': HiddenInput(),
             'updated_by': HiddenInput(), 'updated_at': HiddenInput()
         }
