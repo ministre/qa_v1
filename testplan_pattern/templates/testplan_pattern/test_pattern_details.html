@@ -177,14 +177,13 @@
                             {{ add_value_form }}
                         </form>
                     </div>
-
                     {% if test_pattern.test_pattern_value_integer.all %}
                     <div class="callout">
                         <h5>Integer ({{ test_pattern.test_pattern_value_integer.all.count }})</h5>
                         <ul>
                         {% for value_integer in test_pattern.test_pattern_value_integer.all|dictsort:"id" %}
                             <li>
-                                {{ value_integer.desc }}{% if value_integer.unit %}, {{ value_integer.unit }}{% endif %}
+                                {{ value_integer.desc }}{% if value_integer.unit %}<i>, {{ value_integer.unit }}</i>{% endif %}
                                 <a href="{% url 'test_pattern_value_integer_update' pk=value_integer.id %}"><i class="step fi-pencil" style="color: #7700ff"></i></a>
                                 <a href="{% url 'test_pattern_value_integer_delete' pk=value_integer.id %}"><i class="step fi-minus" style="color: red"></i></a>
                             </li>
@@ -192,26 +191,26 @@
                         </ul>
                     </div>
                     {% endif %}
-
                     {% if test_pattern.test_pattern_value_integer_pair.all %}
                     <div class="callout">
                         <h5>Integer Pair ({{ test_pattern.test_pattern_value_integer_pair.all.count }})</h5>
                         <ul>
                         {% for value_integer_pair in test_pattern.test_pattern_value_integer_pair.all|dictsort:"id" %}
                             <li>
-                                {{ value_integer_pair.desc }}{% if value_integer_pair.unit1 or value_integer_pair.unit2 %}, [{% endif %}
-                                {% if value_integer_pair.unit1 %}{{ value_integer_pair.unit1 }}{% endif %}
-                                {% if value_integer_pair.unit1 and value_integer_pair.unit2 %} / {% endif %}
-                                {% if value_integer_pair.unit2 %}{{ value_integer_pair.unit2 }}{% endif %}
-                                {% if value_integer_pair.unit1 or value_integer_pair.unit2 %}]{% endif %}
+                                {{ value_integer_pair.desc }}
                                 <a href="{% url 'test_pattern_value_integer_pair_update' pk=value_integer_pair.id %}"><i class="step fi-pencil" style="color: #7700ff"></i></a>
                                 <a href="{% url 'test_pattern_value_integer_pair_delete' pk=value_integer_pair.id %}"><i class="step fi-minus" style="color: red"></i></a>
+                                {% if value_integer_pair.unit1 or value_integer_pair.unit2 %}
+                                <ul>
+                                    <li><i>{% if value_integer_pair.unit1 %}{{ value_integer_pair.unit1 }}{% endif %}</i></li>
+                                    <li><i>{% if value_integer_pair.unit2 %}{{ value_integer_pair.unit2 }}{% endif %}</i></li>
+                                </ul>
+                                {% endif %}
                             </li>
                         {% endfor %}
                         </ul>
                     </div>
                     {% endif %}
-
                     {% if test_pattern.test_pattern_value_text.all %}
                     <div class="callout">
                         <h5>Text ({{ test_pattern.test_pattern_value_text.all.count }})</h5>
@@ -226,7 +225,6 @@
                         </ul>
                     </div>
                     {% endif %}
-
                 </div>
             </div>
             <!-- ... -->
