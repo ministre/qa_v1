@@ -9,7 +9,7 @@ from testplan.models import Test
 from .forms import TestplanPatternForm, CategoryPatternForm, TestPatternForm, TestNamesUpdateForm, \
     TestPurposesUpdateForm, TestProceduresUpdateForm, TestExpectedUpdateForm, TestRedmineWikiUpdateForm, \
     TestPatternConfigForm, TestPatternImageForm, TestPatternFileForm, TestPatternLinkForm, TestPatternCommentForm, \
-    TestPatternAddValueForm, TestPatternValueIntegerForm, TestPatternValueIntegerPairForm, TestPatternValueTextForm
+    TestPatternValueIntegerForm, TestPatternValueIntegerPairForm, TestPatternValueTextForm
 from django.urls import reverse
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
@@ -287,14 +287,12 @@ def test_pattern_details(request, pk, tab_id: int):
     procedure = textile.textile(test_pattern.procedure)
     expected = textile.textile(test_pattern.expected)
     comments = get_converted_comments(TestPatternComment.objects.filter(test_pattern=test_pattern).order_by('id'))
-
     device_types_update_form = TestPatternForm(instance=test_pattern)
     device_types_update_form.fields['name'].widget = forms.HiddenInput()
     device_types_update_form.fields['procedure'].widget = forms.HiddenInput()
     device_types_update_form.fields['expected'].widget = forms.HiddenInput()
     device_types_update_form.fields['purpose'].widget = forms.HiddenInput()
     device_types_update_form.fields['redmine_wiki'].widget = forms.HiddenInput()
-
     test_names_update_form = TestNamesUpdateForm(initial={'name': test_pattern.name}, pattern_id=test_pattern.id)
     test_purposes_update_form = TestPurposesUpdateForm(initial={'purpose': test_pattern.purpose},
                                                        pattern_id=test_pattern.id)
@@ -304,9 +302,6 @@ def test_pattern_details(request, pk, tab_id: int):
                                                        pattern_id=test_pattern.id)
     test_redmine_wiki_update_form = TestRedmineWikiUpdateForm(initial={'redmine_wiki': test_pattern.redmine_wiki},
                                                               pattern_id=test_pattern.id)
-
-    add_value_form = TestPatternAddValueForm(initial={'pattern_id': test_pattern.id})
-
     return render(request, 'testplan_pattern/test_pattern_details.html', {'test_pattern': test_pattern, 'num': num,
                                                                           'comments': comments,
                                                                           'device_types_update_form':
@@ -322,7 +317,6 @@ def test_pattern_details(request, pk, tab_id: int):
                                                                           'test_redmine_wiki_update_form':
                                                                               test_redmine_wiki_update_form,
                                                                           'procedure': procedure, 'expected': expected,
-                                                                          'add_value_form': add_value_form,
                                                                           'tab_id': tab_id})
 
 
@@ -784,48 +778,33 @@ class TestPatternCommentDelete(DeleteView):
 
 
 @login_required
-def test_pattern_add_value(request):
+def test_pattern_value_create(request, test_pattern_id: int, type_id: int):
+    back_url = reverse('test_pattern_details', kwargs={'pk': test_pattern_id, 'tab_id': 6})
     if request.method == "POST":
-        back_url = reverse('test_pattern_details', kwargs={'pk': request.POST['pattern_id'], 'tab_id': 6})
-        next_url = None
-        if request.POST['value_type'] == '0':
-            form = TestPatternValueIntegerForm(initial={'test_pattern': request.POST['pattern_id'],
-                                                        'desc': request.POST['desc'],
-                                                        'created_by': request.user, 'updated_by': request.user})
-            next_url = reverse('test_pattern_add_value_integer')
-        elif request.POST['value_type'] == '1':
-            form = TestPatternValueIntegerPairForm(initial={'test_pattern': request.POST['pattern_id'],
-                                                            'desc': request.POST['desc'],
-                                                            'created_by': request.user, 'updated_by': request.user})
-            next_url = reverse('test_pattern_add_value_integer_pair')
+        if type_id == 0:
+            form = TestPatternValueIntegerForm(request.POST)
+        elif type_id == 1:
+            form = TestPatternValueIntegerPairForm(request.POST)
         else:
-            test_pattern = get_object_or_404(TestPattern, id=request.POST['pattern_id'])
-            TestPatternValueText.objects.create(test_pattern=test_pattern, desc=request.POST['desc'],
-                                                created_by=request.user, updated_by=request.user)
-            return HttpResponseRedirect(reverse('test_pattern_details', kwargs={'pk': test_pattern.id, 'tab_id': 6}))
-        return render(request, 'testplan_pattern/test_pattern_add_value.html', {'form': form,
-                                                                                'back_url': back_url,
-                                                                                'next_url': next_url})
-    else:
-        return render(request, 'device/message.html', {'message': [False, _('Page not found')]})
-
-
-@login_required
-def test_pattern_add_value_integer(request):
-    if request.method == "POST":
-        form = TestPatternValueIntegerForm(request.POST)
+            form = TestPatternValueTextForm(request.POST)
         if form.is_valid():
             form.save()
-            return HttpResponseRedirect(reverse('test_pattern_details', kwargs={'pk': request.POST['test_pattern'],
-                                                                                'tab_id': 6}))
-        else:
-            return render(request, 'device/message.html', {'message': [False, _('Error')]})
+            return HttpResponseRedirect(back_url)
     else:
-        return render(request, 'device/message.html', {'message': [False, _('Page not found')]})
+        if type_id == 0:
+            form = TestPatternValueIntegerForm(initial={'test_pattern': test_pattern_id,
+                                                        'created_by': request.user, 'updated_by': request.user})
+        elif type_id == 1:
+            form = TestPatternValueIntegerPairForm(initial={'test_pattern': test_pattern_id,
+                                                            'created_by': request.user, 'updated_by': request.user})
+        else:
+            form = TestPatternValueTextForm(initial={'test_pattern': test_pattern_id,
+                                                     'created_by': request.user, 'updated_by': request.user})
+    return render(request, 'device/create.html', {'form': form, 'back_url': back_url})
 
 
 @method_decorator(login_required, name='dispatch')
-class TestPatternValueIntegerUpdate(UpdateView):
+class TestPatternValueIntUpdate(UpdateView):
     model = TestPatternValueInteger
     form_class = TestPatternValueIntegerForm
     template_name = 'device/update.html'
@@ -844,7 +823,7 @@ class TestPatternValueIntegerUpdate(UpdateView):
 
 
 @method_decorator(login_required, name='dispatch')
-class TestPatternValueIntegerDelete(DeleteView):
+class TestPatternValueIntDelete(DeleteView):
     model = TestPatternValueInteger
     template_name = 'device/delete.html'
 
@@ -858,22 +837,8 @@ class TestPatternValueIntegerDelete(DeleteView):
         return reverse('test_pattern_details', kwargs={'pk': self.object.test_pattern.id, 'tab_id': 6})
 
 
-@login_required
-def test_pattern_add_value_integer_pair(request):
-    if request.method == "POST":
-        form = TestPatternValueIntegerPairForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return HttpResponseRedirect(reverse('test_pattern_details', kwargs={'pk': request.POST['test_pattern'],
-                                                                                'tab_id': 6}))
-        else:
-            return render(request, 'device/message.html', {'message': [False, _('Error')]})
-    else:
-        return render(request, 'device/message.html', {'message': [False, _('Page not found')]})
-
-
 @method_decorator(login_required, name='dispatch')
-class TestPatternValueIntegerPairUpdate(UpdateView):
+class TestPatternValueIntPairUpdate(UpdateView):
     model = TestPatternValueIntegerPair
     form_class = TestPatternValueIntegerPairForm
     template_name = 'device/update.html'
@@ -892,7 +857,7 @@ class TestPatternValueIntegerPairUpdate(UpdateView):
 
 
 @method_decorator(login_required, name='dispatch')
-class TestPatternValueIntegerPairDelete(DeleteView):
+class TestPatternValueIntPairDelete(DeleteView):
     model = TestPatternValueIntegerPair
     template_name = 'device/delete.html'
 

@@ -250,22 +250,6 @@ class TestPatternCommentForm(ModelForm):
         }
 
 
-class TestPatternAddValueForm(forms.Form):
-    pattern_id = forms.IntegerField()
-    desc = forms.CharField(label=_('Description'), max_length=300)
-    value_type = forms.CharField(label=_('Type'), max_length=300)
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        value_types = (
-            (0, 'Integer'),
-            (1, 'Integer Pair'),
-            (2, 'Text'),
-        )
-        self.fields['value_type'].widget = forms.Select(choices=value_types, attrs={'class': 'form-control'})
-        self.fields['pattern_id'].widget = forms.HiddenInput()
-
-
 class TestPatternValueIntegerForm(ModelForm):
     class Meta:
         model = TestPatternValueInteger
