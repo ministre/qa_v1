@@ -1,6 +1,7 @@
 from django.forms import ModelForm, HiddenInput
 from .models import TestplanPattern, CategoryPattern, TestPattern, TestPatternConfig, TestPatternImage, \
-    TestPatternFile, TestPatternLink, TestPatternComment, TestPatternValueInteger
+    TestPatternFile, TestPatternLink, TestPatternComment, TestPatternValueInteger, TestPatternValueIntegerPair, \
+    TestPatternValueText
 from django import forms
 from django.utils.translation import gettext_lazy as _
 from django.shortcuts import get_object_or_404
@@ -252,14 +253,16 @@ class TestPatternCommentForm(ModelForm):
 class TestPatternAddValueForm(forms.Form):
     pattern_id = forms.IntegerField()
     desc = forms.CharField(label=_('Description'), max_length=300)
-    type = forms.CharField(label=_('Type'), max_length=300)
+    value_type = forms.CharField(label=_('Type'), max_length=300)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         value_types = (
             (0, 'Integer'),
+            (1, 'Integer Pair'),
+            (2, 'Text'),
         )
-        self.fields['type'].widget = forms.Select(choices=value_types, attrs={'class': 'form-control'})
+        self.fields['value_type'].widget = forms.Select(choices=value_types, attrs={'class': 'form-control'})
         self.fields['pattern_id'].widget = forms.HiddenInput()
 
 
@@ -269,6 +272,36 @@ class TestPatternValueIntegerForm(ModelForm):
         labels = {
             'desc': _('Description'),
             'unit': _('Unit'),
+        }
+        fields = '__all__'
+        widgets = {
+            'test_pattern': HiddenInput(),
+            'created_by': HiddenInput(), 'created_at': HiddenInput(),
+            'updated_by': HiddenInput(), 'updated_at': HiddenInput()
+        }
+
+
+class TestPatternValueIntegerPairForm(ModelForm):
+    class Meta:
+        model = TestPatternValueIntegerPair
+        labels = {
+            'desc': _('Description'),
+            'unit1': _('Unit 1'),
+            'unit2': _('Unit 2'),
+        }
+        fields = '__all__'
+        widgets = {
+            'test_pattern': HiddenInput(),
+            'created_by': HiddenInput(), 'created_at': HiddenInput(),
+            'updated_by': HiddenInput(), 'updated_at': HiddenInput()
+        }
+
+
+class TestPatternValueTextForm(ModelForm):
+    class Meta:
+        model = TestPatternValueText
+        labels = {
+            'desc': _('Description'),
         }
         fields = '__all__'
         widgets = {

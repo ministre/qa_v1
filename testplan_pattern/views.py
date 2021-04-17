@@ -3,12 +3,13 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from .models import TestplanPattern, CategoryPattern, TestPattern, TestPatternConfig, TestPatternImage, \
-    TestPatternFile, TestPatternLink, TestPatternComment, TestPatternValueInteger
+    TestPatternFile, TestPatternLink, TestPatternComment, TestPatternValueInteger, TestPatternValueIntegerPair, \
+    TestPatternValueText
 from testplan.models import Test
 from .forms import TestplanPatternForm, CategoryPatternForm, TestPatternForm, TestNamesUpdateForm, \
     TestPurposesUpdateForm, TestProceduresUpdateForm, TestExpectedUpdateForm, TestRedmineWikiUpdateForm, \
     TestPatternConfigForm, TestPatternImageForm, TestPatternFileForm, TestPatternLinkForm, TestPatternCommentForm, \
-    TestPatternAddValueForm, TestPatternValueIntegerForm
+    TestPatternAddValueForm, TestPatternValueIntegerForm, TestPatternValueIntegerPairForm, TestPatternValueTextForm
 from django.urls import reverse
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
@@ -785,12 +786,23 @@ class TestPatternCommentDelete(DeleteView):
 @login_required
 def test_pattern_add_value(request):
     if request.method == "POST":
-        # Integer Value Type
-        form = TestPatternValueIntegerForm(initial={'test_pattern': request.POST['pattern_id'],
-                                                    'desc': request.POST['desc'],
-                                                    'created_by': request.user, 'updated_by': request.user})
         back_url = reverse('test_pattern_details', kwargs={'pk': request.POST['pattern_id'], 'tab_id': 6})
-        next_url = reverse('test_pattern_add_value_integer')
+        next_url = None
+        if request.POST['value_type'] == '0':
+            form = TestPatternValueIntegerForm(initial={'test_pattern': request.POST['pattern_id'],
+                                                        'desc': request.POST['desc'],
+                                                        'created_by': request.user, 'updated_by': request.user})
+            next_url = reverse('test_pattern_add_value_integer')
+        elif request.POST['value_type'] == '1':
+            form = TestPatternValueIntegerPairForm(initial={'test_pattern': request.POST['pattern_id'],
+                                                            'desc': request.POST['desc'],
+                                                            'created_by': request.user, 'updated_by': request.user})
+            next_url = reverse('test_pattern_add_value_integer_pair')
+        else:
+            test_pattern = get_object_or_404(TestPattern, id=request.POST['pattern_id'])
+            TestPatternValueText.objects.create(test_pattern=test_pattern, desc=request.POST['desc'],
+                                                created_by=request.user, updated_by=request.user)
+            return HttpResponseRedirect(reverse('test_pattern_details', kwargs={'pk': test_pattern.id, 'tab_id': 6}))
         return render(request, 'testplan_pattern/test_pattern_add_value.html', {'form': form,
                                                                                 'back_url': back_url,
                                                                                 'next_url': next_url})
@@ -834,6 +846,88 @@ class TestPatternValueIntegerUpdate(UpdateView):
 @method_decorator(login_required, name='dispatch')
 class TestPatternValueIntegerDelete(DeleteView):
     model = TestPatternValueInteger
+    template_name = 'device/delete.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('test_pattern_details', kwargs={'pk': self.object.test_pattern.id, 'tab_id': 6})
+        return context
+
+    def get_success_url(self):
+        Item.update_timestamp(foo=self.object.test_pattern, user=self.request.user)
+        return reverse('test_pattern_details', kwargs={'pk': self.object.test_pattern.id, 'tab_id': 6})
+
+
+@login_required
+def test_pattern_add_value_integer_pair(request):
+    if request.method == "POST":
+        form = TestPatternValueIntegerPairForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse('test_pattern_details', kwargs={'pk': request.POST['test_pattern'],
+                                                                                'tab_id': 6}))
+        else:
+            return render(request, 'device/message.html', {'message': [False, _('Error')]})
+    else:
+        return render(request, 'device/message.html', {'message': [False, _('Page not found')]})
+
+
+@method_decorator(login_required, name='dispatch')
+class TestPatternValueIntegerPairUpdate(UpdateView):
+    model = TestPatternValueIntegerPair
+    form_class = TestPatternValueIntegerPairForm
+    template_name = 'device/update.html'
+
+    def get_initial(self):
+        return {'updated_by': self.request.user, 'updated_at': timezone.now()}
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('test_pattern_details', kwargs={'pk': self.object.test_pattern.id, 'tab_id': 6})
+        return context
+
+    def get_success_url(self):
+        Item.update_timestamp(foo=self.object.test_pattern, user=self.request.user)
+        return reverse('test_pattern_details', kwargs={'pk': self.object.test_pattern.id, 'tab_id': 6})
+
+
+@method_decorator(login_required, name='dispatch')
+class TestPatternValueIntegerPairDelete(DeleteView):
+    model = TestPatternValueIntegerPair
+    template_name = 'device/delete.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('test_pattern_details', kwargs={'pk': self.object.test_pattern.id, 'tab_id': 6})
+        return context
+
+    def get_success_url(self):
+        Item.update_timestamp(foo=self.object.test_pattern, user=self.request.user)
+        return reverse('test_pattern_details', kwargs={'pk': self.object.test_pattern.id, 'tab_id': 6})
+
+
+@method_decorator(login_required, name='dispatch')
+class TestPatternValueTextUpdate(UpdateView):
+    model = TestPatternValueText
+    form_class = TestPatternValueTextForm
+    template_name = 'device/update.html'
+
+    def get_initial(self):
+        return {'updated_by': self.request.user, 'updated_at': timezone.now()}
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('test_pattern_details', kwargs={'pk': self.object.test_pattern.id, 'tab_id': 6})
+        return context
+
+    def get_success_url(self):
+        Item.update_timestamp(foo=self.object.test_pattern, user=self.request.user)
+        return reverse('test_pattern_details', kwargs={'pk': self.object.test_pattern.id, 'tab_id': 6})
+
+
+@method_decorator(login_required, name='dispatch')
+class TestPatternValueTextDelete(DeleteView):
+    model = TestPatternValueText
     template_name = 'device/delete.html'
 
     def get_context_data(self, **kwargs):
