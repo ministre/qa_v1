@@ -689,12 +689,17 @@ def build_testplan(request):
                                 test_config.config = test_config.config.replace('\r', '')
                                 table.cell(0, 0).text = test_config.config
                 if images:
-                    test_images = TestImage.objects.filter(test=test).order_by('id')
-                    for test_image in test_images:
-                        if test_image.desc:
-                            document.add_heading(test_image.desc, level=3)
-                        if test_image.image:
-                            document.add_picture(test_image.image, width=Cm(17))
+                    for test_image in TestImage.objects.filter(test=test).order_by('id'):
+                        if test_image.parent:
+                            if test_image.parent.desc:
+                                document.add_heading(test_image.parent.desc, level=3)
+                            if test_image.parent.image:
+                                document.add_picture(test_image.parent.image, width=Cm(17))
+                        else:
+                            if test_image.desc:
+                                document.add_heading(test_image.desc, level=3)
+                            if test_image.image:
+                                document.add_picture(test_image.image, width=Cm(17))
 
         ###
         file = os.path.join(settings.MEDIA_ROOT + '/docx_builder/testplans/',
