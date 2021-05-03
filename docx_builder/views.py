@@ -675,13 +675,19 @@ def build_testplan(request):
                     if test_configs:
                         document.add_heading(str(_('Configurations')), level=3)
                         for test_config in test_configs:
-                            document.add_paragraph(test_config.desc, style='Caption')
-                            test_config.config = test_config.config.replace('\r', '')
+                            if test_config.parent:
+                                document.add_paragraph(test_config.parent.desc, style='Caption')
+                            else:
+                                document.add_paragraph(test_config.desc, style='Caption')
                             table = document.add_table(rows=1, cols=1)
                             table.style = 'Table Grid'
                             shade_cells([table.cell(0, 0)], "#e3e8ec")
-                            table.cell(0, 0).text = test_config.config
-
+                            if test_config.parent:
+                                test_config.parent.config = test_config.parent.config.replace('\r', '')
+                                table.cell(0, 0).text = test_config.parent.config
+                            else:
+                                test_config.config = test_config.config.replace('\r', '')
+                                table.cell(0, 0).text = test_config.config
                 if images:
                     test_images = TestImage.objects.filter(test=test).order_by('id')
                     for test_image in test_images:
