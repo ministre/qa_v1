@@ -175,7 +175,7 @@ class RedmineDevice:
                 wiki += '\n\r'
                 if sample.sn:
                     wiki += '\n| ' + str(_('Serial Number')) + ': | ' + sample.sn + ' |\r'
-                if sample.sn:
+                if sample.desc:
                     wiki += '\n| ' + str(_('Description')) + ': | ' + sample.desc + ' |\r'
                 accounts = DeviceSampleAccount.objects.filter(sample=sample)
                 for account in accounts:
