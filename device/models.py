@@ -154,3 +154,33 @@ class DeviceContact(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
     updated_by = models.ForeignKey(User, models.SET_NULL, related_name='d_contact_u', blank=True, null=True)
     updated_at = models.DateTimeField(default=timezone.now)
+
+
+class Chipset(models.Model):
+    vendor = models.CharField(max_length=100, blank=True, null=True)
+    model = models.CharField(max_length=100)
+    type = models.IntegerField(default=0)
+    desc = models.CharField(max_length=1000, blank=True, null=True)
+    datasheet = models.FileField(upload_to="device/files/chipsets/datasheets/", blank=True, null=True)
+    created_by = models.ForeignKey(User, models.SET_NULL, related_name='chipset_c', blank=True, null=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_by = models.ForeignKey(User, models.SET_NULL, related_name='chipset_u', blank=True, null=True)
+    updated_at = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        if self.vendor:
+            return str(self.vendor) + ' ' + str(self.model)
+        else:
+            return self.model
+
+    def filename(self):
+        return os.path.basename(self.datasheet.name)
+
+
+class DeviceChipset(models.Model):
+    device = models.ForeignKey(Device, related_name='device_chipset', on_delete=models.CASCADE)
+    chipset = models.ForeignKey(Chipset, on_delete=models.CASCADE)
+    created_by = models.ForeignKey(User, models.SET_NULL, related_name='d_chipset_c', blank=True, null=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_by = models.ForeignKey(User, models.SET_NULL, related_name='d_chipset_u', blank=True, null=True)
+    updated_at = models.DateTimeField(default=timezone.now)

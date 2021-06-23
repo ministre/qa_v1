@@ -1,6 +1,6 @@
 from django.forms import ModelForm, HiddenInput
 from device.models import Vendor, DeviceType, Device, DevicePhoto, DeviceSample, DeviceSampleAccount, DeviceFile, \
-    DeviceNote, DeviceContact
+    DeviceNote, DeviceContact, Chipset
 from django.utils.translation import gettext_lazy as _
 from django import forms
 
@@ -150,6 +150,36 @@ class DeviceContactForm(ModelForm):
         fields = '__all__'
         widgets = {
             'device': HiddenInput(),
+            'created_by': HiddenInput(), 'created_at': HiddenInput(),
+            'updated_by': HiddenInput(), 'updated_at': HiddenInput()
+        }
+
+
+class ChipsetForm(ModelForm):
+    class Meta:
+        model = Chipset
+        labels = {
+            'vendor': _('Vendor'),
+            'model': _('Model'),
+            'type': _('Type'),
+            'desc': _('Description'),
+            'datasheet': _('Datasheet'),
+        }
+        fields = '__all__'
+        TYPE = (
+            (0, 'SoC'),
+            (1, 'SoC + Wi-Fi 2.4 GHz'),
+            (2, 'SoC + Wi-Fi 5 GHz'),
+            (3, 'SoC + Wi-Fi Dual Band'),
+            (4, 'Wi-Fi 2.4 GHz'),
+            (5, 'Wi-Fi 5 GHz'),
+            (6, 'Wi-Fi Dual Band'),
+            (7, 'Mobile Modem'),
+            (8, 'VoIP'),
+            (9, 'Ethernet Switch'),
+        )
+        widgets = {
+            'type': forms.Select(choices=TYPE, attrs={'class': 'form-control'}),
             'created_by': HiddenInput(), 'created_at': HiddenInput(),
             'updated_by': HiddenInput(), 'updated_at': HiddenInput()
         }

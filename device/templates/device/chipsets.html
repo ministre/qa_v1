@@ -1,0 +1,77 @@
+{% extends "device/wrapper.html" %}
+
+{% load i18n static %}
+
+{% block content %}
+
+<h4>{% trans "Chipsets" %}</h4>
+
+<a href="{% url 'chipset_create' %}" class="button small">{% trans "Create" %}</a>
+
+<table id="chipsets" class="hover unstriped" style="width:100%">
+    <thead>
+    <tr>
+        <th width="5%">ID</th>
+        <th>{% trans "Vendor" %}</th>
+        <th>{% trans "Model" %}</th>
+        <th>{% trans "Type" %}</th>
+        <th>{% trans "Description" %}</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for chipset in chipsets %}
+    <tr data-href="{% url 'chipset_details' pk=chipset.id %}">
+        <td>{{ chipset.id }}</td>
+        <td>{% if chipset.vendor %}{{ chipset.vendor }}{% endif %}</td>
+        <td>{{ chipset.model }}</td>
+        <td>
+            {% if chipset.type == 0 %}
+            {% trans "SoC" %}
+            {% elif chipset.type == 1 %}
+            {% trans "SoC + Wi-Fi 2.4 GHz" %}
+            {% elif chipset.type == 2 %}
+            {% trans "SoC + Wi-Fi 5 GHz" %}
+            {% elif chipset.type == 3 %}
+            {% trans "SoC + Wi-Fi Dual Band" %}
+            {% elif chipset.type == 4 %}
+            {% trans "Wi-Fi 2.4 GHz" %}
+            {% elif chipset.type == 5 %}
+            {% trans "Wi-Fi 5 GHz" %}
+            {% elif chipset.type == 6 %}
+            {% trans "Wi-Fi Dual Band" %}
+            {% elif chipset.type == 7 %}
+            {% trans "Mobile Modem" %}
+            {% elif chipset.type == 8 %}
+            {% trans "VoIP" %}
+            {% endif %}
+        </td>
+        <td>{% if chipset.desc %}{{ chipset.desc }}{% endif %}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+<script>
+    $(document).ready(function() {
+        var table = $('#chipsets').DataTable({
+        {% if LANGUAGE_CODE == 'ru' %}
+            "language": { "url": "{% static '/DataTables/i18n/Russian.json' %}" },
+        {% endif %}
+        "pageLength": 100,
+        "order": [[ 0, "desc" ]]
+        });
+    });
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const rows = document.querySelectorAll("tr[data-href]");
+        rows.forEach(row => {
+            row.addEventListener("click", () => {
+                window.location.href = row.dataset.href;
+            });
+        });
+    });
+</script>
+
+<script type="text/javascript" src="{% static 'DataTables/datatables.js' %}"></script>
+
+{% endblock %}

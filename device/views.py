@@ -2,10 +2,10 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from qa_v1 import settings
 from device.models import Vendor, Device, DeviceType, DevicePhoto, DeviceSample, DeviceSampleAccount, DeviceFile, \
-    DeviceNote, DeviceContact
+    DeviceNote, DeviceContact, Chipset, DeviceChipset
 from contact.models import Contact
 from .forms import VendorForm, DeviceTypeForm, DeviceForm, DevicePhotoForm, DeviceSampleForm, DeviceSampleAccountForm, \
-    DeviceFileForm, DeviceNoteForm, DeviceContactForm
+    DeviceFileForm, DeviceNoteForm, DeviceContactForm, ChipsetForm
 from redmine.forms import RedmineDeviceTypeExportForm, RedmineDeviceExportForm
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
@@ -13,6 +13,9 @@ from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.urls import reverse
 from django.utils import timezone
 import textile
+from django.http import HttpResponseRedirect
+from django.utils.translation import gettext_lazy as _
+from django import forms
 
 
 class Item(object):
@@ -242,6 +245,7 @@ class DeviceDelete(DeleteView):
 def device_details(request, pk, tab_id):
     device = get_object_or_404(Device, id=pk)
     protocols_count = device.protocols_count()
+    chipsets = Chipset.objects.all().order_by('id')
     notes = DeviceNote.objects.filter(device=device).order_by('id')
     converted_notes = []
     for note in notes:
@@ -252,16 +256,26 @@ def device_details(request, pk, tab_id):
             converted_note = {'id': note.id, 'desc': note.desc, 'text': note.text,
                               'format': note.format}
         converted_notes.append(converted_note)
+
+    chipset_form = ChipsetForm()
+    chipset_form.fields['datasheet'].widget = forms.HiddenInput()
+
     redmine_url = settings.REDMINE_URL
     export_form = RedmineDeviceExportForm(initial={'device_id': device.id,
                                                    'redmine_project': device.redmine_project,
                                                    'redmine_project_name': device.redmine_project_name,
                                                    'redmine_project_desc': device.redmine_project_desc,
                                                    'redmine_parent': device.redmine_parent})
-    return render(request, 'device/device_details.html', {'device': device, 'protocols_count': protocols_count,
-                                                          'notes': converted_notes,
-                                                          'redmine_url': redmine_url, 'export_form': export_form,
-                                                          'tab_id': tab_id})
+    return render(request, 'device/device_details.html', {
+        'device': device,
+        'chipsets': chipsets,
+        'protocols_count': protocols_count,
+        'notes': converted_notes,
+        'chipset_form': chipset_form,
+        'redmine_url': redmine_url,
+        'export_form': export_form,
+        'tab_id': tab_id
+    })
 
 
 @method_decorator(login_required, name='dispatch')
@@ -558,85 +572,107 @@ class DeviceContactDelete(DeleteView):
         return reverse('device_details', kwargs={'pk': self.object.device.id, 'tab_id': 7})
 
 
-'''
-@login_required
-def device_import(request):
-    if request.method == 'POST':
-        project_id = request.POST['project_id']
-        redmine = Redmine(settings.REDMINE_URL, key=settings.REDMINE_KEY, version='4.1.1')
-        if project_id == '':
-            error = 'Отсутствует идентификатор проекта!'
-            return render(request, 'device/device_import_error.html', {'error': error})
-        try:
-            project = redmine.project.get(project_id)
-            try:
-                wiki_page = redmine.wiki_page.get('Wiki', project_id=project.id)
-                # парсим wiki-страницу
-                # тип устройства
-                blocks = wiki_page.text.split('h2. ')
-                tag_blocks = blocks[0].split('#')
-                vendor = ''
-                model = ''
-                hw = ''
-                interfaces = ''
-                leds = ''
-                buttons = ''
-                chipsets = ''
-                memory = ''
-                try:
-                    device_type_id = DeviceType.objects.filter(Q(main_type=tag_blocks[1]) & Q(sub_type=tag_blocks[2]))[0].id
-                except IndexError:
-                    error = 'Неизвестный тип устройства!'
-                    return render(request, 'device/device_import_error.html', {'error': error})
-                # параметры устройства
-                for i, block in enumerate(blocks):
-                    parser = re.search('Общая информация', block)
-                    if parser:
-                        device_blocks = blocks[i].split('|')
-                        for j, device_block in enumerate(device_blocks):
-                            parser = re.search('Производитель:', device_block)
-                            if parser:
-                                vendor = device_blocks[j + 1][1:-1]
-                        for j, device_block in enumerate(device_blocks):
-                            parser = re.search('Модель:', device_block)
-                            if parser:
-                                model = device_blocks[j + 1][1:-1]
-                        for j, device_block in enumerate(device_blocks):
-                            parser = re.search('Версия Hardware:', device_block)
-                            if parser:
-                                hw = device_blocks[j + 1][1:-1]
-                        for j, device_block in enumerate(device_blocks):
-                            parser = re.search('Интерфейсы:', device_block)
-                            if parser:
-                                interfaces = device_blocks[j + 1][1:-1]
-                        for j, device_block in enumerate(device_blocks):
-                            parser = re.search('Индикаторы:', device_block)
-                            if parser:
-                                leds = device_blocks[j + 1][1:-1]
-                        for j, device_block in enumerate(device_blocks):
-                            parser = re.search('Кнопки:', device_block)
-                            if parser:
-                                buttons = device_blocks[j + 1][1:-1]
-                        for j, device_block in enumerate(device_blocks):
-                            parser = re.search('Чипсеты:', device_block)
-                            if parser:
-                                chipsets = device_blocks[j + 1][1:-1]
-                        for j, device_block in enumerate(device_blocks):
-                            parser = re.search('Память:', device_block)
-                            if parser:
-                                memory = device_blocks[j + 1][1:-1]
-                new_device = Device(project_id=project_id, type=DeviceType.objects.get(id=device_type_id),
-                                    vendor=vendor, model=model, hw=hw, interfaces=interfaces, leds=leds,
-                                    buttons=buttons, chipsets=chipsets, memory=memory)
-                new_device.save()
-                return HttpResponseRedirect('/device/')
-            except ResourceNotFoundError:
-                error = 'Отсутствует Wiki-страница!'
-                return render(request, 'device/device_import_error.html', {'error': error})
-        except ResourceNotFoundError:
-            error = 'Проект не найден!'
-            return render(request, 'device/device_import_error.html', {'error': error})
-    else:
-        return render(request, 'device/device_import.html')
+@method_decorator(login_required, name='dispatch')
+class ChipsetListView(ListView):
+    context_object_name = 'chipsets'
+    queryset = Chipset.objects.all().order_by('id')
+    template_name = 'device/chipsets.html'
 
-'''
+
+@method_decorator(login_required, name='dispatch')
+class ChipsetCreate(CreateView):
+    model = Chipset
+    form_class = ChipsetForm
+    template_name = 'device/create.html'
+
+    def get_initial(self):
+        return {'created_by': self.request.user, 'updated_by': self.request.user}
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('chipsets')
+        return context
+
+    def get_success_url(self):
+        return reverse('chipsets')
+
+
+@method_decorator(login_required, name='dispatch')
+class ChipsetUpdate(UpdateView):
+    model = Chipset
+    form_class = ChipsetForm
+    template_name = 'device/update.html'
+
+    def get_initial(self):
+        return {'updated_by': self.request.user, 'updated_at': timezone.now()}
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('chipset_details', kwargs={'pk': self.object.id})
+        return context
+
+    def get_success_url(self):
+        return reverse('chipset_details', kwargs={'pk': self.object.id})
+
+
+@method_decorator(login_required, name='dispatch')
+class ChipsetDelete(DeleteView):
+    model = Chipset
+    template_name = 'device/delete.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('chipset_details', kwargs={'pk': self.object.id})
+        return context
+
+    def get_success_url(self):
+        return reverse('chipsets')
+
+
+@login_required
+def chipset_details(request, pk):
+    chipset = get_object_or_404(Chipset, id=pk)
+    # devices_count = vendor.devices_count()
+    return render(request, 'device/chipset_details.html', {
+        'chipset': chipset
+    })
+
+
+@login_required
+def device_chipset_add(request, device_id: int, chipset_id: int):
+    device = get_object_or_404(Device, id=device_id)
+    chipset = get_object_or_404(Chipset, id=chipset_id)
+    device_chipset = DeviceChipset(device=device, chipset=chipset, created_by=request.user, updated_by=request.user)
+    device_chipset.save()
+    return HttpResponseRedirect(reverse('device_details', kwargs={'pk': device.id, 'tab_id': 2}))
+
+
+@login_required
+def device_chipset_create_add(request, device_id: int):
+    if request.method == "POST":
+        device = get_object_or_404(Device, id=device_id)
+        form = ChipsetForm(request.POST)
+        if form.is_valid():
+            new_chipset = Chipset.objects.create(vendor=form.cleaned_data['vendor'], model=form.cleaned_data['model'],
+                                                 type=form.cleaned_data['type'], desc=form.cleaned_data['desc'],
+                                                 created_by=request.user, updated_by=request.user)
+            chipset = get_object_or_404(Chipset, id=new_chipset.id)
+            DeviceChipset.objects.create(device=device, chipset=chipset, created_by=request.user,
+                                         updated_by=request.user)
+            return HttpResponseRedirect(reverse('device_details', kwargs={'pk': device.id, 'tab_id': 2}))
+    else:
+        return render(request, 'device/message.html', {'message': [False, _('Page not found')]})
+
+
+@method_decorator(login_required, name='dispatch')
+class DeviceChipsetDelete(DeleteView):
+    model = DeviceChipset
+    template_name = 'device/delete.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['back_url'] = reverse('device_details', kwargs={'pk': self.object.device.id, 'tab_id': 2})
+        return context
+
+    def get_success_url(self):
+        return reverse('device_details', kwargs={'pk': self.object.device.id, 'tab_id': 2})

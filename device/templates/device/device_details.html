@@ -4,181 +4,288 @@
 
 {% block content %}
 
-<p>
-    <a href="{% url 'devices' %}">{% trans "Devices" %}</a> &raquo; {{ device.vendor }} {{ device }}
-</p>
+<nav aria-label="Device:" role="navigation">
+    <ul class="breadcrumbs">
+        <li><a href="{% url 'devices' %}">{% trans "Devices" %}</a></li>
+        <li>{{ device.vendor }} {{ device }}</li>
+    </ul>
+</nav>
 
-<ul class="tabs" data-tabs id="device-tabs">
-    <li class="tabs-title {% if tab_id == 1 %} is-active{% endif %}">
-        <a data-tabs-target="general" href="#general">{% trans "General" %}</a>
-    </li>
-    <li class="tabs-title {% if tab_id == 2 %} is-active{% endif %}">
-        <a data-tabs-target="specs" href="#specs">{% trans "Specifications" %}</a>
-    </li>
-    <li class="tabs-title {% if tab_id == 3 %} is-active{% endif %}">
-        <a data-tabs-target="photos" href="#photos">{% trans "Photos" %}
-            {% if device.device_photo.all|length > 0 %} ({{ device.device_photo.all|length }}){% endif %}
-        </a>
-    </li>
-    <li class="tabs-title {% if tab_id == 4 %} is-active{% endif %}">
-        <a data-tabs-target="samples" href="#samples">{% trans "Samples" %}
-            {% if device.device_sample.all|length > 0 %} ({{ device.device_sample.all|length }}){% endif %}
-        </a>
-    </li>
-    <li class="tabs-title {% if tab_id == 5 %} is-active{% endif %}">
-        <a data-tabs-target="files" href="#files">{% trans "Files" %}
-            {% if device.device_file.all|length > 0 %} ({{ device.device_file.all|length }}){% endif %}
-        </a>
-    </li>
-    <li class="tabs-title {% if tab_id == 6 %} is-active{% endif %}">
-        <a data-tabs-target="notes" href="#notes">{% trans "Notes" %}
-            {% if notes|length > 0 %}({{ notes|length }}){% endif %}
-        </a>
-    </li>
-    <li class="tabs-title {% if tab_id == 7 %} is-active{% endif %}">
-        <a data-tabs-target="contacts" href="#contacts">{% trans "Contacts" %}
-            {% if device.device_contact.all|length > 0 %} ({{ device.device_contact.all|length }}){% endif %}
-        </a>
-    </li>
-    <li class="tabs-title {% if tab_id == 8 %} is-active{% endif %}">
-        <a data-tabs-target="redmine" href="#redmine">Redmine</a>
-    </li>
-</ul>
-
-<div class="tabs-content" data-tabs-content="device-tabs">
-    <div class="tabs-panel {% if tab_id == 1 %}is-active{% endif %}" id="general">
-        <a href="{% url 'device_update' pk=device.id %}" class="button small">{% trans "Update" %}</a>
-        <a href="{% url 'device_delete' pk=device.id %}" class="button alert small">{% trans "Delete" %}</a>
-        <div class="grid-x grid-margin-x">
-            <div class="cell">
-                <div class="card">
-                    <div class="card-section">
-                        <table class="unstriped">
-                            <tr>
-                                <td>ID:</td>
-                                <td>{{ device.id }}</td>
-                            </tr>
-                            <tr>
-                                <td>{% trans "Device Type" %}:</td>
-                                <td>{{ device.type }}</td>
-                            </tr>
-                            <tr>
-                                <td>{% trans "Vendor" %}:</td>
-                                <td>{{ device.vendor }}</td>
-                            </tr>
-                            <tr>
-                                <td>{% trans "Model" %}:</td>
-                                <td>{{ device.model }}</td>
-                            </tr>
-                            <tr>
-                                <td>{% trans "Hardware Version" %}:</td>
-                                <td>{% if device.hw %}{{ device.hw }}{% endif %}</td>
-                            </tr>
-                            <tr>
-                                <td>{% trans "Redmine Project" %}:</td>
-                                <td>{% if device.redmine_project %}{{ device.redmine_project }}{% endif %}</td>
-                            </tr>
-                            <tr>
-                                <td>{% trans "Redmine Project Name" %}:</td>
-                                <td>{% if device.redmine_project_name %}{{ device.redmine_project_name }}{% endif %}</td>
-                            </tr>
-                            <tr>
-                                <td>{% trans "Redmine Project Description" %}:</td>
-                                <td>{% if device.redmine_project_desc %}{{ device.redmine_project_desc }}{% endif %}</td>
-                            </tr>
-                            <tr>
-                                <td>{% trans "Redmine Parent Project" %}:</td>
-                                <td>{% if device.redmine_parent %}{{ device.redmine_parent }}{% endif %}</td>
-                            </tr>
-                            <tr>
-                                <td>{% trans "Created" %}:</td>
-                                <td>{{ device.created_at }} {% if device.created_by %}({{ device.created_by }}){% endif %}</td>
-                            </tr>
-                            <tr>
-                                <td>{% trans "Last Update" %}:</td>
-                                <td>{{ device.updated_at }} {% if device.updated_by %}({{ device.updated_by }}){% endif %}</td>
-                            </tr>
-                            <tr>
-                                <td>{% trans "Protocols amount" %}:</td>
-                                <td>{{ protocols_count }}</td>
-                            </tr>
-                        </table>
-                    </div>
+<div class="row">
+    <div class="columns">
+        <ul class="tabs" data-responsive-accordion-tabs="tabs medium-accordion large-tabs" id="device-tabs">
+            <li class="tabs-title{% if tab_id == 1 %} is-active{% endif %}">
+                <a href="#general"{% if tab_id == 1 %} aria-selected="true"{% endif %}>{% trans "General" %}</a>
+            </li>
+            <li class="tabs-title{% if tab_id == 2 %} is-active{% endif %}">
+                <a href="#specs"{% if tab_id == 2 %} aria-selected="true"{% endif %}>{% trans "Specifications" %}</a>
+            </li>
+            <li class="tabs-title{% if tab_id == 3 %} is-active{% endif %}">
+                <a href="#photos"{% if tab_id == 3 %} aria-selected="true"{% endif %}>{% trans "Photos" %}
+                    {% if device.device_photo.all|length > 0 %} ({{ device.device_photo.all|length }}){% endif %}
+                </a>
+            </li>
+            <li class="tabs-title{% if tab_id == 4 %} is-active{% endif %}">
+                <a href="#samples"{% if tab_id == 4 %} aria-selected="true"{% endif %}>{% trans "Samples" %}
+                    {% if device.device_sample.all|length > 0 %} ({{ device.device_sample.all|length }}){% endif %}
+                </a>
+            </li>
+            <li class="tabs-title{% if tab_id == 5 %} is-active{% endif %}">
+                <a href="#files"{% if tab_id == 5 %} aria-selected="true"{% endif %}>{% trans "Files" %}
+                    {% if device.device_file.all|length > 0 %} ({{ device.device_file.all|length }}){% endif %}
+                </a>
+            </li>
+            <li class="tabs-title{% if tab_id == 6 %} is-active{% endif %}">
+                <a href="#notes"{% if tab_id == 6 %} aria-selected="true"{% endif %}>{% trans "Notes" %}
+                    {% if notes|length > 0 %}({{ notes|length }}){% endif %}
+                </a>
+            </li>
+            <li class="tabs-title{% if tab_id == 7 %} is-active{% endif %}">
+                <a href="#contacts"{% if tab_id == 7 %} aria-selected="true"{% endif %}>{% trans "Contacts" %}
+                    {% if device.device_contact.all|length > 0 %} ({{ device.device_contact.all|length }}){% endif %}
+                </a>
+            </li>
+            <li class="tabs-title{% if tab_id == 8 %} is-active{% endif %}">
+                <a href="#redmine"{% if tab_id == 8 %} aria-selected="true"{% endif %}>Redmine</a>
+            </li>
+        </ul>
+        <div class="tabs-content" data-tabs-content="device-tabs">
+            <!-- General -->
+            <div class="tabs-panel{% if tab_id == 1 %} is-active{% endif %}" id="general">
+                <div class="callout">
+                    <a href="{% url 'device_update' pk=device.id %}" class="button small">{% trans "Update" %}</a>
+                    <a href="{% url 'device_delete' pk=device.id %}" class="button alert small">{% trans "Delete" %}</a>
+                    <table class="unstriped">
+                        <tbody>
+                        <tr>
+                            <td>ID:</td>
+                            <td>{{ device.id }}</td>
+                        </tr>
+                        <tr>
+                            <td>{% trans "Device Type" %}:</td>
+                            <td>{{ device.type }}</td>
+                        </tr>
+                        <tr>
+                            <td>{% trans "Vendor" %}:</td>
+                            <td>{{ device.vendor }}</td>
+                        </tr>
+                        <tr>
+                            <td>{% trans "Model" %}:</td>
+                            <td>{{ device.model }}</td>
+                        </tr>
+                        <tr>
+                            <td>{% trans "Hardware Version" %}:</td>
+                            <td>{% if device.hw %}{{ device.hw }}{% endif %}</td>
+                        </tr>
+                        <tr>
+                            <td>{% trans "Redmine Project" %}:</td>
+                            <td>{% if device.redmine_project %}{{ device.redmine_project }}{% endif %}</td>
+                        </tr>
+                        <tr>
+                            <td>{% trans "Redmine Project Name" %}:</td>
+                            <td>{% if device.redmine_project_name %}{{ device.redmine_project_name }}{% endif %}</td>
+                        </tr>
+                        <tr>
+                            <td>{% trans "Redmine Project Description" %}:</td>
+                            <td>{% if device.redmine_project_desc %}{{ device.redmine_project_desc }}{% endif %}</td>
+                        </tr>
+                        <tr>
+                            <td>{% trans "Redmine Parent Project" %}:</td>
+                            <td>{% if device.redmine_parent %}{{ device.redmine_parent }}{% endif %}</td>
+                        </tr>
+                        <tr>
+                            <td>{% trans "Created" %}:</td>
+                            <td>{{ device.created_at }} {% if device.created_by %}({{ device.created_by }}){% endif %}</td>
+                        </tr>
+                        <tr>
+                            <td>{% trans "Last Update" %}:</td>
+                            <td>{{ device.updated_at }} {% if device.updated_by %}({{ device.updated_by }}){% endif %}</td>
+                        </tr>
+                        <tr>
+                            <td>{% trans "Protocols amount" %}:</td>
+                            <td>{{ protocols_count }}</td>
+                        </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
-        </div>
-    </div>
+            <!-- ... -->
 
-    <div class="tabs-panel {% if tab_id == 2 %}is-active{% endif %}" id="specs">
-        <div class="grid-x grid-margin-x">
-            <div class="cell">
-                <div class="card">
-                    <div class="card-section">
-                        <table class="unstriped">
-                            <tr>
-                                <td>{% trans "Interfaces" %}:</td>
-                                <td>{{ device.interfaces }}</td>
-                            </tr>
-                            <tr>
-                                <td>{% trans "Leds" %}:</td>
-                                <td>{{ device.leds }}</td>
-                            </tr>
-                            <tr>
-                                <td>{% trans "Buttons" %}:</td>
-                                <td>{{ device.buttons }}</td>
-                            </tr>
-                            <tr>
-                                <td>{% trans "Chipsets" %}:</td>
-                                <td>{{ device.chipsets }}</td>
-                            </tr>
-                            <tr>
-                                <td>{% trans "Memory" %}:</td>
-                                <td>{{ device.memory }}</td>
-                            </tr>
-                        </table>
-                    </div>
+            <!-- Specifications -->
+            <div class="tabs-panel{% if tab_id == 2 %} is-active{% endif %}" id="specs">
+                <div class="callout">
+                    <table class="unstriped">
+                        <tbody>
+                        <tr>
+                            <td>{% trans "Interfaces" %}:</td>
+                            <td>{{ device.interfaces }}</td>
+                        </tr>
+                        <tr>
+                            <td>{% trans "Leds" %}:</td>
+                            <td>{{ device.leds }}</td>
+                        </tr>
+                        <tr>
+                            <td>{% trans "Buttons" %}:</td>
+                            <td>{{ device.buttons }}</td>
+                        </tr>
+                        <tr>
+                            <td>{% trans "Chipsets" %}:</td>
+                            <td>{{ device.chipsets }}</td>
+                        </tr>
+                        <tr>
+                            <td>{% trans "Memory" %}:</td>
+                            <td>{{ device.memory }}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="callout">
+                    <h5>{% trans "Chipsets" %}</h5>
+
+                    {% if device.device_chipset.all %}
+                    <table class="unstriped">
+                        <thead>
+                        <tr>
+                            <th>{% trans "Name" %}</th>
+                            <th>{% trans "Type" %}</th>
+                            <th>{% trans "Description" %}</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for dev_chipset in device.device_chipset.all|dictsort:"id" %}
+                        <tr>
+                            <td>
+                                <a href="{% url 'chipset_details' pk=dev_chipset.chipset.id %}">{{ dev_chipset.chipset }}</a>
+                                <a href="{% url 'device-chipset_delete' pk=dev_chipset.id %}"><i class="step fi-minus" style="color: red"></i></a>
+                            </td>
+                            <td>
+                                {% if dev_chipset.chipset.type == 0 %}
+                                {% trans "SoC" %}
+                                {% elif dev_chipset.chipset.type == 1 %}
+                                {% trans "SoC + Wi-Fi 2.4 GHz" %}
+                                {% elif dev_chipset.chipset.type == 2 %}
+                                {% trans "SoC + Wi-Fi 5 GHz" %}
+                                {% elif dev_chipset.chipset.type == 3 %}
+                                {% trans "SoC + Wi-Fi Dual Band" %}
+                                {% elif dev_chipset.chipset.type == 4 %}
+                                {% trans "Wi-Fi 2.4 GHz" %}
+                                {% elif dev_chipset.chipset.type == 5 %}
+                                {% trans "Wi-Fi 5 GHz" %}
+                                {% elif dev_chipset.chipset.type == 6 %}
+                                {% trans "Wi-Fi Dual Band" %}
+                                {% elif dev_chipset.chipset.type == 7 %}
+                                {% trans "Mobile Modem" %}
+                                {% elif dev_chipset.chipset.type == 8 %}
+                                {% trans "VoIP" %}
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if dev_chipset.chipset.desc %}
+                                {{ dev_chipset.chipset.desc }}
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    {% endif %}
+
+                    <ul class="accordion" data-responsive-accordion-tabs="accordion medium-tabs large-accordion" data-allow-all-closed="true">
+                        <li class="accordion-item" data-accordion-item>
+                            <a href="#" class="accordion-title">{% trans "Select & Add" %}</a>
+                            <div class="accordion-content" data-tab-content>
+                                <table id="chipsets" class="hover unstriped" style="width:100%">
+                                    <thead>
+                                    <tr>
+                                        <th>{% trans "Name" %}</th>
+                                        <th>{% trans "Type" %}</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for chipset in chipsets %}
+                                    <tr data-href="{% url 'device-chipset_add' device_id=device.id chipset_id=chipset.id %}">
+                                        <td>{{ chipset }}</td>
+                                        <td>
+                                            {% if chipset.type == 0 %}
+                                            {% trans "SoC" %}
+                                            {% elif chipset.type == 1 %}
+                                            {% trans "SoC + Wi-Fi 2.4 GHz" %}
+                                            {% elif chipset.type == 2 %}
+                                            {% trans "SoC + Wi-Fi 5 GHz" %}
+                                            {% elif chipset.type == 3 %}
+                                            {% trans "SoC + Wi-Fi Dual Band" %}
+                                            {% elif chipset.type == 4 %}
+                                            {% trans "Wi-Fi 2.4 GHz" %}
+                                            {% elif chipset.type == 5 %}
+                                            {% trans "Wi-Fi 5 GHz" %}
+                                            {% elif chipset.type == 6 %}
+                                            {% trans "Wi-Fi Dual Band" %}
+                                            {% elif chipset.type == 7 %}
+                                            {% trans "Mobile Modem" %}
+                                            {% elif chipset.type == 8 %}
+                                            {% trans "VoIP" %}
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </li>
+                        <li class="accordion-item" data-accordion-item>
+                            <a href="#" class="accordion-title">{% trans "Create & Add" %}</a>
+                            <div class="accordion-content" data-tab-content>
+                                <form method="post" action="{% url 'device-chipset_create_add' device_id=device.id %}" enctype="multipart/form-data">
+                                    <input type="submit" value='{% trans "Add" %}' class="button success small" />
+                                    {% csrf_token %}
+                                    {{ chipset_form }}
+                                </form>
+                            </div>
+                        </li>
+                    </ul>
+
                 </div>
             </div>
-        </div>
-    </div>
+            <!-- ... -->
 
-    <div class="tabs-panel {% if tab_id == 3 %}is-active{% endif %}" id="photos">
-        <a href="{% url 'photo_create' device_id=device.id %}" class="button small">{% trans "Add" %}</a>
-        <div class="product-image-gallery">
-            <ul class="menu product-thumbs align-center">
-                {% for photo in device.device_photo.all|dictsort:"id" %}
-                <li>
-                    <a class="sim-thumb" data-image="{{ photo.photo.url }}">
-                        <img src="{{ photo.photo.url }}" height="100" width="100" alt="{{ photo.desc }}">
-                    </a>
-                </li>
-                {% endfor %}
-            </ul>
-            <p align="center">
-                <img class="pdp-product-image" id="main-product-image" src="{{ device.device_photo.all.0.photo.url }}" alt="" style="max-width: 800px">
-            </p>
-        </div>
+            <!-- Photos -->
+            <div class="tabs-panel{% if tab_id == 3 %} is-active{% endif %}" id="photos">
+                <div class="callout">
+                    <a href="{% url 'photo_create' device_id=device.id %}" class="button small">{% trans "Add" %}</a>
+                    <div class="product-image-gallery">
+                        <ul class="menu product-thumbs align-center">
+                            {% for photo in device.device_photo.all|dictsort:"id" %}
+                            <li>
+                                <a class="sim-thumb" data-image="{{ photo.photo.url }}">
+                                    <img src="{{ photo.photo.url }}" height="100" width="100" alt="{{ photo.desc }}">
+                                </a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                        <p align="center">
+                            <img class="pdp-product-image" id="main-product-image" src="{{ device.device_photo.all.0.photo.url }}" alt="" style="max-width: 800px">
+                        </p>
+                    </div>
+                    {% for photo in device.device_photo.all|dictsort:"id" %}
+                    {{ photo.desc }}
+                    <p>
+                        <a href="{% url 'photo_update' pk=photo.id %}">{{ photo.filename }}</a>
+                        <a href="{% url 'photo_delete' pk=photo.id %}"><i class="step fi-minus" style="color: #bc104b"></i></a>
+                    </p>
+                    {% endfor %}
+                </div>
+            </div>
+            <!-- ... -->
 
-        {% for photo in device.device_photo.all|dictsort:"id" %}
-        {{ photo.desc }}
-        <p>
-            <a href="{% url 'photo_update' pk=photo.id %}">{{ photo.filename }}</a>
-            <a href="{% url 'photo_delete' pk=photo.id %}"><i class="step fi-minus" style="color: #bc104b"></i></a>
-        </p>
-        {% endfor %}
-
-    </div>
-
-    <div class="tabs-panel {% if tab_id == 4 %}is-active{% endif %}" id="samples">
-        <a href="{% url 'sample_create' device_id=device.id %}" class="button small">{% trans "Add" %}</a>
-        {% for sample in device.device_sample.all|dictsort:"id" %}
-        <div class="grid-x grid-margin-x">
-            <div class="cell">
-                <div class="card">
-                    <div class="card-section">
+            <!-- Samples -->
+            <div class="tabs-panel{% if tab_id == 4 %} is-active{% endif %}" id="samples">
+                <div class="callout">
+                    <a href="{% url 'sample_create' device_id=device.id %}" class="button small">{% trans "Add" %}</a>
+                    {% for sample in device.device_sample.all|dictsort:"id" %}
+                    <div class="callout">
                         <a href="{% url 'sample_update' pk=sample.id %}" class="button small">{% trans "Update" %}</a>
                         <a href="{% url 'sample_delete' pk=sample.id %}" class="button small alert">{% trans "Delete" %}</a>
-
                         <div class="grid-x grid-margin-x small-up-2 medium-up-2">
                             <div class="cell">
                                 <div class="card">
@@ -258,139 +365,126 @@
                             </div>
                         </div>
                     </div>
+                    <script>
+                    function myFunctionSN_{{ sample.id }}() {
+                    var copyText = document.getElementById("myInputSN_{{ sample.id }}");
+                    copyText.select();
+                    copyText.setSelectionRange(0, 99999);
+                    document.execCommand("copy");
+                    }
+                    </script>
+                    {% endfor %}
                 </div>
             </div>
-        </div>
-        <script>
-        function myFunctionSN_{{ sample.id }}() {
-          var copyText = document.getElementById("myInputSN_{{ sample.id }}");
-          copyText.select();
-          copyText.setSelectionRange(0, 99999);
-          document.execCommand("copy");
-        }
-        </script>
-        {% endfor %}
-    </div>
+            <!-- ... -->
 
-    <div class="tabs-panel{% if tab_id == 5 %} is-active{% endif %}" id="files">
-        <a href="{% url 'file_create' device_id=device.id %}" class="button small">{% trans "Add" %}</a>
-        {% for file in device.device_file.all|dictsort:"id" %}
-        <div class="cell">
-            <div class="card">
-                <div class="card-section">
-                    <p>
-                        {% if file.type == 0 %}{% trans "Datasheet" %}{% endif %}
-                        {% if file.type == 1 %}{% trans "Quick Installation Guide" %}{% endif %}
-                        {% if file.type == 2 %}{% trans "HowTo" %}{% endif %}
-                        {% if file.type == 3 %}{% trans "Certificate" %}{% endif %}
-                        {% if file.type == 4 %}{% trans "Other" %}{% endif %}
-                        {% if file.desc %} / {{ file.desc }}{% endif %}
-                        <a href="{% url 'file_update' pk=file.id %}"><i class="step fi-pencil" style="color: #7700ff"></i></a>
-                        <a href="{% url 'file_delete' pk=file.id %}"><i class="step fi-minus" style="color: red"></i></a>
-                        <br>
-                        <a href="{{ file.file.url }}">{{ file.filename }}</a>
-                    </p>
-                </div>
-            </div>
-        </div>
-        {% endfor %}
-    </div>
-
-    <div class="tabs-panel{% if tab_id == 6 %} is-active{% endif %}" id="notes">
-        <a href="{% url 'note_create' device_id=device.id %}" class="button small">{% trans "Add" %}</a>
-        {% for note in notes %}
-        <div class="cell">
-            <div class="card">
-                <div class="card-section">
-                    <p>
-                        {% if note.desc %}{{ note.desc }}{% endif %}
-                        <a href="{% url 'note_update' pk=note.id %}"><i class="step fi-pencil" style="color: #7700ff"></i></a>
-                        <a href="{% url 'note_delete' pk=note.id %}"><i class="step fi-minus" style="color: red"></i></a>
-                    </p>
-                    {% if note.format == 0 %}
-                    <div class="grid-x grid-margin-x">
-                        <div class="cell">
-                            <div class="card">
-                                <div class="card-section">
-                                    {{ note.text|safe }}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    {% else %}
-                    <pre><code>{{ note.text }}</code></pre>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-        {% endfor %}
-    </div>
-
-    <div class="tabs-panel{% if tab_id == 7 %} is-active{% endif %}" id="contacts">
-        <a href="{% url 'd_contact_create' device_id=device.id %}" class="button small">{% trans "Add" %}</a>
-        {% if device.device_contact.all %}
-        <table class="unstriped" style="width:100%">
-            <thead>
-            <tr>
-                <th>{% trans "Full Name" %}</th>
-                <th>{% trans "Vendor" %}</th>
-                <th>E-Mail</th>
-                <th>{% trans "Phone" %}</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for contact in device.device_contact.all %}
-            <tr>
-                <td>{{ contact.contact }}
-                    <a href="{% url 'd_contact_delete' pk=contact.id %}"><i class="step fi-minus" style="color: #bc104b"></i></a>
-                    {% if contact.contact.position %}
-                    <br>
-                    <span style="color: #7700ff; font-style: italic">{{ contact.contact.position }}</span>
-                    {% endif %}
-                </td>
-                <td>{{ contact.contact.vendor }}</td>
-                <td>{% if contact.contact.email %}{{ contact.contact.email }}{% endif %}</td>
-                <td>{% if contact.contact.phone %}{{ contact.contact.phone }}{% endif %}</td>
-            </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-        {% endif %}
-    </div>
-
-    <div class="tabs-panel{% if tab_id == 8 %} is-active{% endif %}" id="redmine">
-        {% if device.redmine_project %}
-        <div class="grid-x grid-margin-x">
-            <div class="cell">
-                <div class="card">
-                    <div class="card-section">
-                        <h5>Redmine Project Wiki</h5>
+            <!-- Files -->
+            <div class="tabs-panel{% if tab_id == 5 %} is-active{% endif %}" id="files">
+                <div class="callout">
+                    <a href="{% url 'file_create' device_id=device.id %}" class="button small">{% trans "Add" %}</a>
+                    {% for file in device.device_file.all|dictsort:"id" %}
+                    <div class="callout">
                         <p>
-                            <a href="{{ redmine_url }}/projects/{{ device.redmine_project }}/wiki/">{{ redmine_url }}/projects/{{ device.redmine_project }}/wiki/</a>
+                            {% if file.type == 0 %}{% trans "Datasheet" %}{% endif %}
+                            {% if file.type == 1 %}{% trans "Quick Installation Guide" %}{% endif %}
+                            {% if file.type == 2 %}{% trans "HowTo" %}{% endif %}
+                            {% if file.type == 3 %}{% trans "Certificate" %}{% endif %}
+                            {% if file.type == 4 %}{% trans "Other" %}{% endif %}
+                            {% if file.desc %} / {{ file.desc }}{% endif %}
+                            <a href="{% url 'file_update' pk=file.id %}"><i class="step fi-pencil" style="color: #7700ff"></i></a>
+                            <a href="{% url 'file_delete' pk=file.id %}"><i class="step fi-minus" style="color: red"></i></a>
+                            <br>
+                            <a href="{{ file.file.url }}">{{ file.filename }}</a>
                         </p>
                     </div>
+                    {% endfor %}
                 </div>
             </div>
-        </div>
-        {% endif %}
-        <div class="grid-x grid-margin-x">
-            <div class="cell">
-                <div class="card">
-                    <div class="card-section">
-                        <h5>{% trans "Export to" %} Redmine</h5>
-                        <form action="{% url 'redmine_device_export' %}" method="post">
-                            <input type="submit" value='{% trans "Export" %}' class="button small success" />
-                            <table class="unstriped" style="text-align: left; width: 600px;">
-                                {% csrf_token %}
-                                {{ export_form.as_table }}
-                            </table>
-                        </form>
+            <!-- ... -->
+
+            <!-- Notes -->
+            <div class="tabs-panel{% if tab_id == 6 %} is-active{% endif %}" id="notes">
+                <div class="callout">
+                    <a href="{% url 'note_create' device_id=device.id %}" class="button small">{% trans "Add" %}</a>
+                    {% for note in notes %}
+                    <div class="callout">
+                        <p>
+                            {% if note.desc %}{{ note.desc }}{% endif %}
+                            <a href="{% url 'note_update' pk=note.id %}"><i class="step fi-pencil" style="color: #7700ff"></i></a>
+                            <a href="{% url 'note_delete' pk=note.id %}"><i class="step fi-minus" style="color: red"></i></a>
+                        </p>
+                        {% if note.format == 0 %}
+                        <div class="callout">
+                            {{ note.text|safe }}
+                        </div>
+                        {% else %}
+                        <pre><code>{{ note.text }}</code></pre>
+                        {% endif %}
                     </div>
+                    {% endfor %}
                 </div>
             </div>
+            <!-- ... -->
+
+            <!-- Contacts -->
+            <div class="tabs-panel{% if tab_id == 7 %} is-active{% endif %}" id="contacts">
+                <div class="callout">
+                    <a href="{% url 'd_contact_create' device_id=device.id %}" class="button small">{% trans "Add" %}</a>
+                    {% if device.device_contact.all %}
+                    <table class="unstriped" style="width:100%">
+                        <thead>
+                        <tr>
+                            <th>{% trans "Full Name" %}</th>
+                            <th>{% trans "Vendor" %}</th>
+                            <th>E-Mail</th>
+                            <th>{% trans "Phone" %}</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for contact in device.device_contact.all %}
+                        <tr>
+                            <td>{{ contact.contact }}
+                                <a href="{% url 'd_contact_delete' pk=contact.id %}"><i class="step fi-minus" style="color: #bc104b"></i></a>
+                                {% if contact.contact.position %}
+                                <br>
+                                <span style="color: #7700ff; font-style: italic">{{ contact.contact.position }}</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ contact.contact.vendor }}</td>
+                            <td>{% if contact.contact.email %}{{ contact.contact.email }}{% endif %}</td>
+                            <td>{% if contact.contact.phone %}{{ contact.contact.phone }}{% endif %}</td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    {% endif %}
+                </div>
+            </div>
+            <!-- ... -->
+
+            <!-- Redmine -->
+            <div class="tabs-panel{% if tab_id == 8 %} is-active{% endif %}" id="redmine">
+                {% if device.redmine_project %}
+                <div class="callout">
+                    <h5>Redmine Project Wiki</h5>
+                    <p><a href="{{ redmine_url }}/projects/{{ device.redmine_project }}/wiki/">{{ redmine_url }}/projects/{{ device.redmine_project }}/wiki/</a></p>
+                </div>
+                {% endif %}
+                <div class="callout">
+                    <h5>{% trans "Export to" %} Redmine</h5>
+                    <form action="{% url 'redmine_device_export' %}" method="post">
+                        <input type="submit" value='{% trans "Export" %}' class="button small success" />
+                        <table class="unstriped" style="text-align: left; width: 600px;">
+                            {% csrf_token %}
+                            {{ export_form.as_table }}
+                        </table>
+                    </form>
+                </div>
+            </div>
+            <!-- ... -->
+
         </div>
     </div>
-
 </div>
 
 <script>
@@ -398,5 +492,27 @@ $('.sim-thumb').on('click', function() {
   $('#main-product-image').attr('src', $(this).data('image'));
 })
 </script>
+
+<script>
+    $(document).ready(function() {
+        var table = $('#chipsets').DataTable({
+        {% if LANGUAGE_CODE == 'ru' %}
+            "language": { "url": "{% static '/DataTables/i18n/Russian.json' %}" },
+        {% endif %}
+        "pageLength": 25,
+        });
+    });
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const rows = document.querySelectorAll("tr[data-href]");
+        rows.forEach(row => {
+            row.addEventListener("click", () => {
+                window.location.href = row.dataset.href;
+            });
+        });
+    });
+</script>
+
+<script type="text/javascript" src="{% static 'DataTables/datatables.js' %}"></script>
 
 {% endblock %}
