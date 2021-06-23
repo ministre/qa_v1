@@ -178,6 +178,8 @@
                                 {% trans "Mobile Modem" %}
                                 {% elif dev_chipset.chipset.type == 8 %}
                                 {% trans "VoIP" %}
+                                {% elif dev_chipset.chipset.type == 9 %}
+                                {% trans "Ethernet Switch" %}
                                 {% endif %}
                             </td>
                             <td>
@@ -225,6 +227,8 @@
                                             {% trans "Mobile Modem" %}
                                             {% elif chipset.type == 8 %}
                                             {% trans "VoIP" %}
+                                            {% elif chipset.type == 9 %}
+                                            {% trans "Ethernet Switch" %}
                                             {% endif %}
                                         </td>
                                     </tr>
