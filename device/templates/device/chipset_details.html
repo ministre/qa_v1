@@ -11,71 +11,78 @@
     </ul>
 </nav>
 
-<div class="grid-x grid-margin-x">
-    <div class="cell">
-        <div class="card">
-            <div class="card-section">
-                <a href="{% url 'chipset_update' pk=chipset.id %}" class="button small">{% trans "Update" %}</a>
-                <a href="{% url 'chipset_delete' pk=chipset.id %}" class="button alert small">{% trans "Delete" %}</a>
-                <table class="unstriped">
-                  <tr>
-                    <td>{% trans "Vendor" %}:</td>
-                    <td>{% if chipset.vendor %}{{ chipset.vendor }}{% endif %}</td>
-                  </tr>
-                  <tr>
-                    <td>{% trans "Model" %}:</td>
-                    <td>{{ chipset.model }}</td>
-                  </tr>
-                  <tr>
-                    <td>{% trans "Type" %}:</td>
-                    <td>
-                      {% if chipset.type == 0 %}
-                      {% trans "SoC" %}
-                      {% elif chipset.type == 1 %}
-                      {% trans "SoC + Wi-Fi 2.4 GHz" %}
-                      {% elif chipset.type == 2 %}
-                      {% trans "SoC + Wi-Fi 5 GHz" %}
-                      {% elif chipset.type == 3 %}
-                      {% trans "SoC + Wi-Fi Dual Band" %}
-                      {% elif chipset.type == 4 %}
-                      {% trans "Wi-Fi 2.4 GHz" %}
-                      {% elif chipset.type == 5 %}
-                      {% trans "Wi-Fi 5 GHz" %}
-                      {% elif chipset.type == 6 %}
-                      {% trans "Wi-Fi Dual Band" %}
-                      {% elif chipset.type == 7 %}
-                      {% trans "Mobile Modem" %}
-                      {% elif chipset.type == 8 %}
-                      {% trans "VoIP" %}
-                      {% elif chipset.type == 9 %}
-                      {% trans "Ethernet Switch" %}
-                      {% elif dev_chipset.chipset.type == 10 %}
-                      {% trans "xDSL Modem" %}
-                      {% elif dev_chipset.chipset.type == 11 %}
-                      {% trans "Z-Wave" %}
-                      {% endif %}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>{% trans "Description" %}:</td>
-                    <td>{% if chipset.desc %}{{ chipset.desc }}{% endif %}</td>
-                  </tr>
-                  <tr>
-                    <td>{% trans "Datasheet" %}:</td>
-                    <td>{% if chipset.datasheet %}<a href="{{ chipset.datasheet.url }}">{{ chipset.filename }}</a>{% endif %}</td>
-                  </tr>
-                  <tr>
-                    <td>{% trans "Created" %}:</td>
-                    <td>{{ chipset.created_at }} {% if chipset.created_by %}({{ chipset.created_by }}){% endif %}</td>
-                  </tr>
-                  <tr>
-                    <td>{% trans "Last Update" %}:</td>
-                    <td>{{ chipset.updated_at }} {% if chipset.updated_by %}({{ chipset.updated_by }}){% endif %}</td>
-                  </tr>
-                </table>
-            </div>
-        </div>
+<div class="callout">
+    <a href="{% url 'chipset_update' pk=chipset.id %}" class="button small">{% trans "Update" %}</a>
+    <a href="{% url 'chipset_delete' pk=chipset.id %}" class="button alert small">{% trans "Delete" %}</a>
+    <table class="unstriped">
+        <tr>
+            <td>{% trans "Vendor" %}:</td>
+            <td>{% if chipset.vendor %}{{ chipset.vendor }}{% endif %}</td>
+        </tr>
+        <tr>
+            <td>{% trans "Model" %}:</td>
+            <td>{{ chipset.model }}</td>
+        </tr>
+        <tr>
+            <td>{% trans "Type" %}:</td>
+            <td>
+                {% if chipset.type == 0 %}
+                {% trans "SoC" %}
+                {% elif chipset.type == 1 %}
+                {% trans "SoC + Wi-Fi 2.4 GHz" %}
+                {% elif chipset.type == 2 %}
+                {% trans "SoC + Wi-Fi 5 GHz" %}
+                {% elif chipset.type == 3 %}
+                {% trans "SoC + Wi-Fi Dual Band" %}
+                {% elif chipset.type == 4 %}
+                {% trans "Wi-Fi 2.4 GHz" %}
+                {% elif chipset.type == 5 %}
+                {% trans "Wi-Fi 5 GHz" %}
+                {% elif chipset.type == 6 %}
+                {% trans "Wi-Fi Dual Band" %}
+                {% elif chipset.type == 7 %}
+                {% trans "Mobile Modem" %}
+                {% elif chipset.type == 8 %}
+                {% trans "VoIP" %}
+                {% elif chipset.type == 9 %}
+                {% trans "Ethernet Switch" %}
+                {% elif dev_chipset.chipset.type == 10 %}
+                {% trans "xDSL Modem" %}
+                {% elif dev_chipset.chipset.type == 11 %}
+                {% trans "Z-Wave" %}
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <td>{% trans "Description" %}:</td>
+            <td>{% if chipset.desc %}{{ chipset.desc }}{% endif %}</td>
+        </tr>
+        <tr>
+            <td>{% trans "Datasheet" %}:</td>
+            <td>{% if chipset.datasheet %}<a href="{{ chipset.datasheet.url }}">{{ chipset.filename }}</a>{% endif %}</td>
+        </tr>
+        <tr>
+            <td>{% trans "Created" %}:</td>
+            <td>{{ chipset.created_at }} {% if chipset.created_by %}({{ chipset.created_by }}){% endif %}</td>
+        </tr>
+        <tr>
+            <td>{% trans "Last Update" %}:</td>
+            <td>{{ chipset.updated_at }} {% if chipset.updated_by %}({{ chipset.updated_by }}){% endif %}</td>
+        </tr>
+    </table>
+
+    <div class="callout">
+        <h5>{% trans "Devices" %}</h5>
+        {% if devices %}
+        <ul>
+            {% for device in devices %}
+            <li><a href="{% url 'device_details' pk=device.id tab_id=1 %}">{{ device.model }}</a></li>
+            {% endfor %}
+        </ul>
+        {% endif %}
     </div>
+
 </div>
+
 
 {% endblock %}

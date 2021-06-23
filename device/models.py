@@ -173,6 +173,14 @@ class Chipset(models.Model):
         else:
             return self.model
 
+    def get_devices(self):
+        devices = []
+        dev_chipsets = DeviceChipset.objects.filter(chipset=self).order_by('id')
+        for dev_chipset in dev_chipsets:
+            devices.append({'id': dev_chipset.device.id,
+                            'model': str(dev_chipset.device.vendor.name) + ' ' + str(dev_chipset.device)})
+        return devices
+
     def filename(self):
         return os.path.basename(self.datasheet.name)
 

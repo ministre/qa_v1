@@ -632,10 +632,8 @@ class ChipsetDelete(DeleteView):
 @login_required
 def chipset_details(request, pk):
     chipset = get_object_or_404(Chipset, id=pk)
-    # devices_count = vendor.devices_count()
-    return render(request, 'device/chipset_details.html', {
-        'chipset': chipset
-    })
+    devices = chipset.get_devices()
+    return render(request, 'device/chipset_details.html', {'chipset': chipset, 'devices': devices})
 
 
 @login_required
