@@ -177,6 +177,8 @@ class ChipsetForm(ModelForm):
             (7, 'Mobile Modem'),
             (8, 'VoIP'),
             (9, 'Ethernet Switch'),
+            (10, 'xDSL Modem'),
+            (11, 'Z-Wave'),
         )
         widgets = {
             'type': forms.Select(choices=TYPE, attrs={'class': 'form-control'}),
