@@ -43,6 +43,12 @@
             {% trans "Mobile Modem" %}
             {% elif chipset.type == 8 %}
             {% trans "VoIP" %}
+            {% elif chipset.type == 9 %}
+            {% trans "Ethernet Switch" %}
+            {% elif dev_chipset.chipset.type == 10 %}
+            {% trans "xDSL Modem" %}
+            {% elif dev_chipset.chipset.type == 11 %}
+            {% trans "Z-Wave" %}
             {% endif %}
         </td>
         <td>{% if chipset.desc %}{{ chipset.desc }}{% endif %}</td>
