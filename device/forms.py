@@ -52,7 +52,8 @@ class DeviceForm(ModelForm):
             'memory': _('Memory'),
         }
         fields = '__all__'
-        widgets = {'created_by': HiddenInput(), 'created_at': HiddenInput(),
+        widgets = {'chipsets': HiddenInput(),
+                   'created_by': HiddenInput(), 'created_at': HiddenInput(),
                    'updated_by': HiddenInput(), 'updated_at': HiddenInput()}
 
 
