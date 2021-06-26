@@ -211,7 +211,7 @@ def build_protocol(request):
             if protocol.device.chipsets:
                 row_cells = table.add_row().cells
                 row_cells[0].text = str(_('Chipsets')) + ': '
-                row_cells[1].text = protocol.device.chipsets
+                row_cells[1].text = protocol.device.get_chipsets(as_string=True)
             if protocol.device.memory:
                 row_cells = table.add_row().cells
                 row_cells[0].text = str(_('Memory')) + ': '
