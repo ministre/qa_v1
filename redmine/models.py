@@ -149,7 +149,7 @@ class RedmineDevice:
             if device.buttons:
                 wiki += '\n| ' + str(_('Buttons')) + ': | ' + device.buttons + ' |\r'
             if device.chipsets:
-                wiki += '\n| ' + str(_('Chipsets')) + ': | ' + device.chipsets + ' |\r'
+                wiki += '\n| ' + str(_('Chipsets')) + ': | ' + device.get_chipsets(as_string=True) + ' |\r'
             if device.memory:
                 wiki += '\n| ' + str(_('Memory')) + ': | ' + device.memory + ' |\r'
 

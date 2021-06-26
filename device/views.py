@@ -245,7 +245,11 @@ class DeviceDelete(DeleteView):
 def device_details(request, pk, tab_id):
     device = get_object_or_404(Device, id=pk)
     protocols_count = device.protocols_count()
-    chipsets = Chipset.objects.all().order_by('id')
+    chipsets = device.get_chipsets()
+    all_chipsets = []
+    for chipset in Chipset.objects.all():
+        all_chipsets.append({'id': chipset.id, 'name': str(chipset), 'type': chipset.get_type_as_string()})
+
     notes = DeviceNote.objects.filter(device=device).order_by('id')
     converted_notes = []
     for note in notes:
@@ -269,6 +273,7 @@ def device_details(request, pk, tab_id):
     return render(request, 'device/device_details.html', {
         'device': device,
         'chipsets': chipsets,
+        'all_chipsets': all_chipsets,
         'protocols_count': protocols_count,
         'notes': converted_notes,
         'chipset_form': chipset_form,
@@ -572,11 +577,13 @@ class DeviceContactDelete(DeleteView):
         return reverse('device_details', kwargs={'pk': self.object.device.id, 'tab_id': 7})
 
 
-@method_decorator(login_required, name='dispatch')
-class ChipsetListView(ListView):
-    context_object_name = 'chipsets'
-    queryset = Chipset.objects.all().order_by('id')
-    template_name = 'device/chipsets.html'
+@login_required
+def chipsets(request):
+    chipset_list = []
+    for chipset in Chipset.objects.all():
+        chipset_list.append({'id': chipset.id, 'vendor': chipset.vendor, 'model': chipset.model,
+                             'type': chipset.get_type_as_string(), 'desc': chipset.desc})
+    return render(request, 'device/chipsets.html', {'chipsets': chipset_list})
 
 
 @method_decorator(login_required, name='dispatch')
@@ -632,8 +639,10 @@ class ChipsetDelete(DeleteView):
 @login_required
 def chipset_details(request, pk):
     chipset = get_object_or_404(Chipset, id=pk)
+    chipset_type = chipset.get_type_as_string()
     devices = chipset.get_devices()
-    return render(request, 'device/chipset_details.html', {'chipset': chipset, 'devices': devices})
+    return render(request, 'device/chipset_details.html', {'chipset': chipset, 'type': chipset_type,
+                                                           'devices': devices})
 
 
 @login_required

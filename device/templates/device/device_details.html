@@ -138,8 +138,7 @@
 
                 <div class="callout">
                     <h5>{% trans "Chipsets" %}</h5>
-
-                    {% if device.device_chipset.all %}
+                    {% if chipsets %}
                     <table class="unstriped">
                         <thead>
                         <tr>
@@ -149,44 +148,14 @@
                         </tr>
                         </thead>
                         <tbody>
-                        {% for dev_chipset in device.device_chipset.all|dictsort:"id" %}
+                        {% for chipset in chipsets %}
                         <tr>
                             <td>
-                                <a href="{% url 'chipset_details' pk=dev_chipset.chipset.id %}">{{ dev_chipset.chipset }}</a>
-                                <a href="{% url 'device-chipset_delete' pk=dev_chipset.id %}"><i class="step fi-minus" style="color: red"></i></a>
+                                <a href="{% url 'chipset_details' pk=chipset.id %}">{{ chipset.name }}</a>
+                                <a href="{% url 'device-chipset_delete' pk=chipset.id %}"><i class="step fi-minus" style="color: red"></i></a>
                             </td>
-                            <td>
-                                {% if dev_chipset.chipset.type == 0 %}
-                                {% trans "SoC" %}
-                                {% elif dev_chipset.chipset.type == 1 %}
-                                {% trans "SoC + Wi-Fi 2.4 GHz" %}
-                                {% elif dev_chipset.chipset.type == 2 %}
-                                {% trans "SoC + Wi-Fi 5 GHz" %}
-                                {% elif dev_chipset.chipset.type == 3 %}
-                                {% trans "SoC + Wi-Fi Dual Band" %}
-                                {% elif dev_chipset.chipset.type == 4 %}
-                                {% trans "Wi-Fi 2.4 GHz" %}
-                                {% elif dev_chipset.chipset.type == 5 %}
-                                {% trans "Wi-Fi 5 GHz" %}
-                                {% elif dev_chipset.chipset.type == 6 %}
-                                {% trans "Wi-Fi Dual Band" %}
-                                {% elif dev_chipset.chipset.type == 7 %}
-                                {% trans "Mobile Modem" %}
-                                {% elif dev_chipset.chipset.type == 8 %}
-                                {% trans "VoIP" %}
-                                {% elif dev_chipset.chipset.type == 9 %}
-                                {% trans "Ethernet Switch" %}
-                                {% elif dev_chipset.chipset.type == 10 %}
-                                {% trans "xDSL Modem" %}
-                                {% elif dev_chipset.chipset.type == 11 %}
-                                {% trans "Z-Wave" %}
-                                {% endif %}
-                            </td>
-                            <td>
-                                {% if dev_chipset.chipset.desc %}
-                                {{ dev_chipset.chipset.desc }}
-                                {% endif %}
-                            </td>
+                            <td>{{ chipset.type }}</td>
+                            <td>{% if chipset.desc %}{{ chipset.desc }}{% endif %}</td>
                         </tr>
                         {% endfor %}
                         </tbody>
@@ -205,36 +174,10 @@
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    {% for chipset in chipsets %}
+                                    {% for chipset in all_chipsets %}
                                     <tr data-href="{% url 'device-chipset_add' device_id=device.id chipset_id=chipset.id %}">
-                                        <td>{{ chipset }}</td>
-                                        <td>
-                                            {% if chipset.type == 0 %}
-                                            {% trans "SoC" %}
-                                            {% elif chipset.type == 1 %}
-                                            {% trans "SoC + Wi-Fi 2.4 GHz" %}
-                                            {% elif chipset.type == 2 %}
-                                            {% trans "SoC + Wi-Fi 5 GHz" %}
-                                            {% elif chipset.type == 3 %}
-                                            {% trans "SoC + Wi-Fi Dual Band" %}
-                                            {% elif chipset.type == 4 %}
-                                            {% trans "Wi-Fi 2.4 GHz" %}
-                                            {% elif chipset.type == 5 %}
-                                            {% trans "Wi-Fi 5 GHz" %}
-                                            {% elif chipset.type == 6 %}
-                                            {% trans "Wi-Fi Dual Band" %}
-                                            {% elif chipset.type == 7 %}
-                                            {% trans "Mobile Modem" %}
-                                            {% elif chipset.type == 8 %}
-                                            {% trans "VoIP" %}
-                                            {% elif chipset.type == 9 %}
-                                            {% trans "Ethernet Switch" %}
-                                            {% elif dev_chipset.chipset.type == 10 %}
-                                            {% trans "xDSL Modem" %}
-                                            {% elif dev_chipset.chipset.type == 11 %}
-                                            {% trans "Z-Wave" %}
-                                            {% endif %}
-                                        </td>
+                                        <td>{{ chipset.name }}</td>
+                                        <td>{{ chipset.type }}</td>
                                     </tr>
                                     {% endfor %}
                                     </tbody>

@@ -44,7 +44,7 @@ urlpatterns = [
     path('contact/create/<int:device_id>/', views.DeviceContactCreate.as_view(), name='d_contact_create'),
     path('contact/delete/<int:pk>/', views.DeviceContactDelete.as_view(), name='d_contact_delete'),
     # chipsets
-    path('chipset/', views.ChipsetListView.as_view(), name='chipsets'),
+    path('chipset/', views.chipsets, name='chipsets'),
     path('chipset/create/', views.ChipsetCreate.as_view(), name='chipset_create'),
     path('chipset/update/<int:pk>/', views.ChipsetUpdate.as_view(), name='chipset_update'),
     path('chipset/delete/<int:pk>/', views.ChipsetDelete.as_view(), name='chipset_delete'),

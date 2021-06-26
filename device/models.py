@@ -80,6 +80,22 @@ class Device(models.Model):
         count = Protocol.objects.filter(device=self).count()
         return count
 
+    def get_chipsets(self, as_string=False):
+        chipsets = []
+        device_chipsets = DeviceChipset.objects.filter(device=self).order_by('id')
+        for device_chipset in device_chipsets:
+            chipsets.append({'id': device_chipset.chipset.id,
+                             'name': str(device_chipset.chipset),
+                             'type': device_chipset.chipset.get_type_as_string(),
+                             'desc': device_chipset.chipset.desc})
+        if as_string:
+            chipsets_string = ''
+            for chipset in chipsets:
+                chipsets_string += chipset['name'] + ' (' + chipset['type'] + '), '
+            return chipsets_string[0:-2]
+        else:
+            return chipsets
+
 
 class DevicePhoto(models.Model):
     device = models.ForeignKey(Device, related_name='device_photo', on_delete=models.CASCADE)
@@ -172,6 +188,33 @@ class Chipset(models.Model):
             return str(self.vendor) + ' ' + str(self.model)
         else:
             return self.model
+
+    def get_type_as_string(self):
+        if self.type == 0:
+            return "Soc"
+        elif self.type == 1:
+            return "SoC + Wi-Fi 2.4 GHz"
+        elif self.type == 2:
+            return "SoC + Wi-Fi 5 GHz"
+        elif self.type == 3:
+            return "SoC + Wi-Fi Dual Band"
+        elif self.type == 4:
+            return "Wi-Fi 2.4 GHz"
+        elif self.type == 5:
+            return "Wi-Fi 5 GHz"
+        elif self.type == 6:
+            return "Wi-Fi Dual Band"
+        elif self.type == 7:
+            return "Mobile Modem"
+        elif self.type == 8:
+            return "VoIP"
+        elif self.type == 9:
+            return "Ethernet Switch"
+        elif self.type == 10:
+            return "xDSL Modem"
+        elif self.type == 11:
+            return "Z-Wave"
+        return "Unknown"
 
     def get_devices(self):
         devices = []
