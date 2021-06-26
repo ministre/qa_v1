@@ -85,7 +85,7 @@ class Device(models.Model):
         device_chipsets = DeviceChipset.objects.filter(device=self).order_by('id')
         for device_chipset in device_chipsets:
             chipsets.append({'id': device_chipset.chipset.id,
-                             'dev_chip_id': device_chipset.chipset.id,
+                             'dev_chip_id': device_chipset.id,
                              'name': str(device_chipset.chipset),
                              'type': device_chipset.chipset.get_type_as_string(),
                              'desc': device_chipset.chipset.desc})
