@@ -192,13 +192,13 @@ class Chipset(models.Model):
 
     def get_type_as_string(self):
         if self.type == 0:
-            return "Soc"
+            return "Router SoC"
         elif self.type == 1:
-            return "SoC + Wi-Fi 2.4 GHz"
+            return "Router SoC + Wi-Fi 2.4 GHz"
         elif self.type == 2:
-            return "SoC + Wi-Fi 5 GHz"
+            return "Router SoC + Wi-Fi 5 GHz"
         elif self.type == 3:
-            return "SoC + Wi-Fi Dual Band"
+            return "Router SoC + Wi-Fi Dual Band"
         elif self.type == 4:
             return "Wi-Fi 2.4 GHz"
         elif self.type == 5:
@@ -210,7 +210,7 @@ class Chipset(models.Model):
         elif self.type == 8:
             return "VoIP"
         elif self.type == 9:
-            return "Ethernet Switch"
+            return "Ethernet Switch SoC"
         elif self.type == 10:
             return "xDSL Modem"
         elif self.type == 11:

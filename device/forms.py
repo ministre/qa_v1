@@ -168,16 +168,16 @@ class ChipsetForm(ModelForm):
         }
         fields = '__all__'
         TYPE = (
-            (0, 'SoC'),
-            (1, 'SoC + Wi-Fi 2.4 GHz'),
-            (2, 'SoC + Wi-Fi 5 GHz'),
-            (3, 'SoC + Wi-Fi Dual Band'),
+            (0, 'Router SoC'),
+            (1, 'Router SoC + Wi-Fi 2.4 GHz'),
+            (2, 'Router SoC + Wi-Fi 5 GHz'),
+            (3, 'Router SoC + Wi-Fi Dual Band'),
             (4, 'Wi-Fi 2.4 GHz'),
             (5, 'Wi-Fi 5 GHz'),
             (6, 'Wi-Fi Dual Band'),
             (7, 'Mobile Modem'),
             (8, 'VoIP'),
-            (9, 'Ethernet Switch'),
+            (9, 'Ethernet Switch SoC'),
             (10, 'xDSL Modem'),
             (11, 'Z-Wave'),
         )
