@@ -225,6 +225,9 @@ class Chipset(models.Model):
                             'model': str(dev_chipset.device.vendor.name) + ' ' + str(dev_chipset.device)})
         return devices
 
+    def get_devices_count(self):
+        return DeviceChipset.objects.filter(chipset=self).count()
+
     def filename(self):
         return os.path.basename(self.datasheet.name)
 

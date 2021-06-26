@@ -582,7 +582,9 @@ def chipsets(request):
     chipset_list = []
     for chipset in Chipset.objects.all():
         chipset_list.append({'id': chipset.id, 'vendor': chipset.vendor, 'model': chipset.model,
-                             'type': chipset.get_type_as_string(), 'desc': chipset.desc})
+                             'type': chipset.get_type_as_string(),
+                             'devices_count': chipset.get_devices_count(),
+                             'desc': chipset.desc})
     return render(request, 'device/chipsets.html', {'chipsets': chipset_list})
 
 
