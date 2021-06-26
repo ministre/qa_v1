@@ -245,7 +245,7 @@ class DeviceDelete(DeleteView):
 def device_details(request, pk, tab_id):
     device = get_object_or_404(Device, id=pk)
     protocols_count = device.protocols_count()
-    chipsets = device.get_chipsets()
+    dev_chipsets = device.get_chipsets()
     all_chipsets = []
     for chipset in Chipset.objects.all():
         all_chipsets.append({'id': chipset.id, 'name': str(chipset), 'type': chipset.get_type_as_string()})
@@ -272,7 +272,7 @@ def device_details(request, pk, tab_id):
                                                    'redmine_parent': device.redmine_parent})
     return render(request, 'device/device_details.html', {
         'device': device,
-        'chipsets': chipsets,
+        'chipsets': dev_chipsets,
         'all_chipsets': all_chipsets,
         'protocols_count': protocols_count,
         'notes': converted_notes,

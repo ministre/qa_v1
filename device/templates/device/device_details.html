@@ -152,7 +152,7 @@
                         <tr>
                             <td>
                                 <a href="{% url 'chipset_details' pk=chipset.id %}">{{ chipset.name }}</a>
-                                <a href="{% url 'device-chipset_delete' pk=chipset.id %}"><i class="step fi-minus" style="color: red"></i></a>
+                                <a href="{% url 'device-chipset_delete' pk=chipset.dev_chip_id %}"><i class="step fi-minus" style="color: red"></i></a>
                             </td>
                             <td>{{ chipset.type }}</td>
                             <td>{% if chipset.desc %}{{ chipset.desc }}{% endif %}</td>
